@@ -1,0 +1,11 @@
+.flex_grid {
+  display: flex;
+  overflow-x: scroll;
+}
+
+.card {
+  border: 1px solid gray;
+  flex-basis: 40%;
+  height: 100px;
+  flex-shrink: 0;
+}
