@@ -10,6 +10,11 @@ const getBikes = async (req, res) => {
   res.status(200).json(bikes);
 };
 
+const testBikes = async (req, res) => {
+  console.log("test");
+  res.status(200).send("Test");
+};
+
 const getBikesByBrand = async (req, res) => {
   const brand = req.body.brand;
 
@@ -151,4 +156,5 @@ module.exports = {
   checkPassword,
   getBikesByType,
   getBikesByBrand,
+  testBikes,
 };

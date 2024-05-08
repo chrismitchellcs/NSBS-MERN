@@ -9,11 +9,12 @@ const {
   sendForm,
   getBikesByType,
   getBikesByBrand,
-  // checkPassword,
+  testBikes,
 } = require("../controllers/bikeController");
 
 const router = express.Router();
 
+router.get("/test", testBikes);
 router.get("/", getBikes);
 router.post("/type", getBikesByType);
 router.post("/brand", getBikesByBrand);
