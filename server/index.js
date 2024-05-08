@@ -9,13 +9,13 @@ const imageRoutes = require("./routes/images");
 // express
 const app = express();
 const cors = require("cors");
-app.use(
-  cors({
-    origin: ["https://nsbs-mern-api.vercel.app"],
-    methods: ["POST", "GET", "DELETE"],
-    credentials: true,
-  })
-);
+app.use(cors({ origin: "*" }));
+
+// cors({
+//   origin: ["*"],
+//   methods: ["POST", "GET", "DELETE"],
+//   credentials: true,
+// })
 
 // middleware
 app.use(express.json({ limit: "50mb" }));
