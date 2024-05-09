@@ -1,6 +1,5 @@
 const Bike = require("../models/bikeModel");
 const mongoose = require("mongoose");
-const { post } = require("../routes/bikes");
 const { sendEmail } = require("../utils/email");
 const axios = require("axios");
 
