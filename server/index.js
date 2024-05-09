@@ -17,9 +17,9 @@ app.use(cors({ origin: "*" }));
 //   credentials: true,
 // })
 
-// app.use("/", (req, res) => {
-//   res.send("server is running");
-// });
+app.use("/", (req, res) => {
+  res.send("server is running");
+});
 
 // middleware
 app.use(express.json({ limit: "50mb" }));
@@ -46,5 +46,3 @@ mongoose
   .catch((error) => {
     console.log(error);
   });
-
-module.exports = { app };
