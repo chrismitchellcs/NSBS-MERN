@@ -1,5 +1,4 @@
 const express = require("express");
-const Bike = require("../models/bikeModel");
 const {
   createBike,
   getBikes,

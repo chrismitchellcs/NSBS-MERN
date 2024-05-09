@@ -1,6 +1,3 @@
-const axios = require("axios");
-// const cloudinary = require("../utils/cloudinary");
-
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
