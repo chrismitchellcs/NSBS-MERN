@@ -16,7 +16,7 @@ const ContactForm = () => {
     captchaRef.current.reset();
 
     await axios
-      .post("http://localhost:5050/api/bikes/sendform", {
+      .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/sendform`, {
         token,
         name,
         email,

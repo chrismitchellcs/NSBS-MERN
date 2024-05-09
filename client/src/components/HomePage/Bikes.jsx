@@ -27,13 +27,15 @@ const Bikes = ({ brand }) => {
   useEffect(() => {
     const fetchBikes = async () => {
       await axios
-        .post("http://localhost:5050/api/bikes/brand", {
+        .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/brand`, {
           brand,
         })
         .then((res) => {
           setBikes(res.data);
         })
-        .catch((error) => {});
+        .catch((error) => {
+          console.log(error);
+        });
     };
     fetchBikes();
   }, []);

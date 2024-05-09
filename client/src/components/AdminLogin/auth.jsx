@@ -20,7 +20,7 @@ const useProvideAuth = () => {
   const login = async ({ password }) => {
     console.log(password);
     await axios
-      .post("http://localhost:5050/api/auth", {
+      .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/auth`, {
         password,
       })
       .then((res) => {

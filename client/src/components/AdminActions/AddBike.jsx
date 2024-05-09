@@ -28,7 +28,7 @@ const AddBike = ({ setBikes }) => {
     console.log(images);
     console.log(sizes);
     await axios
-      .post("http://localhost:5050/api/bikes/", {
+      .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {
         brand,
         type,
         material,

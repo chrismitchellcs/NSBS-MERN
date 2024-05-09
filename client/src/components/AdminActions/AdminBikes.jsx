@@ -18,7 +18,7 @@ const AdminBikes = ({ bikes, setBikes }) => {
   const handleClick = async (e) => {
     const bikeID = e.target.id;
     await axios
-      .delete(`http://localhost:5050/api/bikes/${bikeID}`, {})
+      .delete(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${bikeID}`, {})
       .then((res) => {
         setBikes(res.data);
       })

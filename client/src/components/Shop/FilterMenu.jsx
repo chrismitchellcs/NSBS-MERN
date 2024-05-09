@@ -18,7 +18,7 @@ const FilterMenu = ({ setBikes }) => {
   const handleTypeClick = async (e) => {
     const type = e.target.id;
     await axios
-      .post("http://localhost:5050/api/bikes/type", { type })
+      .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/type`, { type })
       .then((res) => {
         setBikes(res.data);
       })
@@ -28,7 +28,7 @@ const FilterMenu = ({ setBikes }) => {
   const handleBrandClick = async (e) => {
     const brand = e.target.id;
     await axios
-      .post("http://localhost:5050/api/bikes/brand", { brand })
+      .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/brand`, { brand })
       .then((res) => {
         setBikes(res.data);
       })

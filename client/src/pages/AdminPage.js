@@ -8,12 +8,15 @@ const AdminPage = () => {
   const [bikes, setBikes] = useState([]);
   useEffect(() => {
     const fetchBikes = async () => {
+      console.log(process.env.REACT_APP_VERCEL_DOMAIN);
       await axios
-        .get("http://localhost:5050/api/bikes/", {})
+        .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {})
         .then((res) => {
           setBikes(res.data);
         })
-        .catch((error) => {});
+        .catch((error) => {
+          console.log(error);
+        });
     };
     fetchBikes();
   }, []);

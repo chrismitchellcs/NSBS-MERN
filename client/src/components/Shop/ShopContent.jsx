@@ -11,7 +11,7 @@ const ShopContent = () => {
   useEffect(() => {
     const fetchBikes = async () => {
       await axios
-        .get("http://localhost:5050/api/bikes/", {})
+        .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {})
         .then((res) => {
           setBikes(res.data);
         })

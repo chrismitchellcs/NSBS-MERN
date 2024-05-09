@@ -64,7 +64,7 @@ const AddImage = () => {
     const data = JSON.stringify({ file });
     return new Promise(async (resolve, reject) => {
       await axios
-        .post("http://localhost:5050/api/images", {
+        .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/images`, {
           data,
         })
         .then((res) => {
