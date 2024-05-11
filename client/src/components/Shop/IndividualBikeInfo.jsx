@@ -42,7 +42,7 @@ const IndividualBikeInfo = ({ bike }) => {
   const [image, setImage] = useState(images[0]);
   const [preview, setPreview] = useState(images[1]);
 
-  const [size, setSize] = useState();
+  const [size, setSize] = useState(false);
 
   const switchImage = () => {
     const tempImage = image;
@@ -91,7 +91,7 @@ const IndividualBikeInfo = ({ bike }) => {
             ${bike.price.toLocaleString()}
           </Box>
           <Stack spacing={1}>
-            <Box>Colour</Box>
+            {images.length > 1 && <Box>Colour</Box>}
             <Button onClick={switchImage} sx={{ maxWidth: "150px" }}>
               <Image
                 cloudName="ds4ukwnxl"
@@ -103,21 +103,28 @@ const IndividualBikeInfo = ({ bike }) => {
           </Stack>
           <Stack spacing={1}>
             <Box>Size</Box>
+
             <SizeButtons
               sizes={JSON.parse(bike.sizes)}
               setSize={setSize}
               size={size}
             ></SizeButtons>
           </Stack>
-
-          <InquireButton>Inquire</InquireButton>
+          {size && <Box>Availiable</Box>}
         </Stack>
       </Stack>
       <Stack width={"80%"} alignItems={"center"}>
         <Box fontSize={"20px"} lineHeight={"1.5"} fontWeight={"300"}>
           {bike.description}
         </Box>
-        <MoreInfoButton>More Info</MoreInfoButton>
+
+        <MoreInfoButton
+          // @ts-ignore
+          target="_blank"
+          href={bike.link}
+        >
+          More Info
+        </MoreInfoButton>
       </Stack>
     </Stack>
     // <Box width={"80%"} justifySelf={"center"} height={"75vh"} mt={5}>
