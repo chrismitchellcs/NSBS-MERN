@@ -1,3 +1,5 @@
+Currently the app is being hosted here: https://nsbs-mern-frontend.vercel.app/
+
 This is a website for North Shore Bike Shop (NSBS), a mountain bicycle store based in North Vancouver, BC.  This website allows customers to access information about the store, as well as the bikes that are in stock and availiable to order.
 
 The website allows authenticated employees to log into an admin page where they can manage inventory of the bikes.  Employees can add all of the details of individual bikes and upload images so that customers can see what is in stock.  This admin page is hosted on the front end and accessible only through a secret password.
