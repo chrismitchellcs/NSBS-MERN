@@ -84,9 +84,15 @@ const IndividualBikeInfo = ({ bike }) => {
           ></Image>
         </Box>
         <Stack spacing={3}>
-          <Box sx={{ fontSize: "30px" }}>
-            {bike.brand} {bike.name} {bike.material}
-          </Box>
+          {bike.material === "N/A" ? (
+            <Box sx={{ fontSize: "30px" }}>
+              {bike.brand} {bike.name}
+            </Box>
+          ) : (
+            <Box sx={{ fontSize: "30px" }}>
+              {bike.brand} {bike.name} {bike.material}
+            </Box>
+          )}
           <Box sx={{ fontSize: "30px", fontWeight: "300" }}>
             ${bike.price.toLocaleString()}
           </Box>

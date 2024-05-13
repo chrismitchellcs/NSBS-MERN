@@ -35,7 +35,7 @@ const ContactForm = () => {
     <form onSubmit={handleSubmit}>
       {/* <label htmlFor="name">Name</label> */}
       {/* <input type="text" id="name" className="input" /> */}
-      <Stack spacing={2} ml={5} width={"60%"}>
+      <Stack spacing={2} ml={5} width={{ xs: "80%", sm: "60%" }}>
         <Stack direction={"row"} justifyContent={"space-between"}>
           <TextField
             id="name"
@@ -65,7 +65,12 @@ const ContactForm = () => {
           sx={{ width: "100%" }}
         />
       </Stack>
-      <Stack width={"60%"} direction={"row"} sx={{ m: 2, ml: 5 }} spacing={4}>
+      <Stack
+        width={"60%"}
+        direction={{ xs: "column", sm: "row" }}
+        sx={{ m: 2, ml: 5 }}
+        spacing={2}
+      >
         <ReCAPTCHA
           sitekey="6LcIjDQpAAAAANHNJdQQTrJy-LQLR7oAWIWontHU"
           ref={captchaRef}

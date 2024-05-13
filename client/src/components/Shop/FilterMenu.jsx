@@ -5,6 +5,7 @@ import CollapsedFilterMenu from "./CollapsedFilterMenu";
 const FilterMenu = ({ setBikes }) => {
   const FilterButton = styled(Button)({
     color: "white",
+
     maxHeight: "40px",
     fontWeight: "300",
     fontSize: "16px",
@@ -40,10 +41,11 @@ const FilterMenu = ({ setBikes }) => {
     "Trail",
     "XC",
     "Recreational",
+    "Kids",
   ];
 
   return (
-    <Box width={"100%"} bgcolor={"black"} p={2}>
+    <Box width={"100%"} bgcolor={"black"} pt={2} pb={2}>
       <Stack
         direction="row"
         alignItems={"center"}

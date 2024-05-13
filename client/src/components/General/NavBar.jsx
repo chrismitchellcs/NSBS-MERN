@@ -49,6 +49,12 @@ const MenuButton = styled(Button)({
 
 const NavBar = ({ background, position, displayLogo }) => {
   const [open, setOpen] = useState(false);
+  const handleClick = (e) => {
+    const page = e.target.id;
+    console.log(page);
+    window.location.href = page;
+  };
+
   return (
     <AppBar
       position={position}
@@ -105,9 +111,15 @@ const NavBar = ({ background, position, displayLogo }) => {
               horizontal: "right",
             }}
           >
-            <MenuItem>Profile</MenuItem>
-            <MenuItem>My account</MenuItem>
-            <MenuItem>Logout</MenuItem>
+            <MenuItem onClick={handleClick} id="shop">
+              Shop
+            </MenuItem>
+            <MenuItem onClick={handleClick} id="service">
+              Service
+            </MenuItem>
+            <MenuItem onClick={handleClick} id="contact">
+              Contact
+            </MenuItem>
           </Menu>
         </Box>
       </StyledToolbar>

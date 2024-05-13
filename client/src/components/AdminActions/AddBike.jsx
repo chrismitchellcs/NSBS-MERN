@@ -116,6 +116,7 @@ const AddBike = ({ setBikes }) => {
             control={<Radio />}
             label="Recreational"
           />
+          <FormControlLabel value="Kids" control={<Radio />} label="Kids" />
         </RadioGroup>
         <FormLabel id="demo-radio-buttons-group-label">Material</FormLabel>
         <RadioGroup
@@ -130,6 +131,7 @@ const AddBike = ({ setBikes }) => {
           <FormControlLabel value="Alloy" control={<Radio />} label="Alloy" />
           <FormControlLabel value="Carbon" control={<Radio />} label="Carbon" />
           <FormControlLabel value="Steel" control={<Radio />} label="Steel" />
+          <FormControlLabel value="N/A" control={<Radio />} label="N/A" />
         </RadioGroup>
         <Stack width={"100%"} alignItems={"flex-start"} spacing={1}>
           <TextField id="name" label="Name" variant="outlined" />

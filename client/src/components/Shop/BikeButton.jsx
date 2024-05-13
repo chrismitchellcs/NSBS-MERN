@@ -59,9 +59,15 @@ const BikeButton = ({ bike }) => {
           ></Image>
         </Box>
 
-        <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
-          {bike.brand} {bike.name} {bike.material}
-        </Box>
+        {bike.material === "N/A" ? (
+          <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
+            {bike.brand} {bike.name}
+          </Box>
+        ) : (
+          <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
+            {bike.brand} {bike.name} {bike.material}
+          </Box>
+        )}
 
         <Box color={"black"} fontSize={"16px"} fontWeight={"300"}>
           ${bike.price}
