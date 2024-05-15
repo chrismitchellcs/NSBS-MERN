@@ -5,10 +5,10 @@ export const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
   const { isAuth } = useAuth();
   console.log(isAuth);
-  //   if (!isAuth) {
-  //     console.log("navigating");
-  //     navigate("/adminlogin");
-  //   } else {
-  return children;
-  //   }
+  if (!isAuth) {
+    console.log("navigating");
+    navigate("/adminlogin");
+  } else {
+    return children;
+  }
 };
