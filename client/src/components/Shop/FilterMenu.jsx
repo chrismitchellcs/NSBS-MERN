@@ -40,8 +40,10 @@ const FilterMenu = ({ setBikes }) => {
     "Enduro / All Mountain",
     "Trail",
     "XC",
+    "Dirt Jumper",
     "Recreational",
     "Kids",
+    "E-Bike",
   ];
 
   return (

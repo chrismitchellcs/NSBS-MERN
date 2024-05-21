@@ -112,11 +112,17 @@ const AddBike = ({ setBikes }) => {
           <FormControlLabel value="Trail" control={<Radio />} label="Trail" />
           <FormControlLabel value="XC" control={<Radio />} label="XC" />
           <FormControlLabel
+            value="Dirt Jumper"
+            control={<Radio />}
+            label="Dirt Jumper"
+          />
+          <FormControlLabel
             value="Recreational"
             control={<Radio />}
             label="Recreational"
           />
           <FormControlLabel value="Kids" control={<Radio />} label="Kids" />
+          <FormControlLabel value="E-Bike" control={<Radio />} label="E-Bike" />
         </RadioGroup>
         <FormLabel id="demo-radio-buttons-group-label">Material</FormLabel>
         <RadioGroup
