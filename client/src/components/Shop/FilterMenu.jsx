@@ -8,7 +8,7 @@ const FilterMenu = ({ setBikes }) => {
 
     maxHeight: "40px",
     fontWeight: "300",
-    fontSize: "16px",
+    fontSize: "14px",
 
     "&:hover": {
       backgroundColor: "#4d5e5f",
@@ -53,7 +53,7 @@ const FilterMenu = ({ setBikes }) => {
         alignItems={"center"}
         justifyContent={"space-around"}
       >
-        <Stack direction={"row"} spacing={5}>
+        <Stack direction={"row"} spacing={2}>
           <FilterButton onClick={handleBrandClick} id="Transition">
             Transition
           </FilterButton>
@@ -63,7 +63,7 @@ const FilterMenu = ({ setBikes }) => {
         </Stack>
         <Stack
           direction={"row"}
-          spacing={5}
+          spacing={2}
           display={{ xs: "none", sm: "none", md: "none", lg: "flex" }}
         >
           {bikeTypes.map((type) => {

@@ -142,11 +142,27 @@ const AddBike = ({ setBikes }) => {
         <Stack width={"100%"} alignItems={"flex-start"} spacing={1}>
           <TextField id="name" label="Name" variant="outlined" />
           <TextField id="price" label="Price" variant="outlined" />
-          <TextField id="description" label="Description" variant="outlined" />
+          <TextField
+            id="description"
+            label="Description"
+            variant="outlined"
+            multiline
+          />
           <TextField id="link" label="Link" variant="outlined" />
           <FormLabel id="demo-radio-buttons-group-label">Add Sizes</FormLabel>
           <AddSizes sizes={sizeArray} setSizes={setSizeArray}></AddSizes>
+          <Box width={"50%"}>
+            Please ensure photos are smaller than 500kb (0.5mb). All photos
+            downloaded from websites will be under this but photos from cameras
+            will be over. Please go{" "}
+            <a href="https://imageresizer.com/image-compressor" target="_blank">
+              HERE
+            </a>{" "}
+            and compress them to 500kb or lower. Please also ensure that all
+            photos taken by camera are 16:9.
+          </Box>
           <AddImage></AddImage>
+
           <SelectImages images={imagesSelected} setImages={setImagesSelected} />
           <Button sx={{ color: "black", bgcolor: "#dcdcdc" }} type="submit">
             Add Bike
