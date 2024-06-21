@@ -15,22 +15,8 @@ const ContactForm = () => {
     const token = captchaRef.current.getValue();
     captchaRef.current.reset();
 
-    await axios
-      .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/sendform`, {
-        token,
-        name,
-        email,
-        subject,
-        message,
-      })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((error) => {
-        alert("form not sent");
-      });
     // await axios
-    //   .post(`http://localhost:5050/api/bikes/sendform`, {
+    //   .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/sendform`, {
     //     token,
     //     name,
     //     email,
@@ -43,6 +29,20 @@ const ContactForm = () => {
     //   .catch((error) => {
     //     alert("form not sent");
     //   });
+    await axios
+      .post(`http://localhost:5050/api/bikes/sendform`, {
+        token,
+        name,
+        email,
+        subject,
+        message,
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => {
+        alert("form not sent");
+      });
   };
 
   return (
