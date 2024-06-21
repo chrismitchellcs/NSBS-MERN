@@ -130,8 +130,13 @@ const sendForm = async (req, res) => {
     );
 
     if (response.data.success) {
-      await sendEmail(name, email, subject, message);
-      res.send("Human");
+      sendEmail(name, email, subject, message)
+        .then(() => {
+          res.send("Human");
+        })
+        .catch(() => {
+          res.status(500).send("Error");
+        });
     } else {
       res.status(500).send("Robot");
     }
