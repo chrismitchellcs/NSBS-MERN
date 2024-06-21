@@ -10,7 +10,7 @@ const sendEmail = async (name, email, subject, message) => {
         secure: false,
         auth: {
           user: "chrismitch774@gmail.com",
-          pass: process.env.GMAIL_PASS,
+          pass: "fbhc fmno akqs yzbf",
         },
       })
       .sendMail({
