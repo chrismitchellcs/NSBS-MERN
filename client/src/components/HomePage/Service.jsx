@@ -38,13 +38,14 @@ const Service = () => {
           width: "60%",
           m: 2,
           ml: "20%",
+          lineHeight: "1.5",
         }}
         textAlign={"center"}
       >
-        Our service department is tidy, fast, and staffed with competent
-        mechanics who are eager to see you back on your bike. Our turn-around
-        time is unmatched anywhere else in town. We fix everything bicycle
-        related.
+        Experience our service department, where tidiness, speed, and competent
+        mechanics are guaranteed to get you back on your bike quickly. Our
+        unmatched turn-around time and expertise ensure that we fix everything
+        bicycle-related, making us your go-to shop in town.
       </Box>
       <Box mb={2}>
         <ShopButton href="service">More Info</ShopButton>

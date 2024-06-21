@@ -27,10 +27,10 @@ const NorcoHome = () => {
         <Box
           sx={{ display: { xs: "none", sm: "none", md: "none", lg: "block" } }}
         >
-          Norco is a local brand from Coquitlam, BC that sell bikes for all
-          riders. Norco has bikes for beginners looking to do some trails and
-          city riding, to experts wanting the fastest and most advanced bike you
-          can buy.
+          Norco is a local brand from Coquitlam, BC, offering bikes for every
+          rider. Whether you're a beginner exploring trails and city streets or
+          an expert seeking the fastest, most advanced bike available, Norco has
+          you covered.
         </Box>
       </Box>
       <Box

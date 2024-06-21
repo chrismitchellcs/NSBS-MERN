@@ -43,12 +43,14 @@ const Parts = () => {
           width: "60%",
           m: 2,
           ml: "20%",
+          lineHeight: "1.5",
         }}
         textAlign={"center"}
       >
-        North Shore Bike Shop is always well stocked with any parts you may
-        need. Whether you want to get your bike up and running affordably, or
-        you want the latest and greatest tech, NSBS has it.
+        At North Shore Bike Shop, we pride ourselves on being well stocked with
+        all the parts you may need. Whether you're looking for affordable
+        options to get your bike up and running or the latest cutting-edge
+        technology, NSBS has you covered.
       </Box>
       <Box
         justifyContent={"center"}

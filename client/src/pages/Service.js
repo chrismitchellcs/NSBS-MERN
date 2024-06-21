@@ -33,11 +33,16 @@ const Service = () => {
         pt={5}
         pb={5}
       >
-        <Box width={"50%"} fontSize={"30px"} fontWeight={"400"} m={1}>
+        <Box
+          width={{ xs: "80%", sm: "80%", md: "50%" }}
+          fontSize={"30px"}
+          fontWeight={"400"}
+          m={1}
+        >
           NSBS SERVICE
         </Box>
         <Box
-          width={"50%"}
+          width={{ xs: "80%", sm: "80%", md: "50%" }}
           fontSize={"1.1rem"}
           fontWeight={"300"}
           m={1}
@@ -71,7 +76,11 @@ const Service = () => {
         <Box component={"img"} src={"IMG_1090.jpg"} width={"40%"}></Box>
       </Stack> */}
 
-      <Box sx={{ width: { xs: "100%", sm: "100%", md: "60%" } }}>
+      <Box
+        sx={{
+          width: { xs: "100%", sm: "100%", md: "60%" },
+        }}
+      >
         <Box color={"black"} m={3}>
           <Stack
             fontSize={"26px"}
@@ -110,13 +119,13 @@ const Service = () => {
         </Box>
         <Box color={"black"} m={3}>
           <Box m={1} lineHeight={"2"}>
-            <Stack
-              fontSize={"26px"}
-              fontWeight={"400"}
-              justifyContent={"space-between"}
-            >
-              <Box>SERVICE RATES </Box>
+            <Stack direction={"row"} spacing={2}>
+              <Box sx={{ fontSize: "26px" }}>SERVICE RATES </Box>
+              <Box sx={{ fontSize: "26px", fontWeight: "300" }}>
+                (prices do not include parts)
+              </Box>
             </Stack>
+
             {serviceItems.map(function (data) {
               return (
                 <Stack

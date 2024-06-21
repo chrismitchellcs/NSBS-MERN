@@ -54,7 +54,7 @@ const NSBSInfo = () => {
               sx={{ fontSize: { xs: "14px", sm: "16px" } }}
               fontWeight={"300"}
             >
-              Check out our wide range of bikes we stock
+              Explore the wide range of bikes available at our shop!
             </Box>
           </Box>
         </InfoButton>
@@ -73,7 +73,8 @@ const NSBSInfo = () => {
               sx={{ fontSize: { xs: "14px", sm: "16px" } }}
               fontWeight={"300"}
             >
-              Bring your bike for excellent service and short wait times
+              Bring your bike in for top-notch service with quick turnaround
+              times.
             </Box>
           </Box>
         </InfoButton>
@@ -92,7 +93,8 @@ const NSBSInfo = () => {
               sx={{ fontSize: { xs: "14px", sm: "16px" } }}
               fontWeight={"300"}
             >
-              Get in touch with us or come visit us
+              Contact us or visit our shop today to explore our products and
+              services!
             </Box>
           </Box>
         </InfoButton>
