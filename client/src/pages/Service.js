@@ -35,7 +35,7 @@ const Service = () => {
       >
         <Box
           width={{ xs: "80%", sm: "80%", md: "50%" }}
-          fontSize={"30px"}
+          fontSize={"26px"}
           fontWeight={"400"}
           m={1}
         >
@@ -83,7 +83,7 @@ const Service = () => {
       >
         <Box color={"black"} m={3}>
           <Stack
-            fontSize={"26px"}
+            fontSize={"24px"}
             fontWeight={"400"}
             m={1}
             direction={"row"}
@@ -92,7 +92,7 @@ const Service = () => {
             <Box>TUNE-UP</Box>
             <Box>$100</Box>
           </Stack>
-          <Box fontSize={"1rem"} fontWeight={"300"} m={1} lineHeight={"1.5"}>
+          <Box fontSize={"18px"} fontWeight={"300"} m={1} lineHeight={"1.5"}>
             Complete safety check of all components <br />
             Brake & drivetrain adjustment
             <br /> Minor wheel truing
@@ -104,7 +104,7 @@ const Service = () => {
         </Box>
         <Box color={"black"} m={3}>
           <Stack
-            fontSize={"26px"}
+            fontSize={"24px"}
             fontWeight={"400"}
             m={1}
             direction={"row"}
@@ -113,7 +113,7 @@ const Service = () => {
             <Box>KIDS BIKE TUNE-UP </Box>
             <Box>$60</Box>
           </Stack>
-          <Box fontSize={"1rem"} fontWeight={"300"} m={1} lineHeight={"1.5"}>
+          <Box fontSize={"18px"} fontWeight={"300"} m={1} lineHeight={"1.5"}>
             Everything included in the tune-up for bikes 24" and under
           </Box>
         </Box>
@@ -129,7 +129,7 @@ const Service = () => {
             {serviceItems.map(function (data) {
               return (
                 <Stack
-                  fontSize={"1rem"}
+                  fontSize={"18px"}
                   fontWeight={"300"}
                   direction={"row"}
                   justifyContent={"space-between"}

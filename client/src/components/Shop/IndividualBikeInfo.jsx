@@ -23,7 +23,7 @@ const InquireButton = styled(Button)({
 
 const MoreInfoButton = styled(Button)({
   backgroundColor: "#3c5d4e",
-  margin: "1%",
+
   paddingLeft: "2%",
   paddingRight: "2%",
   color: "white",
@@ -119,7 +119,7 @@ const IndividualBikeInfo = ({ bike }) => {
           {size && <Box>Availiable</Box>}
         </Stack>
       </Stack>
-      <Stack width={"80%"} alignItems={"center"}>
+      <Stack width={"80%"} alignItems={"center"} mb={5} spacing={5}>
         <Box fontSize={"20px"} lineHeight={"1.5"} fontWeight={"300"}>
           {bike.description}
         </Box>

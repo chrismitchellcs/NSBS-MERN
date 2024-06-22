@@ -73,7 +73,13 @@ const Bikes = ({ brand }) => {
           <Stack
             direction="row"
             display={"-ms-flexbox"}
-            sx={{ overflowX: "scroll", width: "100%", MsFlexPack: "center" }}
+            sx={{
+              overflowX: "scroll",
+              width: "100%",
+              MsFlexPack: "center",
+              pt: 1,
+              pb: 1,
+            }}
           >
             {bikes &&
               bikes.map((bike) => {
