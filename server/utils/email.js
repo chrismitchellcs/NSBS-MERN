@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 
 const sendEmail = async (name, email, subject, message) => {
-  const data = `Subject:${subject}\n\nName: ${name}\nEmail: ${email}\nSubject: ${subject}\nMessage:\n${message}`;
+  const data = `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\nMessage:\n${message}`;
 
   try {
     await nodemailer
