@@ -1,6 +1,10 @@
 const nodemailer = require("nodemailer");
 
 const sendEmail = async (name, email, subject, message) => {
+  const data = `from: ${email}\n
+  subject: ${subject}\n
+  message: ${message}\n`;
+
   try {
     await nodemailer
       .createTransport({
@@ -18,7 +22,7 @@ const sendEmail = async (name, email, subject, message) => {
         from: email, // sender address
         to: "chrismitch774@gmail.com", // list of receivers
         subject: subject, // Subject line
-        text: message, // plain text body
+        text: data, // plain text body
       });
     console.log("Email sent to " + email);
   } catch (e) {
