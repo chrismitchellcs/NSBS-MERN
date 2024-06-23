@@ -32,7 +32,8 @@ const NSBSInfo = () => {
         fontWeight={"300"}
         mb={4}
       >
-        North Shore Bike Shop has been serving the North Shore since 2007.
+        Since 2007, North Shore Bike Shop has been proudly serving the North
+        Shore community.
       </Box>
       <Stack
         direction={"row"}

@@ -34,7 +34,7 @@ const Closer = () => {
 
   return (
     <Box
-      // sx={{ position: "absolute", bottom: 0 }}
+      sx={{}}
       // bgcolor={"#f1f2f6"}
 
       bgcolor={"#EAEAEA"}

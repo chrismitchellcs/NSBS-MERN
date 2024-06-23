@@ -21,7 +21,7 @@ const Service = () => {
     { item: "Pivot Bearing Replacement", price: "	$225" },
   ];
   return (
-    <Stack justifyContent={"center"}>
+    <Stack alignItems={"center"}>
       <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
       <Box component={"img"} src={"service-xstretch.jpg"} width={"100%"}></Box>
       <Stack
@@ -34,7 +34,7 @@ const Service = () => {
         pb={5}
       >
         <Box
-          width={{ xs: "80%", sm: "80%", md: "50%" }}
+          width={{ xs: "80%", sm: "80%", md: "60%" }}
           fontSize={"26px"}
           fontWeight={"400"}
           m={1}
@@ -42,7 +42,7 @@ const Service = () => {
           NSBS SERVICE
         </Box>
         <Box
-          width={{ xs: "80%", sm: "80%", md: "50%" }}
+          width={{ xs: "80%", sm: "80%", md: "60%" }}
           fontSize={"1.1rem"}
           fontWeight={"300"}
           m={1}
@@ -53,46 +53,37 @@ const Service = () => {
           time is unmatched anywhere else in town. We fix everything bicycle
           related. Feel free to contact us about any service inquiries.
         </Box>
-      </Stack>
-      {/* <Stack
-        bgcolor={"black"}
-        direction={"row"}
-        justifyContent={"space-evenly"}
-        alignItems={"center"}
-        p={5}
-      >
-        <Box color={"white"} width={"40%"}>
-          <Box fontSize={"30px"} fontWeight={"400"} m={1}>
-            NSBS SERVICE
-          </Box>
-          <Box fontSize={"1.1rem"} fontWeight={"300"} m={1} lineHeight={"1.5"}>
-            Our service department is tidy, fast, and staffed with competent
-            mechanics who are eager to see you back on your bike. Our
-            turn-around time is unmatched anywhere else in town. We fix
-            everything bicycle related. Feel free to contact us about any
-            service inquiries.
-          </Box>
+        <Box
+          width={{ xs: "80%", sm: "80%", md: "60%" }}
+          fontSize={"1.1rem"}
+          fontWeight={"300"}
+          m={1}
+          lineHeight={"1.5"}
+        >
+          While we are a mountain bike-focused shop, we stock parts and service
+          all types of bikes! The only exception is some e-bikes, as we may not
+          have all the necessary parts. If you have any questions about this,
+          please feel free to call or email us before coming in.
         </Box>
-        <Box component={"img"} src={"IMG_1090.jpg"} width={"40%"}></Box>
-      </Stack> */}
+      </Stack>
 
-      <Box
+      <Stack
         sx={{
-          width: { xs: "100%", sm: "100%", md: "60%" },
+          width: { xs: "90%", sm: "90%", md: "60%" },
         }}
+        m={5}
       >
-        <Box color={"black"} m={3}>
+        <Box color={"black"} mt={3} mb={3}>
           <Stack
             fontSize={"24px"}
             fontWeight={"400"}
-            m={1}
             direction={"row"}
             justifyContent={"space-between"}
           >
             <Box>TUNE-UP</Box>
             <Box>$100</Box>
           </Stack>
-          <Box fontSize={"18px"} fontWeight={"300"} m={1} lineHeight={"1.5"}>
+          <Box fontSize={"16px"} fontWeight={"300"} mt={1} lineHeight={"1.5"}>
             Complete safety check of all components <br />
             Brake & drivetrain adjustment
             <br /> Minor wheel truing
@@ -102,26 +93,26 @@ const Service = () => {
             <br /> Superficial bike cleanup
           </Box>
         </Box>
-        <Box color={"black"} m={3}>
+        <Box color={"black"} mt={3} mb={3}>
           <Stack
             fontSize={"24px"}
             fontWeight={"400"}
-            m={1}
             direction={"row"}
+            mb={1}
             justifyContent={"space-between"}
           >
             <Box>KIDS BIKE TUNE-UP </Box>
             <Box>$60</Box>
           </Stack>
-          <Box fontSize={"18px"} fontWeight={"300"} m={1} lineHeight={"1.5"}>
+          <Box fontSize={"16px"} fontWeight={"300"} lineHeight={"1.5"}>
             Everything included in the tune-up for bikes 24" and under
           </Box>
         </Box>
-        <Box color={"black"} m={3}>
-          <Box m={1} lineHeight={"2"}>
-            <Stack direction={"row"} spacing={2}>
-              <Box sx={{ fontSize: "26px" }}>SERVICE RATES </Box>
-              <Box sx={{ fontSize: "26px", fontWeight: "300" }}>
+        <Box color={"black"} mt={3} mb={3}>
+          <Box lineHeight={"2"}>
+            <Stack direction={{ xs: "column" }} spacing={0} mb={2}>
+              <Box sx={{ fontSize: "24px" }}>SERVICE RATES </Box>
+              <Box sx={{ fontSize: "20px", fontWeight: "300" }}>
                 (prices do not include parts)
               </Box>
             </Stack>
@@ -129,7 +120,7 @@ const Service = () => {
             {serviceItems.map(function (data) {
               return (
                 <Stack
-                  fontSize={"18px"}
+                  fontSize={"16px"}
                   fontWeight={"300"}
                   direction={"row"}
                   justifyContent={"space-between"}
@@ -141,7 +132,7 @@ const Service = () => {
             })}
           </Box>
         </Box>
-      </Box>
+      </Stack>
       <Closer></Closer>
     </Stack>
     // <Stack justifyContent={"center"}>
