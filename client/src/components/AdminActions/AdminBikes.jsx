@@ -3,6 +3,7 @@ import {
   Button,
   Link,
   Paper,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -13,6 +14,7 @@ import {
 import axios from "axios";
 
 import { Image } from "cloudinary-react";
+import EditSizes from "./EditSizes";
 
 const AdminBikes = ({ bikes, setBikes }) => {
   const handleClick = async (e) => {
@@ -24,6 +26,8 @@ const AdminBikes = ({ bikes, setBikes }) => {
       })
       .catch((error) => {});
   };
+
+  const handleSizeClick = () => {};
 
   return (
     <Box m={3}>
@@ -66,9 +70,12 @@ const AdminBikes = ({ bikes, setBikes }) => {
                   ))}
                 </TableCell>
                 <TableCell align="center">
-                  {JSON.parse(row.sizes).map((size) => {
-                    return <Box>{size}</Box>;
-                  })}
+                  <Stack>
+                    <EditSizes bike={row}></EditSizes>
+                    {JSON.parse(row.sizes).map((size) => {
+                      return <Box>{size}</Box>;
+                    })}
+                  </Stack>
                 </TableCell>
                 <TableCell align="center">
                   <Box fontSize={"10px"}>{row.description}</Box>

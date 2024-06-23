@@ -1,9 +1,14 @@
-import { Button, Stack, TextField } from "@mui/material";
+import { Alert, Button, Stack, TextField } from "@mui/material";
 import ReCAPTCHA from "react-google-recaptcha";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import axios from "axios";
+import CheckIcon from "@mui/icons-material/Check";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 const ContactForm = () => {
+  const [formSent, setFormSent] = useState(false);
+  const [formNotSent, setFormNotSent] = useState(false);
+
   const captchaRef = useRef(null);
 
   const handleSubmit = async (e) => {
@@ -24,10 +29,10 @@ const ContactForm = () => {
         message,
       })
       .then((res) => {
-        console.log(res);
+        setFormSent(true);
       })
       .catch((error) => {
-        alert("form not sent");
+        setFormNotSent(true);
       });
     // await axios
     //   .post(`http://localhost:5050/api/bikes/sendform`, {
@@ -104,6 +109,25 @@ const ContactForm = () => {
           Submit
         </Button>
       </Stack>
+      {formSent && (
+        <Alert
+          sx={{ width: "40%", m: 3, ml: 5, mr: 5 }}
+          icon={<CheckIcon fontSize="inherit" />}
+          severity="success"
+        >
+          Email sent! We will reply ASAP.
+        </Alert>
+      )}
+      {formNotSent && (
+        <Alert
+          sx={{ width: { xs: "70%", sm: "70%", md: "40%" }, m: 3, ml: 5 }}
+          icon={<ErrorOutlineIcon fontSize="inherit" />}
+          severity="error"
+        >
+          Email not sent. Please try again or use our email
+          northshorebikeshop@gmail.com
+        </Alert>
+      )}
     </form>
   );
 };
