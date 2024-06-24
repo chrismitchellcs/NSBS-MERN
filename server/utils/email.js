@@ -11,14 +11,14 @@ const sendEmail = async (name, email, subject, message) => {
         port: 587,
         secure: false,
         auth: {
-          user: "chrismitch774@gmail.com",
+          user: "northshorebikeshop@gmail.com",
           pass: process.env.GMAIL_PASS,
         },
       })
       .sendMail({
         name: name,
         from: email, // sender address
-        to: "chrismitch774@gmail.com", // list of receivers
+        to: "northshorebikeshop@gmail.com", // list of receivers
         subject: subject, // Subject line
         text: data, // plain text body
       });
