@@ -55,6 +55,8 @@ const IndividualBikeInfo = ({ bike }) => {
       <Stack
         direction={{ xs: "column", sm: "column", md: "row" }}
         justifyContent={"center"}
+        alignItems={"center"}
+        textAlign={{ xs: "center", sm: "center", md: "initial" }}
         spacing={5}
         mt={5}
         mb={5}
