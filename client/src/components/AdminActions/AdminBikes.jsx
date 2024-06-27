@@ -71,7 +71,7 @@ const AdminBikes = ({ bikes, setBikes }) => {
                 </TableCell>
                 <TableCell align="center">
                   <Stack>
-                    <EditSizes bike={row}></EditSizes>
+                    <EditSizes bike={row} setBikes={setBikes}></EditSizes>
                     {JSON.parse(row.sizes).map((size) => {
                       return <Box>{size}</Box>;
                     })}

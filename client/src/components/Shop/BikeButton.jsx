@@ -13,8 +13,9 @@ const BikeButton = ({ bike }) => {
     <Button
       onClick={handleClick}
       sx={{
-        borderColor: "black",
-        border: "5px",
+        alignItems: "flex-end",
+        // borderColor: "black",
+        // border: "5px",
         minWidth: { xs: "210px", sm: "210px", md: "210px", lg: "350px" },
 
         minHeight: { xs: "210px", sm: "210px", md: "210px", lg: "260px" },
@@ -58,20 +59,21 @@ const BikeButton = ({ bike }) => {
             crop="fill"
           ></Image>
         </Box>
+        <Stack>
+          {bike.material === "N/A" ? (
+            <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
+              {bike.brand} {bike.name}
+            </Box>
+          ) : (
+            <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
+              {bike.brand} {bike.name} {bike.material}
+            </Box>
+          )}
 
-        {bike.material === "N/A" ? (
-          <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
-            {bike.brand} {bike.name}
+          <Box color={"black"} fontSize={"16px"} fontWeight={"300"}>
+            ${bike.price}
           </Box>
-        ) : (
-          <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
-            {bike.brand} {bike.name} {bike.material}
-          </Box>
-        )}
-
-        <Box color={"black"} fontSize={"16px"} fontWeight={"300"}>
-          ${bike.price}
-        </Box>
+        </Stack>
       </Stack>
     </Button>
   );
