@@ -106,10 +106,17 @@ const Closer = () => {
           direction={{ xs: "row", sm: "column" }}
           mt={{ xs: 2 }}
         >
-          <SMButton>
+          <SMButton
+            // @ts-ignore
+            target="_blank"
+            href="https://www.instagram.com/north_shore_bike_shop/"
+          >
             <InstagramIcon sx={{ fontSize: "30px" }} />
           </SMButton>
-          <SMButton>
+          <SMButton // @ts-ignore
+            target="_blank"
+            href="https://www.pinkbike.com/u/north-shore-bike-shop/"
+          >
             <Box
               component="img"
               sx={{
