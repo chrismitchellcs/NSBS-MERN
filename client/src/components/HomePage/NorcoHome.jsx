@@ -22,7 +22,7 @@ const NorcoHome = () => {
             mb: 2,
           }}
           alt="NSBS"
-          src={"norcologowhite.png"}
+          src={"norcologowhite-min.png"}
         />
         <Box
           sx={{ display: { xs: "none", sm: "none", md: "none", lg: "block" } }}
@@ -41,7 +41,7 @@ const NorcoHome = () => {
           p: 0,
         }}
         alt="NSBS"
-        src={"lucas2.png"}
+        src={"lucas2-min.png"}
       />
     </Box>
   );

@@ -24,7 +24,7 @@ const logoNames = [
 const Parts = () => {
   return (
     <Box textAlign={"center"}>
-      <Box component={"img"} src="nsbsparts.jpg" width={"100%"}></Box>
+      <Box component={"img"} src="nsbsparts-min.jpg" width={"100%"}></Box>
       <Box
         sx={{
           fontSize: { xs: "26px", sm: "30px" },

@@ -19,7 +19,7 @@ const ShopButton = styled(Button)({
 const Service = () => {
   return (
     <Box textAlign={"center"} m={0}>
-      <Box component={"img"} src="service-stretch.jpg" width={"100%"}></Box>
+      <Box component={"img"} src="service-stretch-min.jpg" width={"100%"}></Box>
       <Box
         sx={{
           fontSize: { xs: "26px", sm: "30px" },

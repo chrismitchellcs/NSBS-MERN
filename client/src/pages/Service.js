@@ -23,7 +23,11 @@ const Service = () => {
   return (
     <Stack alignItems={"center"}>
       <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
-      <Box component={"img"} src={"service-xstretch.jpg"} width={"100%"}></Box>
+      <Box
+        component={"img"}
+        src={"service-xstretch-min.jpg"}
+        width={"100%"}
+      ></Box>
       <Stack
         width={"100%"}
         bgcolor={"black"}

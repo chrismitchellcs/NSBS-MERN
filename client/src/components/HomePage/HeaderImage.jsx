@@ -34,7 +34,7 @@ const HeaderImage = () => {
           p: 0,
         }}
         alt="NSBS"
-        src={"trees-short.png"}
+        src={"trees-short-min.png"}
         onLoad={handleLoad}
       />
       {/* ) : (
@@ -50,7 +50,7 @@ const HeaderImage = () => {
           p: 0,
         }}
         alt="NSBS"
-        src={"trees-edit.png"}
+        src={"trees-edit-min.png"}
       />
     </Box>
   );

@@ -41,7 +41,7 @@ const TransitionHome = () => {
           //   mt: 10,
         }}
         alt="NSBS"
-        src={"transitionriding copy.jpg"}
+        src={"transitionriding copy-min.jpg"}
       />
     </Box>
   );
