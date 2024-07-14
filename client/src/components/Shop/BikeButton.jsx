@@ -18,9 +18,9 @@ const BikeButton = ({ bike }) => {
         // border: "5px",
         minWidth: { xs: "210px", sm: "210px", md: "210px", lg: "350px" },
 
-        minHeight: { xs: "210px", sm: "210px", md: "210px", lg: "260px" },
+        minHeight: { xs: "210px", sm: "240px", md: "240px", lg: "290px" },
         maxWidth: { xs: "210px", sm: "210px", md: "210px", lg: "350px" },
-        maxHeight: { xs: "210px", sm: "210px", md: "210px", lg: "260px" },
+        maxHeight: { xs: "210px", sm: "240px", md: "240px", lg: "290px" },
         // minWidth: "350px",
         // minHeight: "260px",
         // maxWidth: "350px",

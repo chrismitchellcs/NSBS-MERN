@@ -21,6 +21,7 @@ const AddBike = ({ setBikes }) => {
     const name = e.target.name.value;
     const price = e.target.price.value;
     const description = e.target.description.value;
+    console.log(description);
     const link = e.target.link.value;
     const sizes = JSON.stringify(sizeArray);
     const images = JSON.stringify(imagesSelected);
@@ -148,6 +149,7 @@ const AddBike = ({ setBikes }) => {
             variant="outlined"
             multiline
           />
+
           <TextField id="link" label="Link" variant="outlined" />
           <FormLabel id="demo-radio-buttons-group-label">Add Sizes</FormLabel>
           <AddSizes sizes={sizeArray} setSizes={setSizeArray}></AddSizes>

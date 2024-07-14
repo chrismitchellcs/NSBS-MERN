@@ -98,7 +98,10 @@ const IndividualBikeInfo = ({ bike }) => {
           <Box sx={{ fontSize: "30px", fontWeight: "300" }}>
             ${bike.price.toLocaleString()}
           </Box>
-          <Stack spacing={1}>
+          <Stack
+            spacing={1}
+            alignItems={{ xs: "center", sm: "center", md: "inherit" }}
+          >
             {images.length > 1 && <Box>Colour</Box>}
             <Button onClick={switchImage} sx={{ maxWidth: "150px" }}>
               <Image
@@ -109,7 +112,10 @@ const IndividualBikeInfo = ({ bike }) => {
               ></Image>
             </Button>
           </Stack>
-          <Stack spacing={1}>
+          <Stack
+            spacing={1}
+            alignItems={{ xs: "center", sm: "center", md: "inherit" }}
+          >
             <Box>Size</Box>
 
             <SizeButtons
@@ -122,7 +128,12 @@ const IndividualBikeInfo = ({ bike }) => {
         </Stack>
       </Stack>
       <Stack width={"80%"} alignItems={"center"} mb={5} spacing={5}>
-        <Box fontSize={"20px"} lineHeight={"1.5"} fontWeight={"300"}>
+        <Box
+          fontSize={"20px"}
+          lineHeight={"1.5"}
+          fontWeight={"300"}
+          sx={{ whiteSpace: "pre-wrap" }}
+        >
           {bike.description}
         </Box>
 
@@ -135,68 +146,6 @@ const IndividualBikeInfo = ({ bike }) => {
         </MoreInfoButton>
       </Stack>
     </Stack>
-    // <Box width={"80%"} justifySelf={"center"} height={"75vh"} mt={5}>
-    //   <Stack direction={"row"} justifyContent={"center"}>
-    //     <Box>
-    //       <Image
-    //         cloudName="ds4ukwnxl"
-    //         publicId={image}
-    //         width="500"
-    //         crop="scale"
-    //       ></Image>
-    //     </Box>
-    //     <Box width={"100%"}>
-    //       <Stack spacing={1} justifyContent={"center"} alignItems={"center"}>
-    //         <Box>
-    //           <Button onClick={switchImage}>
-    //             <Image
-    //               cloudName="ds4ukwnxl"
-    //               publicId={preview}
-    //               width="200"
-    //               crop="scale"
-    //             ></Image>
-    //           </Button>
-    //         </Box>
-    //         <Box width={"60%"} bgcolor={"black"} height={"1px"}></Box>
-
-    //         <Box fontSize={"30px"} fontWeight={"400"}>
-    //           ${bike.price}
-    //         </Box>
-    //         <Stack
-    //           width={"100%"}
-    //           direction={"row"}
-    //           justifyContent={"center"}
-    //           spacing={5}
-    //           alignItems={"center"}
-    //         >
-    //           <Box fontSize={"20px"} fontWeight={"300"}>
-    //             Size:{" "}
-    //           </Box>
-    //           <Select
-    //             labelId="demo-simple-select-label"
-    //             id="demo-simple-select"
-    //             value={size}
-    //             onChange={handleChange}
-    //           >
-    //             {sizes.map((size) => (
-    //               <MenuItem value={size}>{size}</MenuItem>
-    //             ))}
-    //           </Select>
-    //         </Stack>
-    //         <InquireButton>Inquire</InquireButton>
-    //       </Stack>
-    //     </Box>
-    //   </Stack>
-    //   <Stack justifyContent={"center"} alignItems={"center"} spacing={2}>
-    //     <Box fontSize={"30px"} fontWeight={"400"} width={"100%"}>
-    //       {bike.brand} {bike.name}
-    //     </Box>
-    //     <Box fontSize={"20px"} fontWeight={"300"} lineHeight={"1.5"}>
-    //       {bike.description}
-    //     </Box>
-    //     <MoreInfoButton>More Info</MoreInfoButton>
-    //   </Stack>
-    // </Box>
   );
 };
 
