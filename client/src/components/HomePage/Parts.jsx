@@ -37,7 +37,7 @@ const Parts = () => {
       </Box>
       <Box
         sx={{
-          fontSize: { xs: "18px", sm: "24px" },
+          fontSize: { xs: "18px", sm: "20px" },
           fontWeight: "300",
           color: "black",
           width: "60%",

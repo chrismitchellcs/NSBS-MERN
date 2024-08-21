@@ -86,7 +86,7 @@ const NavBar = ({ background, position, displayLogo }) => {
         </Stack>
 
         <Box display={{ xs: "none", sm: "block" }}>
-          <NavButton>
+          <NavButton href="/contact">
             <LocationOn></LocationOn>
           </NavButton>
         </Box>

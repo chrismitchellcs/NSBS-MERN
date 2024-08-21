@@ -7,6 +7,7 @@ import NSBSInfo from "components/HomePage/NSBSInfo";
 import Parts from "components/HomePage/Parts";
 import NavBarHome from "components/General/NavBarHome";
 import Service from "components/HomePage/Service";
+import DemoDay from "components/HomePage/DemoDay";
 
 const Home = () => {
   // const [bikes, setBikes] = useState(null);
@@ -37,6 +38,7 @@ const Home = () => {
       />
       <HeaderImage></HeaderImage>
       <NSBSInfo></NSBSInfo>
+      <DemoDay></DemoDay>
       <TransitionHome></TransitionHome>
       <Bikes brand={"Transition"}></Bikes>
       <NorcoHome></NorcoHome>

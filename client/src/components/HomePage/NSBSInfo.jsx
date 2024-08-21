@@ -21,15 +21,14 @@ const NSBSInfo = () => {
   return (
     <Box textAlign={"center"} justifyContent={"center"} m={5}>
       <Box
-        sx={{ fontSize: { xs: "26px", sm: "30px" } }}
+        sx={{ fontSize: { xs: "36px", sm: "36px" } }}
         fontWeight={"400"}
         m={2}
       >
-        YOUR LOCAL MTB EXPERTS
+        Your Local MTB Experts
       </Box>
       <Box
-        sx={{ fontSize: { xs: "18px", sm: "24px" } }}
-        fontWeight={"300"}
+        sx={{ fontSize: { xs: "18px", sm: "24px" }, fontWeight: "375" }}
         mb={4}
       >
         Since 2007, North Shore Bike Shop has been proudly serving the North
