@@ -15,6 +15,10 @@ import axios from "axios";
 
 import { Image } from "cloudinary-react";
 import EditSizes from "./EditSizes";
+import EditBikeBrand from "./EditBikeBrand";
+import EditBikeName from "./EditBikeName";
+import EditBikeMaterial from "./EditBikeMaterial";
+import EditBikePrice from "./EditBikePrice";
 
 const AdminBikes = ({ bikes, setBikes }) => {
   const handleClick = async (e) => {
@@ -36,7 +40,8 @@ const AdminBikes = ({ bikes, setBikes }) => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Bike</TableCell>
+              <TableCell>Brand</TableCell>
+              <TableCell>Model</TableCell>
               <TableCell align="center">Material</TableCell>
               <TableCell align="center">Type</TableCell>
               <TableCell align="center">Price</TableCell>
@@ -54,11 +59,41 @@ const AdminBikes = ({ bikes, setBikes }) => {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.brand} {row.name}
+                  <Stack>
+                    <EditBikeBrand
+                      bike={row}
+                      setBikes={setBikes}
+                    ></EditBikeBrand>
+                    <Box>{row.brand}</Box>
+                  </Stack>
                 </TableCell>
-                <TableCell align="center">{row.material}</TableCell>
+                <TableCell component="th" scope="row">
+                  <Stack>
+                    <EditBikeName bike={row} setBikes={setBikes}></EditBikeName>
+                    <Box>{row.name}</Box>
+                  </Stack>
+                </TableCell>
+
+                <TableCell align="center">
+                  <Stack>
+                    <EditBikeMaterial
+                      bike={row}
+                      setBikes={setBikes}
+                    ></EditBikeMaterial>
+                    <Box>{row.material}</Box>
+                  </Stack>
+                </TableCell>
                 <TableCell align="center">{row.type}</TableCell>
-                <TableCell align="center">${row.price}</TableCell>
+                <TableCell align="center">
+                  {" "}
+                  <Stack>
+                    <EditBikePrice
+                      bike={row}
+                      setBikes={setBikes}
+                    ></EditBikePrice>
+                    <Box>${row.price}</Box>
+                  </Stack>
+                </TableCell>
                 <TableCell align="center">
                   {JSON.parse(row.images).map((image) => (
                     <Image
