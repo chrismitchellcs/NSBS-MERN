@@ -38,7 +38,7 @@ const Home = () => {
       />
       <HeaderImage></HeaderImage>
       <NSBSInfo></NSBSInfo>
-      <DemoDay></DemoDay>
+      {/* <DemoDay></DemoDay> */}
       <TransitionHome></TransitionHome>
       <Bikes brand={"Transition"}></Bikes>
       <NorcoHome></NorcoHome>
