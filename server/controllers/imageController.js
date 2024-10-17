@@ -30,7 +30,8 @@ const uploadImage = async (req, res) => {
 const getImages = async (req, res) => {
   const { resources } = await cloudinary.search
     .expression("folder:bike-images")
-    .max_results(500)
+    .sort_by("created_at")
+    .max_results(10)
     .execute();
   const publicIds = resources.map((file) => file.public_id);
   res.send(publicIds);
