@@ -19,6 +19,9 @@ import EditBikeBrand from "./EditBikeBrand";
 import EditBikeName from "./EditBikeName";
 import EditBikeMaterial from "./EditBikeMaterial";
 import EditBikePrice from "./EditBikePrice";
+import EditBikeSalePrice from "./EditBikeSalePrice";
+import EditSizesAvailiable from "./EditSizesAvailiable";
+import EditSizesInStock from "./EditSizesInStock";
 
 const AdminBikes = ({ bikes, setBikes }) => {
   const handleClick = async (e) => {
@@ -45,8 +48,11 @@ const AdminBikes = ({ bikes, setBikes }) => {
               <TableCell align="center">Material</TableCell>
               <TableCell align="center">Type</TableCell>
               <TableCell align="center">Price</TableCell>
+              <TableCell align="center">Sale Price</TableCell>
               <TableCell align="center">Images</TableCell>
               <TableCell align="center">Sizes</TableCell>
+              <TableCell align="center">Sizes Available</TableCell>
+              <TableCell align="center">Sizes In Stock</TableCell>
               <TableCell align="center">Description</TableCell>
               <TableCell align="center">Page</TableCell>
               <TableCell align="center"></TableCell>
@@ -95,6 +101,16 @@ const AdminBikes = ({ bikes, setBikes }) => {
                   </Stack>
                 </TableCell>
                 <TableCell align="center">
+                  {" "}
+                  <Stack>
+                    <EditBikeSalePrice
+                      bike={row}
+                      setBikes={setBikes}
+                    ></EditBikeSalePrice>
+                    <Box>${row.saleprice}</Box>
+                  </Stack>
+                </TableCell>
+                <TableCell align="center">
                   {JSON.parse(row.images).map((image) => (
                     <Image
                       cloudName="ds4ukwnxl"
@@ -110,6 +126,40 @@ const AdminBikes = ({ bikes, setBikes }) => {
                     {JSON.parse(row.sizes).map((size) => {
                       return <Box>{size}</Box>;
                     })}
+                  </Stack>
+                </TableCell>
+                <TableCell align="center">
+                  <Stack>
+                    <EditSizesAvailiable
+                      bike={row}
+                      setBikes={setBikes}
+                    ></EditSizesAvailiable>
+                    {row.sizesa ? (
+                      <Box>
+                        {JSON.parse(row.sizesa).map((size) => {
+                          return <Box>{size}</Box>;
+                        })}
+                      </Box>
+                    ) : (
+                      "N/A"
+                    )}
+                  </Stack>
+                </TableCell>
+                <TableCell align="center">
+                  <Stack>
+                    <EditSizesInStock
+                      bike={row}
+                      setBikes={setBikes}
+                    ></EditSizesInStock>
+                    {row.sizesis ? (
+                      <Box>
+                        {JSON.parse(row.sizesis).map((size) => {
+                          return <Box>{size}</Box>;
+                        })}
+                      </Box>
+                    ) : (
+                      "N/A"
+                    )}
                   </Stack>
                 </TableCell>
                 <TableCell align="center">

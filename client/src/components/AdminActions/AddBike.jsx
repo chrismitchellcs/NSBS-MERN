@@ -20,10 +20,13 @@ const AddBike = ({ setBikes }) => {
     e.preventDefault();
     const name = e.target.name.value;
     const price = e.target.price.value;
+    const saleprice = e.target.saleprice.value;
     const description = e.target.description.value;
     console.log(description);
     const link = e.target.link.value;
     const sizes = JSON.stringify(sizeArray);
+    const sizesa = JSON.stringify(sizeAArray);
+    const sizesis = JSON.stringify(sizeISArray);
     const images = JSON.stringify(imagesSelected);
     setImagesSelected([]);
     console.log(images);
@@ -35,7 +38,10 @@ const AddBike = ({ setBikes }) => {
         material,
         name,
         sizes,
+        sizesa,
+        sizesis,
         price,
+        saleprice,
         images,
         description,
         link,
@@ -48,6 +54,8 @@ const AddBike = ({ setBikes }) => {
       });
   };
   const [sizeArray, setSizeArray] = useState([]);
+  const [sizeAArray, setSizeAArray] = useState([]);
+  const [sizeISArray, setSizeISArray] = useState([]);
 
   const [imagesSelected, setImagesSelected] = useState([]);
 
@@ -144,6 +152,12 @@ const AddBike = ({ setBikes }) => {
           <TextField id="name" label="Name" variant="outlined" />
           <TextField id="price" label="Price" variant="outlined" />
           <TextField
+            id="saleprice"
+            label="Sale Price (Leave blank if not on sale)"
+            variant="outlined"
+            sx={{ width: "500px" }}
+          />
+          <TextField
             id="description"
             label="Description"
             variant="outlined"
@@ -151,8 +165,19 @@ const AddBike = ({ setBikes }) => {
           />
 
           <TextField id="link" label="Link" variant="outlined" />
-          <FormLabel id="demo-radio-buttons-group-label">Add Sizes</FormLabel>
+          <FormLabel id="demo-radio-buttons-group-label">
+            Add Sizes (Click buttons in order from smallest size to biggest)
+          </FormLabel>
           <AddSizes sizes={sizeArray} setSizes={setSizeArray}></AddSizes>
+          <FormLabel id="demo-radio-buttons-group-label">
+            Add Sizes Availiable To Order
+          </FormLabel>
+          <AddSizes sizes={sizeAArray} setSizes={setSizeAArray}></AddSizes>
+          <FormLabel id="demo-radio-buttons-group-label">
+            Add Sizes In Stock
+          </FormLabel>
+          <AddSizes sizes={sizeISArray} setSizes={setSizeISArray}></AddSizes>
+
           <Box width={"50%"}>
             Please ensure photos are smaller than 500kb (0.5mb). All photos
             downloaded from websites will be under this but photos from cameras

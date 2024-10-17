@@ -10,7 +10,7 @@ const ShopButton = styled(Button)({
   paddingRight: "1%",
   color: "white",
   maxHeight: "40px",
-  fontWeight: "300",
+  fontWeight: "400",
   fontSize: "16px",
 
   "&:hover": {
@@ -49,7 +49,7 @@ const Bikes = ({ brand }) => {
         mt={2}
         spacing={3}
       >
-        <Box sx={{ fontSize: { xs: "18px", sm: "28px" }, fontWeight: "300" }}>
+        <Box sx={{ fontSize: { xs: "18px", sm: "28px" }, fontWeight: "500" }}>
           SHOP {uppercase} BIKES
         </Box>
         <ShopButton href="shop">See All</ShopButton>
@@ -59,6 +59,7 @@ const Bikes = ({ brand }) => {
         sx={{
           backgroundColor: "white",
           width: "100%",
+          height: "320px",
           p: 0,
 
           display: "-ms-flexbox",

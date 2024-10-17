@@ -10,70 +10,154 @@ const BikeButton = ({ bike }) => {
 
   const image = JSON.parse(bike.images)[0];
   return (
+    // <Button
+    //   onClick={handleClick}
+    //   sx={{
+    //     alignItems: "flex-end",
+    //     // borderColor: "black",
+    //     // border: "5px",
+    //     minWidth: { xs: "210px", sm: "210px", md: "210px", lg: "350px" },
+
+    //     minHeight: { xs: "210px", sm: "240px", md: "240px", lg: "290px" },
+    //     maxWidth: { xs: "210px", sm: "210px", md: "210px", lg: "350px" },
+    //     maxHeight: { xs: "210px", sm: "240px", md: "240px", lg: "290px" },
+    //     // minWidth: "350px",
+    //     // minHeight: "260px",
+    //     // maxWidth: "350px",
+    //     // maxHeight: "260px",
+    //     backgroundColor: "white",
+    //     m: 2,
+    //     "&:hover": {
+    //       backgroundColor: "white",
+    //       opacity: "0.8",
+    //       color: "black",
+    //     },
+    //   }}
+    // >
+    //   <Stack justifyContent={"center"} alignItems={"center"}>
+    //     {/* <Box
+    //       component={"img"}
+    //       src="spire-fadetoblack-xoaxs.jpeg"
+    //       width={"100%"}
+    //       sx={{
+    //         color: "inherit",
+    //       }}
+    //     ></Box> */}
+    //     <Box display={{ xs: "block", sm: "block", md: "block", lg: "none" }}>
+    //       <Image
+    //         cloudName="ds4ukwnxl"
+    //         publicId={image}
+    //         width="210"
+    //         crop="fill"
+    //       ></Image>
+    //     </Box>
+    //     <Box display={{ xs: "none", sm: "none", md: "none", lg: "block" }}>
+    //       <Image
+    //         cloudName="ds4ukwnxl"
+    //         publicId={image}
+    //         width="330"
+    //         crop="fill"
+    //       ></Image>
+    //     </Box>
+    //     <Stack>
+    //       {bike.material === "N/A" ? (
+    //         <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
+    //           {bike.brand} {bike.name}
+    //         </Box>
+    //       ) : (
+    //         <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
+    //           {bike.brand} {bike.name} {bike.material}
+    //         </Box>
+    //       )}
+
+    //       <Box color={"black"} fontSize={"16px"} fontWeight={"300"}>
+    //         ${bike.price}
+    //       </Box>
+    //     </Stack>
+    //   </Stack>
+    // </Button>
     <Button
       onClick={handleClick}
       sx={{
-        alignItems: "flex-end",
-        // borderColor: "black",
-        // border: "5px",
-        minWidth: { xs: "210px", sm: "210px", md: "210px", lg: "350px" },
-
-        minHeight: { xs: "210px", sm: "240px", md: "240px", lg: "290px" },
-        maxWidth: { xs: "210px", sm: "210px", md: "210px", lg: "350px" },
-        maxHeight: { xs: "210px", sm: "240px", md: "240px", lg: "290px" },
-        // minWidth: "350px",
-        // minHeight: "260px",
-        // maxWidth: "350px",
-        // maxHeight: "260px",
-        backgroundColor: "white",
+        minHeight: "290px",
+        maxHeight: "290px",
+        minWidth: "290px",
+        maxWidth: "290px",
         m: 2,
+        color: "black",
         "&:hover": {
           backgroundColor: "white",
-          opacity: "0.8",
+          opacity: "0.6",
           color: "black",
         },
       }}
     >
-      <Stack justifyContent={"center"} alignItems={"center"}>
-        {/* <Box
-          component={"img"}
-          src="spire-fadetoblack-xoaxs.jpeg"
-          width={"100%"}
-          sx={{
-            color: "inherit",
-          }}
-        ></Box> */}
-        <Box display={{ xs: "block", sm: "block", md: "block", lg: "none" }}>
-          <Image
-            cloudName="ds4ukwnxl"
-            publicId={image}
-            width="210"
-            crop="fill"
-          ></Image>
-        </Box>
-        <Box display={{ xs: "none", sm: "none", md: "none", lg: "block" }}>
-          <Image
-            cloudName="ds4ukwnxl"
-            publicId={image}
-            width="330"
-            crop="fill"
-          ></Image>
-        </Box>
-        <Stack>
-          {bike.material === "N/A" ? (
-            <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
-              {bike.brand} {bike.name}
+      <Stack sx={{ height: "290px" }}>
+        <Box display={"flex"} justifyContent={"flex-end"}>
+          {bike.saleprice ? (
+            <Box
+              sx={{
+                bgcolor: "#faa2b0",
+                pl: 1,
+                pr: 1,
+                borderRadius: "5px",
+                height: "25px",
+              }}
+            >
+              SALE
             </Box>
           ) : (
-            <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
-              {bike.brand} {bike.name} {bike.material}
-            </Box>
+            <Box
+              sx={{
+                bgcolor: "white",
+                pl: 1,
+                pr: 1,
+                borderRadius: "5px",
+                height: "25px",
+              }}
+            ></Box>
           )}
-
-          <Box color={"black"} fontSize={"16px"} fontWeight={"300"}>
-            ${bike.price}
+        </Box>
+        <Image
+          cloudName="ds4ukwnxl"
+          publicId={image}
+          width="290"
+          height="200"
+          crop="pad"
+        ></Image>
+        {bike.material === "N/A" ? (
+          <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
+            {bike.brand} {bike.name}
           </Box>
-        </Stack>
+        ) : (
+          <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
+            {bike.brand} {bike.name} {bike.material}
+          </Box>
+        )}
+        {bike.saleprice ? (
+          <Box display={"flex"} justifyContent={"center"}>
+            <Box
+              color={"black"}
+              fontSize={"16px"}
+              fontWeight={"300"}
+              sx={{ textDecoration: "line-through", mr: 1 }}
+            >
+              ${bike.price.toLocaleString()}
+            </Box>
+            <Box
+              color={"black"}
+              fontSize={"16px"}
+              fontWeight={"400"}
+              sx={{ ml: 1 }}
+            >
+              ${bike.saleprice.toLocaleString()}
+            </Box>
+          </Box>
+        ) : (
+          <Box color={"black"} fontSize={"16px"} fontWeight={"400"} sx={{}}>
+            ${bike.price.toLocaleString()}
+          </Box>
+        )}
       </Stack>
     </Button>
   );

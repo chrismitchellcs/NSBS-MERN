@@ -95,9 +95,31 @@ const IndividualBikeInfo = ({ bike }) => {
               {bike.brand} {bike.name} {bike.material}
             </Box>
           )}
-          <Box sx={{ fontSize: "30px", fontWeight: "300" }}>
-            ${bike.price.toLocaleString()}
-          </Box>
+
+          {bike.saleprice ? (
+            <Box display={"flex"}>
+              <Box
+                color={"black"}
+                fontSize={"30px"}
+                fontWeight={"300"}
+                sx={{ textDecoration: "line-through", mr: 1 }}
+              >
+                ${bike.price.toLocaleString()}
+              </Box>
+              <Box
+                color={"black"}
+                fontSize={"30px"}
+                fontWeight={"400"}
+                sx={{ ml: 1 }}
+              >
+                ${bike.saleprice.toLocaleString()}
+              </Box>
+            </Box>
+          ) : (
+            <Box color={"black"} fontSize={"30px"} fontWeight={"400"} sx={{}}>
+              ${bike.price.toLocaleString()}
+            </Box>
+          )}
           <Stack
             spacing={1}
             alignItems={{ xs: "center", sm: "center", md: "inherit" }}
@@ -120,11 +142,12 @@ const IndividualBikeInfo = ({ bike }) => {
 
             <SizeButtons
               sizes={JSON.parse(bike.sizes)}
+              sizesa={JSON.parse(bike.sizesa)}
+              sizesis={JSON.parse(bike.sizesis)}
               setSize={setSize}
               size={size}
             ></SizeButtons>
           </Stack>
-          {size && <Box>Availiable</Box>}
         </Stack>
       </Stack>
       <Stack width={"80%"} alignItems={"center"} mb={5} spacing={5}>
@@ -144,6 +167,55 @@ const IndividualBikeInfo = ({ bike }) => {
         >
           More Info
         </MoreInfoButton>
+      </Stack>
+      <Stack width={"80%"} alignItems={"center"} mb={5} spacing={3}>
+        <Box
+          fontSize={"24px"}
+          lineHeight={"1.5"}
+          fontWeight={"400"}
+          sx={{ whiteSpace: "pre-wrap" }}
+        >
+          Why Buy From NSBS
+        </Box>
+        <Box
+          fontSize={"20px"}
+          lineHeight={"1.5"}
+          fontWeight={"300"}
+          sx={{ whiteSpace: "pre-wrap" }}
+        >
+          <ul>
+            <li>
+              Wide selection of brand-new mountain bikes, from entry-level to
+              top-of-the-line models
+            </li>
+            <li>
+              Professionally built by expert staff, ensuring your bike is
+              trail-ready
+            </li>
+            <li>
+              Personalized service, including custom accessories, fitting, and
+              suspension setup
+            </li>
+            <li>
+              Complimentary basic tune-ups for the lifetime of the bike,
+              covering:
+              <ul>
+                <li>Drivetrain adjustments</li>
+                <li>Brake adjustments</li>
+                <li>Wheel truing</li>
+                <li>Other essential maintenance</li>
+              </ul>
+            </li>
+            <li>
+              15% discount on parts and labor (with a few exceptions) for the
+              lifetime of your purchased bike
+            </li>
+            <li>
+              Exceptional customer service and support tailored to your biking
+              needs
+            </li>
+          </ul>
+        </Box>
       </Stack>
     </Stack>
   );

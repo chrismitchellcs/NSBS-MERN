@@ -22,13 +22,13 @@ const NSBSInfo = () => {
     <Box textAlign={"center"} justifyContent={"center"} m={5}>
       <Box
         sx={{ fontSize: { xs: "36px", sm: "36px" } }}
-        fontWeight={"400"}
+        fontWeight={"600"}
         m={2}
       >
-        Your Local MTB Experts
+        YOUR LOCAL MTB EXPERTS
       </Box>
       <Box
-        sx={{ fontSize: { xs: "18px", sm: "24px" }, fontWeight: "375" }}
+        sx={{ fontSize: { xs: "18px", sm: "24px" }, fontWeight: "400" }}
         mb={4}
       >
         Since 2007, North Shore Bike Shop has been proudly serving the North
@@ -46,13 +46,14 @@ const NSBSInfo = () => {
             ></PedalBikeIcon>
             <Box
               sx={{ fontSize: { xs: "16px", sm: "20px" } }}
-              fontWeight={"normal"}
+              fontWeight={"600"}
             >
               SHOP BIKES
             </Box>
             <Box
               sx={{ fontSize: { xs: "14px", sm: "16px" } }}
-              fontWeight={"300"}
+              fontWeight={"400"}
+              display={{ xs: "none", sm: "none", md: "block" }}
             >
               Explore the wide range of bikes available at our shop!
             </Box>
@@ -65,13 +66,14 @@ const NSBSInfo = () => {
             ></BuildOutlinedIcon>
             <Box
               sx={{ fontSize: { xs: "16px", sm: "20px" } }}
-              fontWeight={"normal"}
+              fontWeight={"600"}
             >
               SERVICE INFO
             </Box>
             <Box
               sx={{ fontSize: { xs: "14px", sm: "16px" } }}
-              fontWeight={"300"}
+              fontWeight={"400"}
+              display={{ xs: "none", sm: "none", md: "block" }}
             >
               Bring your bike in for top-notch service with quick turnaround
               times.
@@ -85,13 +87,14 @@ const NSBSInfo = () => {
             ></LocationOnOutlinedIcon>
             <Box
               sx={{ fontSize: { xs: "16px", sm: "20px" } }}
-              fontWeight={"normal"}
+              fontWeight={"600"}
             >
               CONTACT US
             </Box>
             <Box
+              display={{ xs: "none", sm: "none", md: "block" }}
               sx={{ fontSize: { xs: "14px", sm: "16px" } }}
-              fontWeight={"300"}
+              fontWeight={"400"}
             >
               Contact us or visit our shop today to explore our products and
               services!

@@ -36,7 +36,8 @@ const NorcoHome = () => {
       <Box
         component="img"
         sx={{
-          width: "100%",
+          width: "100vw",
+          height: "30vw",
           mh: 5,
           p: 0,
         }}

@@ -29,7 +29,8 @@ const HeaderImage = () => {
         display={{ xs: "none", sm: "none", md: "block" }}
         component="img"
         sx={{
-          width: "100%",
+          width: "100vw",
+          height: "34.1vw",
           m: 0,
           p: 0,
         }}
@@ -45,7 +46,8 @@ const HeaderImage = () => {
         display={{ xs: "block", sm: "block", md: "none" }}
         component="img"
         sx={{
-          width: "100%",
+          width: "100vw",
+          height: "42.7vw",
           m: 0,
           p: 0,
         }}

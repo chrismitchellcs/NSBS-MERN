@@ -35,7 +35,8 @@ const TransitionHome = () => {
       <Box
         component="img"
         sx={{
-          width: "100%",
+          width: "100vw",
+          height: "30vw",
           mh: 5,
           //   ml: 30,
           //   mt: 10,

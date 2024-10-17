@@ -24,13 +24,18 @@ const logoNames = [
 const Parts = () => {
   return (
     <Box textAlign={"center"}>
-      <Box component={"img"} src="nsbsparts-min.jpg" width={"100%"}></Box>
+      <Box
+        component={"img"}
+        src="nsbsparts-min.jpg"
+        width={"100vw"}
+        height={"33.8vw"}
+      ></Box>
       <Box
         sx={{
           fontSize: { xs: "26px", sm: "30px" },
           color: "black",
           m: 2,
-          fontWeight: "400",
+          fontWeight: "500",
         }}
       >
         PARTS & ACCESSORIES
@@ -38,7 +43,7 @@ const Parts = () => {
       <Box
         sx={{
           fontSize: { xs: "18px", sm: "20px" },
-          fontWeight: "300",
+          fontWeight: "400",
           color: "black",
           width: "60%",
           m: 2,

@@ -67,7 +67,12 @@ const NavBar = ({ background, position, displayLogo }) => {
               style={{ backgroundColor: "white", border: "0px" }}
               href="/"
             >
-              <Box component={"img"} src="logo.png" width={"100px"}></Box>
+              <Box
+                component={"img"}
+                src="logo.png"
+                width={"100px"}
+                height={"52px"}
+              ></Box>
             </Button>
           ) : (
             ""
