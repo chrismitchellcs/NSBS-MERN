@@ -5,7 +5,7 @@ const axios = require("axios");
 
 // get all bikes
 const getBikes = async (req, res) => {
-  const bikes = await Bike.find({}).sort({ brand: 1, name: 1 });
+  const bikes = await Bike.find({}).sort({ saleprice: -1 });
   res.status(200).json(bikes);
 };
 
@@ -18,7 +18,7 @@ const getBikesByBrand = async (req, res) => {
   const brand = req.body.brand;
 
   try {
-    const bikes = await Bike.find({ brand: brand });
+    const bikes = await Bike.find({ brand: brand }).sort({ brand: 1, name: 1 });
     res.status(200).json(bikes);
   } catch (error) {
     res.status(400);
@@ -28,7 +28,7 @@ const getBikesByType = async (req, res) => {
   const type = req.body.type;
   console.log(type);
   try {
-    const bikes = await Bike.find({ type: type });
+    const bikes = await Bike.find({ type: type }).sort({ brand: 1, name: 1 });
     res.status(200).json(bikes);
   } catch (error) {
     res.status(400);
