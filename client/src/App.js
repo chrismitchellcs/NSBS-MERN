@@ -8,11 +8,13 @@ import { ProtectedRoute } from "components/AdminLogin/ProtectedRoute";
 import AdminPage from "pages/AdminPage";
 import { ProvideAuth } from "components/AdminLogin/auth";
 import BikeDetails from "pages/BikeDetails";
+import ScrollToTop from "components/General/ScrollToTop";
 
 const App = () => {
   return (
     <div className="App">
       <BrowserRouter>
+        <ScrollToTop />
         <div className="pages">
           <ProvideAuth>
             <Routes>
