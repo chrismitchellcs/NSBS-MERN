@@ -63,15 +63,12 @@ const NavBar = ({ background, position, displayLogo }) => {
       <StyledToolbar>
         <Stack direction={"row"} alignItems={"center"} spacing={5}>
           {displayLogo ? (
-            <Button
-              style={{ backgroundColor: "white", border: "0px" }}
-              href="/"
-            >
+            <Button style={{}} href="/">
               <Box
                 component={"img"}
                 src="logo.png"
-                width={"100px"}
-                height={"52px"}
+                width={{ xs: "60px", sm: "80px", md: "120px" }}
+                // height={"60px"}
               ></Box>
             </Button>
           ) : (

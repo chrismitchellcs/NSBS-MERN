@@ -4,7 +4,13 @@ import HoursTable from "./HoursTable";
 
 const ContactInfo = () => {
   return (
-    <Stack direction="column" alignItems="center" m={5} height={"500px"}>
+    <Stack
+      direction="column"
+      alignItems="center"
+      m={5}
+      height={"500px"}
+      pb={{ xs: 5, sm: 0 }}
+    >
       <Box
         sx={{
           backgroundColor: "#3c5d4e",

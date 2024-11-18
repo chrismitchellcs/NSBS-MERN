@@ -22,8 +22,8 @@ const Service = () => {
       <Box
         component={"img"}
         width={"100vw"}
-        height={"39.3vw"}
-        src="service-stretch-min.jpg"
+        // height={"39.3vw"}
+        src="IMG_1090.jpg"
       ></Box>
       <Box
         sx={{

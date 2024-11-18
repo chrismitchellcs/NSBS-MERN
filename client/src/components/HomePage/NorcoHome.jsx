@@ -6,26 +6,29 @@ const NorcoHome = () => {
       <Box
         position={"absolute"}
         sx={{
-          width: "30%",
+          width: "40%",
           color: "white",
-          ml: "52%",
-          mt: "10%",
-          fontSize: "1em",
-          fontWeight: "300",
+          ml: "9%",
+          mt: "15%",
+
+          fontWeight: "400",
           lineHeight: "1.5",
         }}
+        fontSize={{ xs: "16px", sm: "14px", md: "16px", lg: "18px" }}
       >
         <Box
           component="img"
           sx={{
-            width: "100%",
+            width: "80%",
             mb: 2,
           }}
           alt="NSBS"
-          src={"norcologowhite-min.png"}
+          src={"norco.svg"}
         />
         <Box
-          sx={{ display: { xs: "none", sm: "none", md: "none", lg: "block" } }}
+          sx={{
+            display: { xs: "none", sm: "none", md: "block", lg: "block" },
+          }}
         >
           Norco is a local brand from Coquitlam, BC, offering bikes for every
           rider. Whether you're a beginner exploring trails and city streets or
@@ -37,12 +40,12 @@ const NorcoHome = () => {
         component="img"
         sx={{
           width: "100vw",
-          height: "30vw",
+          // height: "30vw",
           mh: 5,
           p: 0,
         }}
         alt="NSBS"
-        src={"lucas2-min.png"}
+        src={"gracey2.jpg"}
       />
     </Box>
   );

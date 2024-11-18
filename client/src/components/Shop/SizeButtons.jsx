@@ -44,7 +44,7 @@ const SizeButtons = ({ sizes, size, setSize, sizesa, sizesis }) => {
     setSize(size);
   };
   return (
-    <Stack spacing={2} width={"100%"}>
+    <Stack spacing={2} width={"300px"}>
       {sizes.map((s) => {
         // if (s === size) {
         //   return (

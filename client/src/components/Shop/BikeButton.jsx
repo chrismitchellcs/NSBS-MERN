@@ -79,10 +79,10 @@ const BikeButton = ({ bike }) => {
     <Button
       onClick={handleClick}
       sx={{
-        minHeight: "290px",
-        maxHeight: "290px",
-        minWidth: "290px",
-        maxWidth: "290px",
+        minHeight: "270px",
+        maxHeight: "270px",
+        minWidth: "270px",
+        maxWidth: "270px",
         m: 2,
         color: "black",
         "&:hover": {
@@ -92,7 +92,7 @@ const BikeButton = ({ bike }) => {
         },
       }}
     >
-      <Stack sx={{ height: "290px" }}>
+      <Stack sx={{ height: "270px" }}>
         <Box display={"flex"} justifyContent={"flex-end"}>
           {bike.saleprice ? (
             <Box
@@ -121,16 +121,16 @@ const BikeButton = ({ bike }) => {
         <Image
           cloudName="ds4ukwnxl"
           publicId={image}
-          width="290"
-          height="200"
+          width="270"
+          height="180"
           crop="pad"
         ></Image>
         {bike.material === "N/A" ? (
-          <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
+          <Box color={"black"} fontSize={"14px"} fontWeight={"400"}>
             {bike.brand} {bike.name}
           </Box>
         ) : (
-          <Box color={"black"} fontSize={"16px"} fontWeight={"400"}>
+          <Box color={"black"} fontSize={"14px"} fontWeight={"400"}>
             {bike.brand} {bike.name} {bike.material}
           </Box>
         )}
@@ -138,7 +138,7 @@ const BikeButton = ({ bike }) => {
           <Box display={"flex"} justifyContent={"center"}>
             <Box
               color={"black"}
-              fontSize={"16px"}
+              fontSize={"14px"}
               fontWeight={"300"}
               sx={{ textDecoration: "line-through", mr: 1 }}
             >
@@ -146,7 +146,7 @@ const BikeButton = ({ bike }) => {
             </Box>
             <Box
               color={"black"}
-              fontSize={"16px"}
+              fontSize={"14px"}
               fontWeight={"400"}
               sx={{ ml: 1 }}
             >

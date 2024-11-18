@@ -6,19 +6,20 @@ const TransitionHome = () => {
       <Box
         position={"absolute"}
         sx={{
-          width: "30%",
+          width: "40%",
           color: "white",
-          ml: "12%",
-          mt: "10%",
-          fontSize: "1em",
-          fontWeight: "300",
+          ml: "53%",
+          mt: "16%",
+
+          fontWeight: "400",
           lineHeight: "1.5",
         }}
+        fontSize={{ xs: "16px", sm: "14px", md: "16px", lg: "18px" }}
       >
         <Box
           component="img"
           sx={{
-            width: "100%",
+            width: "80%",
             mb: 2,
           }}
           alt="NSBS"
@@ -36,13 +37,13 @@ const TransitionHome = () => {
         component="img"
         sx={{
           width: "100vw",
-          height: "30vw",
+          // height: "30vw",
           mh: 5,
           //   ml: 30,
           //   mt: 10,
         }}
         alt="NSBS"
-        src={"transitionriding copy-min.jpg"}
+        src={"hannahb.jpg"}
       />
     </Box>
   );

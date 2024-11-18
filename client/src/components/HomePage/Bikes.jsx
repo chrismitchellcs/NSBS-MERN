@@ -11,7 +11,7 @@ const ShopButton = styled(Button)({
   color: "white",
   maxHeight: "40px",
   fontWeight: "400",
-  fontSize: "16px",
+  fontSize: "14px",
 
   "&:hover": {
     backgroundColor: "#4d5e5f",
@@ -23,6 +23,16 @@ const Bikes = ({ brand }) => {
   const [bikes, setBikes] = useState(null);
 
   const uppercase = brand.toUpperCase();
+
+  const handleScroll = (event) => {
+    const container = event.target;
+    const scrollAmount = event.deltaY;
+    container.scrollTo({
+      top: 0,
+      left: container.scrollLeft + scrollAmount,
+      behavior: "smooth",
+    });
+  };
 
   useEffect(() => {
     const fetchBikes = async () => {
@@ -49,7 +59,7 @@ const Bikes = ({ brand }) => {
         mt={2}
         spacing={3}
       >
-        <Box sx={{ fontSize: { xs: "18px", sm: "28px" }, fontWeight: "500" }}>
+        <Box sx={{ fontSize: { xs: "18px", sm: "24px" }, fontWeight: "400" }}>
           SHOP {uppercase} BIKES
         </Box>
         <ShopButton href="shop">See All</ShopButton>
@@ -59,7 +69,7 @@ const Bikes = ({ brand }) => {
         sx={{
           backgroundColor: "white",
           width: "100%",
-          height: "320px",
+          height: "300px",
           p: 0,
 
           display: "-ms-flexbox",
@@ -74,6 +84,7 @@ const Bikes = ({ brand }) => {
           <Stack
             direction="row"
             display={"-ms-flexbox"}
+            onWheel={handleScroll}
             sx={{
               overflowX: "scroll",
               width: "100%",

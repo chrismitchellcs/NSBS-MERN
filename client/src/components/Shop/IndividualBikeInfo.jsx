@@ -97,7 +97,14 @@ const IndividualBikeInfo = ({ bike }) => {
           )}
 
           {bike.saleprice ? (
-            <Box display={"flex"}>
+            <Box
+              display={"flex"}
+              justifyContent={{
+                xs: "center",
+                sm: "center",
+                md: "flex-start",
+              }}
+            >
               <Box
                 color={"black"}
                 fontSize={"30px"}
@@ -116,7 +123,18 @@ const IndividualBikeInfo = ({ bike }) => {
               </Box>
             </Box>
           ) : (
-            <Box color={"black"} fontSize={"30px"} fontWeight={"400"} sx={{}}>
+            <Box
+              display={"flex"}
+              justifyContent={{
+                xs: "center",
+                sm: "center",
+                md: "flex-start",
+              }}
+              color={"black"}
+              fontSize={"30px"}
+              fontWeight={"400"}
+              sx={{}}
+            >
               ${bike.price.toLocaleString()}
             </Box>
           )}

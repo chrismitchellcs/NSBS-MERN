@@ -101,6 +101,7 @@ const AddBike = ({ setBikes }) => {
             label="Transition"
           />
           <FormControlLabel value="Norco" control={<Radio />} label="Norco" />
+          <FormControlLabel value="Ibis" control={<Radio />} label="Ibis" />
           <FormControlLabel value="other" control={<Radio />} label="Other" />
         </RadioGroup>
         <FormLabel id="demo-radio-buttons-group-label">Type</FormLabel>

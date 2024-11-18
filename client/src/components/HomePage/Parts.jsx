@@ -26,9 +26,9 @@ const Parts = () => {
     <Box textAlign={"center"}>
       <Box
         component={"img"}
-        src="nsbsparts-min.jpg"
+        src="bikes-min.jpg"
         width={"100vw"}
-        height={"33.8vw"}
+        // height={"33.8vw"}
       ></Box>
       <Box
         sx={{

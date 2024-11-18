@@ -1,4 +1,4 @@
-import { Box, Skeleton } from "@mui/material";
+import { Box, Skeleton, Stack } from "@mui/material";
 import { useState } from "react";
 
 const HeaderImage = () => {
@@ -9,33 +9,57 @@ const HeaderImage = () => {
 
   return (
     <Box sx={{ mb: -0.5 }}>
-      <Box
+      {/* <Box
         component="img"
         position={"absolute"}
+        display={{ xs: "none", sm: "none" }}
         sx={{
-          width: { xs: "20%", sm: "10%", md: "10%" },
+          width: "20%",
           ml: "auto",
           mr: "auto",
-          mt: { xs: 1, sm: 3, md: 2 },
+          mt: "20%",
           left: 0,
           right: 0,
           textAlign: "center",
         }}
         alt="NSBS"
-        src={"logo.png"}
-      />
+        src={"logowhitehq.png"}
+      /> */}
+      <Stack
+        position={"absolute"}
+        sx={{
+          width: "80%",
+          ml: "auto",
+          mr: "auto",
+          mt: "22%",
+          left: 0,
+          right: 0,
+          textAlign: "center",
+          fontSize: "4vw",
+          color: "white",
+        }}
+        spacing={1}
+      >
+        <Box>
+          <b>NORTH SHORE</b> BIKE SHOP
+        </Box>
+        <Box sx={{ fontSize: "2.5vw", fontWeight: "350" }}>
+          Proudly Serving the North Shore Since 2007
+        </Box>
+      </Stack>
+
       {/* {load ? ( */}
       <Box
         display={{ xs: "none", sm: "none", md: "block" }}
         component="img"
         sx={{
           width: "100vw",
-          height: "34.1vw",
+          // height: "34.1vw",
           m: 0,
           p: 0,
         }}
         alt="NSBS"
-        src={"trees-short-min.png"}
+        src={"trees-edit-min.png"}
         onLoad={handleLoad}
       />
       {/* ) : (
@@ -47,7 +71,7 @@ const HeaderImage = () => {
         component="img"
         sx={{
           width: "100vw",
-          height: "42.7vw",
+          // height: "42.7vw",
           m: 0,
           p: 0,
         }}
