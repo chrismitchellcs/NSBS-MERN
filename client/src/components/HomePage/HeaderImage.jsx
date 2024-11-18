@@ -1,11 +1,17 @@
-import { Box, Skeleton, Stack } from "@mui/material";
-import { useState } from "react";
+import { Box, Fade, Skeleton, Stack } from "@mui/material";
+import { useEffect, useState } from "react";
 
 const HeaderImage = () => {
   const [load, setLoad] = useState(true);
   const handleLoad = () => {
     setLoad(true);
   };
+
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(true);
+  }, []);
 
   return (
     <Box sx={{ mb: -0.5 }}>
@@ -25,28 +31,30 @@ const HeaderImage = () => {
         alt="NSBS"
         src={"logowhitehq.png"}
       /> */}
-      <Stack
-        position={"absolute"}
-        sx={{
-          width: "80%",
-          ml: "auto",
-          mr: "auto",
-          mt: "22%",
-          left: 0,
-          right: 0,
-          textAlign: "center",
-          fontSize: "4vw",
-          color: "white",
-        }}
-        spacing={1}
-      >
-        <Box>
-          <b>NORTH SHORE</b> BIKE SHOP
-        </Box>
-        <Box sx={{ fontSize: "2.5vw", fontWeight: "350" }}>
-          Proudly Serving the North Shore Since 2007
-        </Box>
-      </Stack>
+      <Fade in={show} timeout={1500}>
+        <Stack
+          position={"absolute"}
+          sx={{
+            width: "80%",
+            ml: "auto",
+            mr: "auto",
+            mt: "22vw",
+            left: 0,
+            right: 0,
+            textAlign: "center",
+            fontSize: "4vw",
+            color: "white",
+          }}
+          spacing={1}
+        >
+          <Box>
+            <b>NORTH SHORE</b> BIKE SHOP
+          </Box>
+          <Box sx={{ fontSize: "2.5vw", fontWeight: "350" }}>
+            Proudly Serving the North Shore Since 2007
+          </Box>
+        </Stack>
+      </Fade>
 
       {/* {load ? ( */}
       <Box
@@ -54,7 +62,7 @@ const HeaderImage = () => {
         component="img"
         sx={{
           width: "100vw",
-          // height: "34.1vw",
+          height: "39.55vw",
           m: 0,
           p: 0,
         }}
@@ -71,7 +79,7 @@ const HeaderImage = () => {
         component="img"
         sx={{
           width: "100vw",
-          // height: "42.7vw",
+          height: "39.55vw",
           m: 0,
           p: 0,
         }}

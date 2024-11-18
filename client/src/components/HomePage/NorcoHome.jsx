@@ -40,7 +40,7 @@ const NorcoHome = () => {
         component="img"
         sx={{
           width: "100vw",
-          // height: "30vw",
+          height: "45.1vw",
           mh: 5,
           p: 0,
         }}

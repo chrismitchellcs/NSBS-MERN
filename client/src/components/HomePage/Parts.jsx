@@ -28,7 +28,7 @@ const Parts = () => {
         component={"img"}
         src="bikes-min.jpg"
         width={"100vw"}
-        // height={"33.8vw"}
+        height={"56vw"}
       ></Box>
       <Box
         sx={{

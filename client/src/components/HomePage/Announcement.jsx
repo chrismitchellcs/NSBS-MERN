@@ -40,6 +40,7 @@ const Announcement = () => {
         sx={{
           borderRadius: "20px",
           width: "90vw",
+          height: "52.776vw",
 
           mh: 5,
           //   ml: 30,
