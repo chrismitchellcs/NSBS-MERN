@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useNavigate } from "react-router-dom";
 
 const StyledToolbar = styled(Toolbar)({
   justifyContent: "space-between",
@@ -48,17 +49,25 @@ const MenuButton = styled(Button)({
 });
 
 const NavBar = ({ background, position, displayLogo }) => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const handleClick = (e) => {
     const page = e.target.id;
     console.log(page);
-    window.location.href = page;
+    navigate(`/${page}`);
   };
+  var shadow = "none";
+  if (background == "white") {
+    shadow = "true";
+  }
 
   return (
     <AppBar
       position={position}
-      style={{ background: background, boxShadow: "none" }}
+      style={{
+        background: background,
+        boxShadow: shadow,
+      }}
     >
       <StyledToolbar>
         <Stack direction={"row"} alignItems={"center"} spacing={5}>
@@ -66,8 +75,8 @@ const NavBar = ({ background, position, displayLogo }) => {
             <Button style={{}} href="/">
               <Box
                 component={"img"}
-                src="logo.png"
-                width={{ xs: "60px", sm: "80px", md: "120px" }}
+                src="/logo.png"
+                width={{ xs: "60px", sm: "80px", md: "100px" }}
                 // height={"60px"}
               ></Box>
             </Button>

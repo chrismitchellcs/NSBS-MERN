@@ -38,6 +38,7 @@ const MoreInfoButton = styled(Button)({
 });
 
 const IndividualBikeInfo = ({ bike }) => {
+  console.log(bike);
   const images = JSON.parse(bike.images);
   const [image, setImage] = useState(images[0]);
   const [preview, setPreview] = useState(images[1]);

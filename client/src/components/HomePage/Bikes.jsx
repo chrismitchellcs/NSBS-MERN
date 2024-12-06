@@ -2,6 +2,9 @@ import { Box, Button, Stack, capitalize, styled } from "@mui/material";
 import BikeButton from "../Shop/BikeButton";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
+import Slider from "react-slick";
 
 const ShopButton = styled(Button)({
   backgroundColor: "#3c5d4e",
@@ -18,6 +21,28 @@ const ShopButton = styled(Button)({
     color: "white",
   },
 });
+const responsive = {
+  desktop: {
+    breakpoint: { max: 10000, min: 1200 },
+    items: 4,
+    slidesToSlide: 4, // optional, default to 1.
+  },
+  desktopSmall: {
+    breakpoint: { max: 1200, min: 860 },
+    items: 3,
+    slidesToSlide: 3, // optional, default to 1.
+  },
+  tablet: {
+    breakpoint: { max: 860, min: 599 },
+    items: 2,
+    slidesToSlide: 2, // optional, default to 1.
+  },
+  mobile: {
+    breakpoint: { max: 599, min: 0 },
+    items: 1,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+};
 
 const Bikes = ({ brand }) => {
   const [bikes, setBikes] = useState(null);
@@ -62,9 +87,33 @@ const Bikes = ({ brand }) => {
         <Box sx={{ fontSize: { xs: "18px", sm: "24px" }, fontWeight: "400" }}>
           SHOP {uppercase} BIKES
         </Box>
-        <ShopButton href="shop">See All</ShopButton>
+        <ShopButton href={`shop/${brand.toLowerCase()}`}>See All</ShopButton>
       </Stack>
-      <Box
+      {bikes && (
+        <Carousel
+          swipeable={true}
+          draggable={false}
+          showDots={false}
+          responsive={responsive}
+          ssr={false} // means to render carousel on server-side.
+          infinite={true}
+          autoPlay={false}
+          autoPlaySpeed={5000}
+          keyBoardControl={false}
+          customTransition="transform 500ms ease-in-out"
+          transitionDuration={0}
+          containerClass="carousel-container"
+          //   deviceType={this.props.deviceType}
+          dotListClass="custom-dot-list-style"
+          itemClass="carousel-item-padding-40-px"
+        >
+          {bikes.map((bike) => {
+            return <BikeButton bike={bike}></BikeButton>;
+          })}
+        </Carousel>
+      )}
+
+      {/* <Box
         display="flex"
         sx={{
           backgroundColor: "white",
@@ -99,7 +148,7 @@ const Bikes = ({ brand }) => {
               })}
           </Stack>
         </Stack>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

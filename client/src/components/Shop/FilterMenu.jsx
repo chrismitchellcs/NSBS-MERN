@@ -1,8 +1,11 @@
 import { Box, Button, Stack, styled } from "@mui/material";
 import axios from "axios";
 import CollapsedFilterMenu from "./CollapsedFilterMenu";
+import { useNavigate } from "react-router-dom";
 
 const FilterMenu = ({ setBikes }) => {
+  const navigate = useNavigate();
+
   const FilterButton = styled(Button)({
     color: "white",
 
@@ -17,23 +20,28 @@ const FilterMenu = ({ setBikes }) => {
   });
 
   const handleTypeClick = async (e) => {
-    const type = e.target.id;
-    await axios
-      .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/type`, { type })
-      .then((res) => {
-        setBikes(res.data);
-      })
-      .catch((error) => {});
+    var type = e.target.id;
+    console.log(type);
+    if (type == "All" || type == "all") {
+      type = "";
+    }
+    type = type.replace(/\s+/g, "+");
+    type = type.replace("/", "=");
+
+    navigate(`/shop/${type.toLowerCase()}`);
+    navigate(0);
   };
 
   const handleBrandClick = async (e) => {
-    const brand = e.target.id;
-    await axios
-      .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/brand`, { brand })
-      .then((res) => {
-        setBikes(res.data);
-      })
-      .catch((error) => {});
+    e.preventDefault();
+    var brand = e.target.id;
+    console.log(brand);
+    if (brand == "All" || brand == "all") {
+      brand = "";
+    }
+    brand = brand.replace(" ", "+");
+    navigate(`/shop/${brand.toLowerCase()}`);
+    navigate(0);
   };
   const bikeTypes = [
     "DH",
@@ -46,6 +54,8 @@ const FilterMenu = ({ setBikes }) => {
     "E-Bike",
   ];
 
+  const bikeBrands = ["All", "Transition", "Norco", "Ibis"];
+
   return (
     <Box width={"100%"} bgcolor={"black"} pt={2} pb={2}>
       <Stack
@@ -53,14 +63,27 @@ const FilterMenu = ({ setBikes }) => {
         alignItems={"center"}
         justifyContent={"space-around"}
       >
-        <Stack direction={"row"} spacing={2}>
-          <FilterButton onClick={handleBrandClick} id="Transition">
-            Transition
+        <Stack
+          direction={"row"}
+          spacing={2}
+          display={{ xs: "none", sm: "none", md: "none", lg: "flex" }}
+        >
+          <FilterButton onClick={handleBrandClick} id="bnbnbn">
+            All
           </FilterButton>
+          <FilterButton onClick={handleBrandClick}>Transition</FilterButton>
           <FilterButton onClick={handleBrandClick} id="Norco">
             Norco
           </FilterButton>
+          <FilterButton onClick={handleBrandClick} id="Transition">
+            Ibis
+          </FilterButton>
         </Stack>
+        <CollapsedFilterMenu
+          name={"Brand"}
+          bikeTypes={bikeBrands}
+          handleTypeClick={handleBrandClick}
+        ></CollapsedFilterMenu>
         <Stack
           direction={"row"}
           spacing={2}
@@ -75,6 +98,7 @@ const FilterMenu = ({ setBikes }) => {
           })}
         </Stack>
         <CollapsedFilterMenu
+          name={"Filter"}
           bikeTypes={bikeTypes}
           handleTypeClick={handleTypeClick}
         ></CollapsedFilterMenu>

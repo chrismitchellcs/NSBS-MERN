@@ -5,7 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { Box } from "@mui/material";
 
-const CollapsedFilterMenu = ({ bikeTypes, handleTypeClick }) => {
+const CollapsedFilterMenu = ({ name, bikeTypes, handleTypeClick }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -35,7 +35,7 @@ const CollapsedFilterMenu = ({ bikeTypes, handleTypeClick }) => {
         onClick={handleClick}
         endIcon={<KeyboardArrowDownIcon />}
       >
-        Filter
+        {name}
       </Button>
       <Menu
         id="basic-menu"

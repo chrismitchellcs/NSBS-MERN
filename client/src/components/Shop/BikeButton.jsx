@@ -1,11 +1,16 @@
 import { Box, Button, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Image } from "cloudinary-react";
+import FadeInSection from "components/General/FadeInSection";
 const BikeButton = ({ bike }) => {
   const navigate = useNavigate();
   const handleClick = (e) => {
     e.preventDefault();
-    navigate("/bikedetails", { state: bike });
+    // navigate("/bikedetails", { state: bike });
+    var brand = bike.brand;
+    brand = brand.toLowerCase();
+
+    navigate(`/shop/${brand}/${bike._id}`);
   };
 
   const image = JSON.parse(bike.images)[0];
@@ -76,6 +81,7 @@ const BikeButton = ({ bike }) => {
     //     </Stack>
     //   </Stack>
     // </Button>
+
     <Button
       onClick={handleClick}
       sx={{

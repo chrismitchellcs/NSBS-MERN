@@ -8,8 +8,10 @@ import Parts from "components/HomePage/Parts";
 import NavBarHome from "components/General/NavBarHome";
 import Service from "components/HomePage/Service";
 import IbisHome from "components/HomePage/IbisHome";
-import Announcement from "components/HomePage/Announcement";
+import Announcement from "components/HomePage/Announcements/Announcement";
 import NavBar from "components/General/NavBar";
+import FadeInSection from "components/General/FadeInSection";
+import Announcements from "components/HomePage/Announcements";
 
 const Home = () => {
   return (
@@ -26,15 +28,30 @@ const Home = () => {
       ></NavBar>
       <HeaderImage></HeaderImage>
       <NSBSInfo></NSBSInfo>
-      <Announcement></Announcement>
+      {/* <FadeInSection> */}
+      <Announcements></Announcements>
+      {/* </FadeInSection> */}
+
+      {/* <FadeInSection> */}
       <TransitionHome></TransitionHome>
+      {/* </FadeInSection> */}
+
       <Bikes brand={"Transition"}></Bikes>
+      {/* <FadeInSection> */}
       <NorcoHome></NorcoHome>
+      {/* </FadeInSection> */}
       <Bikes brand={"Norco"}></Bikes>
+      {/* <FadeInSection> */}
       <IbisHome></IbisHome>
+      {/* </FadeInSection> */}
       <Bikes brand={"Ibis"}></Bikes>
+      {/* <FadeInSection> */}
       <Parts></Parts>
+      {/* </FadeInSection> */}
+      {/* <FadeInSection> */}
       <Service></Service>
+      {/* </FadeInSection> */}
+
       <Closer></Closer>
     </div>
   );

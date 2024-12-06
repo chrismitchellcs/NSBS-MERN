@@ -36,8 +36,8 @@ const IbisHome = () => {
       <Box
         component="img"
         sx={{
-          width: "100vw",
-          //   height: "30vw",
+          width: "100%",
+          height: "45.1vw",
           mh: 5,
           //   ml: 30,
           //   mt: 10,

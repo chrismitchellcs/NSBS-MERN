@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import FadeInSection from "components/General/FadeInSection";
 
 const TransitionHome = () => {
   return (
@@ -26,7 +27,9 @@ const TransitionHome = () => {
           src={"transitionlogowhite.png"}
         />
         <Box
-          sx={{ display: { xs: "none", sm: "none", md: "none", lg: "block" } }}
+          sx={{
+            display: { xs: "none", sm: "none", md: "none", lg: "block" },
+          }}
         >
           We are proud to be one of the largest Transition Bikes dealers in
           Canada! Transition is a local company from Bellingham, WA. We are
@@ -36,8 +39,8 @@ const TransitionHome = () => {
       <Box
         component="img"
         sx={{
-          width: "100vw",
-          // height: "30vw",
+          width: "100%",
+          height: "45.1vw",
           mh: 5,
           //   ml: 30,
           //   mt: 10,

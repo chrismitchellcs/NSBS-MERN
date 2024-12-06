@@ -1,6 +1,8 @@
 import Closer from "components/General/Closer";
+import FadeInSection from "components/General/FadeInSection";
 import NavBar from "components/General/NavBar";
 import ShopContent from "components/Shop/ShopContent";
+import { useEffect, useState } from "react";
 
 const Shop = () => {
   return (

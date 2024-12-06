@@ -36,7 +36,6 @@ const Closer = () => {
     <Box
       sx={{}}
       // bgcolor={"#f1f2f6"}
-
       bgcolor={"#EAEAEA"}
       color={"black"}
       width={"100%"}
@@ -125,7 +124,7 @@ const Closer = () => {
                 p: 0,
               }}
               alt="NSBS"
-              src="pinkbike.png"
+              src="/pinkbike.png"
             />
           </SMButton>
         </Stack>

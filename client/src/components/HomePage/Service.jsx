@@ -2,12 +2,12 @@ import { Box, Button, styled } from "@mui/material";
 
 const ShopButton = styled(Button)({
   backgroundColor: "#3c5d4e",
-  margin: "0%",
-  paddingLeft: "1%",
-  paddingRight: "1%",
+  margin: "1%",
+  paddingLeft: "3%",
+  paddingRight: "3%",
   color: "white",
   maxHeight: "40px",
-  fontWeight: "300",
+  fontWeight: "400",
   fontSize: "16px",
 
   "&:hover": {
@@ -21,7 +21,7 @@ const Service = () => {
     <Box textAlign={"center"} m={0}>
       <Box
         component={"img"}
-        width={"100vw"}
+        width={"100%"}
         height={"56.45vw"}
         src="IMG_1090.jpg"
       ></Box>

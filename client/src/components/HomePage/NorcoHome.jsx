@@ -25,6 +25,7 @@ const NorcoHome = () => {
           alt="NSBS"
           src={"norco.svg"}
         />
+
         <Box
           sx={{
             display: { xs: "none", sm: "none", md: "block", lg: "block" },
@@ -39,7 +40,7 @@ const NorcoHome = () => {
       <Box
         component="img"
         sx={{
-          width: "100vw",
+          width: "100%",
           height: "45.1vw",
           mh: 5,
           p: 0,
