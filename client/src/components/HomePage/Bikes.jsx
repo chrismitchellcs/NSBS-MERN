@@ -49,16 +49,6 @@ const Bikes = ({ brand }) => {
 
   const uppercase = brand.toUpperCase();
 
-  const handleScroll = (event) => {
-    const container = event.target;
-    const scrollAmount = event.deltaY;
-    container.scrollTo({
-      top: 0,
-      left: container.scrollLeft + scrollAmount,
-      behavior: "smooth",
-    });
-  };
-
   useEffect(() => {
     const fetchBikes = async () => {
       await axios
