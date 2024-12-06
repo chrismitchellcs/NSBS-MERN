@@ -86,12 +86,12 @@ const HeaderImage = () => {
         component="img"
         sx={{
           width: "100%",
-          // height: "39.55vw",
+          height: "66.65vw",
           m: 0,
           p: 0,
         }}
         alt="NSBS"
-        src={"2-Norco-BC.png"}
+        src={"2-Norco-BC-min.png"}
       />
     </Box>
   );

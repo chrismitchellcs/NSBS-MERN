@@ -96,13 +96,13 @@ const TransitionAnnouncement = () => {
             // borderRadius: "20px",
             width: "100%",
             // height: "52.776vw",
-
+            height: "58.65vw",
             mh: 5,
             //   ml: 30,
             //   mt: 10,
           }}
           alt="NSBS"
-          src={"transitionann.jpg"}
+          src={"transitionann-min.jpg"}
         />
       </Box>
     </Fade>

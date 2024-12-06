@@ -79,29 +79,31 @@ const Bikes = ({ brand }) => {
         </Box>
         <ShopButton href={`shop/${brand.toLowerCase()}`}>See All</ShopButton>
       </Stack>
-      {bikes && (
-        <Carousel
-          swipeable={true}
-          draggable={false}
-          showDots={false}
-          responsive={responsive}
-          ssr={false} // means to render carousel on server-side.
-          infinite={true}
-          autoPlay={false}
-          autoPlaySpeed={5000}
-          keyBoardControl={false}
-          customTransition="transform 500ms ease-in-out"
-          transitionDuration={0}
-          containerClass="carousel-container"
-          //   deviceType={this.props.deviceType}
-          dotListClass="custom-dot-list-style"
-          itemClass="carousel-item-padding-40-px"
-        >
-          {bikes.map((bike) => {
-            return <BikeButton bike={bike}></BikeButton>;
-          })}
-        </Carousel>
-      )}
+      <Box height={"290px"}>
+        {bikes && (
+          <Carousel
+            swipeable={true}
+            draggable={false}
+            showDots={false}
+            responsive={responsive}
+            ssr={false} // means to render carousel on server-side.
+            infinite={true}
+            autoPlay={false}
+            autoPlaySpeed={5000}
+            keyBoardControl={false}
+            customTransition="transform 500ms ease-in-out"
+            transitionDuration={0}
+            containerClass="carousel-container"
+            //   deviceType={this.props.deviceType}
+            dotListClass="custom-dot-list-style"
+            itemClass="carousel-item-padding-40-px"
+          >
+            {bikes.map((bike) => {
+              return <BikeButton bike={bike}></BikeButton>;
+            })}
+          </Carousel>
+        )}
+      </Box>
 
       {/* <Box
         display="flex"

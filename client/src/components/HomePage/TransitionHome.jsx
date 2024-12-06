@@ -46,7 +46,7 @@ const TransitionHome = () => {
           //   mt: 10,
         }}
         alt="NSBS"
-        src={"hannahb.jpg"}
+        src={"hannahb-min.jpg"}
       />
     </Box>
   );

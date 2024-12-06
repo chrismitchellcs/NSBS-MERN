@@ -4,6 +4,7 @@ import "react-multi-carousel/lib/styles.css";
 import { Box } from "@mui/material";
 import Announcement from "./Announcements/Announcement";
 import TransitionAnnouncement from "./Announcements/TransitionAnnouncement";
+import SightGen4 from "./Announcements/SightGen4";
 
 const responsive = {
   desktop: {
@@ -46,6 +47,7 @@ const Announcements = () => {
         {/* <Announcement></Announcement> */}
         <TransitionAnnouncement></TransitionAnnouncement>
         <Announcement></Announcement>
+        <SightGen4></SightGen4>
         {/* <TransitionAnnouncement></TransitionAnnouncement> */}
       </Carousel>
     </Box>

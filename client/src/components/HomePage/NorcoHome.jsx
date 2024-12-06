@@ -46,7 +46,7 @@ const NorcoHome = () => {
           p: 0,
         }}
         alt="NSBS"
-        src={"gracey2.jpg"}
+        src={"gracey2-min.jpg"}
       />
     </Box>
   );
