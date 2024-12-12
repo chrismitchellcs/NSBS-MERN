@@ -5,6 +5,7 @@ import { Box } from "@mui/material";
 import Announcement from "./Announcements/Announcement";
 import TransitionAnnouncement from "./Announcements/TransitionAnnouncement";
 import SightGen4 from "./Announcements/SightGen4";
+import Sight160 from "./Announcements/Sight160";
 
 const responsive = {
   desktop: {
@@ -46,8 +47,10 @@ const Announcements = () => {
       >
         {/* <Announcement></Announcement> */}
         <TransitionAnnouncement></TransitionAnnouncement>
+        <Sight160></Sight160>
         <Announcement></Announcement>
         <SightGen4></SightGen4>
+
         {/* <TransitionAnnouncement></TransitionAnnouncement> */}
       </Carousel>
     </Box>
