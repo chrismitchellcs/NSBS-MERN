@@ -9,6 +9,7 @@ import AdminPage from "pages/AdminPage";
 import { ProvideAuth } from "components/AdminLogin/auth";
 import BikeDetails from "pages/BikeDetails";
 import ScrollToTop from "components/General/ScrollToTop";
+import ReturnPolicy from "pages/ReturnPolicy";
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
               <Route path="/shop/:brand/:bikeid" element={<BikeDetails />} />
               <Route path="/bike" element={<Shop />} />
               {/* <Route path="/bikedetails" element={<BikeDetails />} /> */}
+              <Route path="/return-policy" element={<ReturnPolicy />} />
               <Route path="/adminlogin" element={<Login />} />
               <Route
                 path="/adminpage"
