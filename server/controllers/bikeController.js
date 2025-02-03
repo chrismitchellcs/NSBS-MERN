@@ -148,6 +148,26 @@ const sendForm = async (req, res) => {
   }
 };
 
+const sendBikeForm = async (req, res) => {
+  const { token, name, email, color, size, message } = req.body;
+
+  try {
+    const response = await axios.post(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
+    );
+
+    if (response.data.success) {
+      await sendEmail(name, email, color, size, message);
+      res.status(200).send();
+    } else {
+      res.status(500).send("Robot");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error);
+  }
+};
+
 const checkPassword = async (req, res) => {
   res.status(200).send("");
 };
@@ -159,6 +179,7 @@ module.exports = {
   deleteBike,
   updateBike,
   sendForm,
+  sendBikeForm,
   checkPassword,
   getBikesByType,
   getBikesByBrand,

@@ -6,6 +6,7 @@ const {
   deleteBike,
   updateBike,
   sendForm,
+  sendBikeForm,
   getBikesByType,
   getBikesByBrand,
   testBikes,
@@ -23,6 +24,7 @@ router.get("/:id", getBike);
 router.post("/", createBike);
 
 router.post("/sendform", sendForm);
+router.post("/sendbikeform", sendBikeForm);
 
 router.delete("/:id", deleteBike);
 
