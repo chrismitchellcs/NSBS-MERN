@@ -1,6 +1,6 @@
 const Bike = require("../models/bikeModel");
 const mongoose = require("mongoose");
-const { sendEmail } = require("../utils/email");
+const { sendEmail, sendBikeEmail } = require("../utils/email");
 const axios = require("axios");
 
 // get all bikes
