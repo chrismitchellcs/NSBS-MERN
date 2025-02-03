@@ -29,7 +29,7 @@ const sendEmail = async (name, email, subject, message) => {
 };
 
 const sendBikeEmail = async (name, email, bikename, color, size, message) => {
-  const data = `Name: ${name}\nEmail: ${email}\nBike: ${bikename}\nColor: ${color}\nSize:\n${size}Message:\n${message}`;
+  const data = `Name: ${name}\nEmail: ${email}\nBike: ${bikename}\nColor: ${color}\nSize:${size}\nMessage:\n${message}`;
 
   try {
     await nodemailer
