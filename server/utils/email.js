@@ -28,6 +28,34 @@ const sendEmail = async (name, email, subject, message) => {
   }
 };
 
+const sendBikeEmail = async (name, email, bikename, color, size, message) => {
+  const data = `Name: ${name}\nEmail: ${email}\nBike: ${bikename}\nColor: ${color}\nSize:\n${size}Message:\n${message}`;
+
+  try {
+    await nodemailer
+      .createTransport({
+        service: "gmail",
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+          user: "northshorebikeshop@gmail.com",
+          pass: process.env.GMAIL_PASS,
+        },
+      })
+      .sendMail({
+        name: name,
+        from: email, // sender address
+        to: "northshorebikeshop@gmail.com", // list of receivers
+        subject: "Inquiry: " + bikename, // Subject line
+        text: data, // plain text body
+      });
+    console.log("Email sent to " + email);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 // // create reusable transporter object using the default SMTP transport
 // const transporter = nodemailer.createTransport({
 //   service: "gmail",

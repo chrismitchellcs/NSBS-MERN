@@ -149,7 +149,7 @@ const sendForm = async (req, res) => {
 };
 
 const sendBikeForm = async (req, res) => {
-  const { token, name, email, color, size, message } = req.body;
+  const { token, name, email, bikename, color, size, message } = req.body;
 
   try {
     const response = await axios.post(
@@ -157,7 +157,7 @@ const sendBikeForm = async (req, res) => {
     );
 
     if (response.data.success) {
-      await sendEmail(name, email, color, size, message);
+      await sendBikeEmail(name, email, bikename, color, size, message);
       res.status(200).send();
     } else {
       res.status(500).send("Robot");
