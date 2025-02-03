@@ -149,4 +149,4 @@ const sendBikeEmail = async (name, email, bikename, color, size, message) => {
 //   res.status(200).json({ status: "OK" });
 // };
 
-module.exports = { sendEmail };
+module.exports = { sendEmail, sendBikeEmail };
