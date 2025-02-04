@@ -30,24 +30,12 @@ const ContactForm = () => {
       })
       .then((res) => {
         setFormSent(true);
+        setFormNotSent(false);
       })
       .catch((error) => {
         setFormNotSent(true);
+        setFormSent(false);
       });
-    // await axios
-    //   .post(`http://localhost:5050/api/bikes/sendform`, {
-    //     token,
-    //     name,
-    //     email,
-    //     subject,
-    //     message,
-    //   })
-    //   .then((res) => {
-    //     console.log(res);
-    //   })
-    //   .catch((error) => {
-    //     alert("form not sent");
-    //   });
   };
 
   return (

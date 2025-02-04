@@ -102,7 +102,7 @@ const TransitionAnnouncement = () => {
             //   mt: 10,
           }}
           alt="NSBS"
-          src={"transitionann-min.jpg"}
+          src={"transitionann-min (1).jpg"}
         />
       </Box>
     </Fade>

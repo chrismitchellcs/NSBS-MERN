@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
+import IndividualBikeInfoNew from "components/Shop/IndividualBikeInfoNew";
 
 const BikeDetails = () => {
   // const location = useLocation();
@@ -64,7 +65,11 @@ const BikeDetails = () => {
         <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
         {/* <ShopNote></ShopNote> */}
         <Box>
-          {bike ? <IndividualBikeInfo bike={bike}></IndividualBikeInfo> : ""}
+          {bike ? (
+            <IndividualBikeInfoNew bike={bike}></IndividualBikeInfoNew>
+          ) : (
+            ""
+          )}
         </Box>
       </div>
 

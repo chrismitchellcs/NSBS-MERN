@@ -5,7 +5,6 @@ import TransitionHome from "components/HomePage/TransitionHome";
 import NorcoHome from "components/HomePage/NorcoHome";
 import NSBSInfo from "components/HomePage/NSBSInfo";
 import Parts from "components/HomePage/Parts";
-import NavBarHome from "components/General/NavBarHome";
 import Service from "components/HomePage/Service";
 import IbisHome from "components/HomePage/IbisHome";
 import Announcement from "components/HomePage/Announcements/Announcement";

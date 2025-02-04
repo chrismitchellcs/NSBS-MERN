@@ -8,17 +8,13 @@ const BikeGrid = ({ bikes }) => {
   const Bikes = () => {
     if (bikes.length == 0) {
       return (
-        <Stack
-          width={"100%"}
-          alignItems={"center"}
-          justifyContent={"center"}
-          m={10}
-        >
+        <Stack width={"100%"} alignItems={"center"} justifyContent={"center"}>
           <Box
             width={"60%"}
             textAlign={"center"}
             fontSize={"20px"}
             fontWeight={"300"}
+            mt={5}
           >
             There are currently no options in this category on the website. We
             likely do have some options for you, get in contact with us and we

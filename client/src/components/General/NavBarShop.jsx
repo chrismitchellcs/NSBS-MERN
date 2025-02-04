@@ -24,8 +24,7 @@ const NavButton = styled(Button)({
   color: "black",
   maxHeight: "40px",
   margin: "10px",
-  fontSize: "16px",
-  fontWeight: "400",
+  fontSize: "14px",
 
   "&:hover": {
     textDecoration: "underline",
@@ -48,7 +47,7 @@ const MenuButton = styled(Button)({
   },
 });
 
-const NavBar = ({ background, position, displayLogo }) => {
+const NavBarShop = () => {
   const [open, setOpen] = useState(false);
 
   const handleClick = (e) => {
@@ -59,54 +58,29 @@ const NavBar = ({ background, position, displayLogo }) => {
 
   return (
     <AppBar
-      position={position}
-      style={{ background: background, boxShadow: "none" }}
+      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      position={"fixed"}
+      style={{
+        background: "white",
+      }}
     >
       <StyledToolbar>
         <Stack direction={"row"} alignItems={"center"} spacing={5}>
-          <Box display={{ xs: "block", sm: "block", md: "none" }}>
-            <MenuButton onClick={(e) => setOpen(true)}>
-              <MenuIcon></MenuIcon>
-            </MenuButton>
-            <Menu
-              id="basic-menu"
-              open={open}
-              onClose={(e) => setOpen(false)}
-              MenuListProps={{
-                "aria-labelledby": "basic-button",
-              }}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-            >
-              <MenuItem onClick={handleClick} id="shop">
-                Shop
-              </MenuItem>
+          <Button style={{}} href="/">
+            <Box
+              component={"img"}
+              src="/logo.png"
+              width={{ xs: "60px", sm: "80px", md: "100px" }}
+              // height={"60px"}
+            ></Box>
+          </Button>
 
-              <MenuItem onClick={handleClick} id="service">
-                Service
-              </MenuItem>
-              <MenuItem onClick={handleClick} id="contact">
-                Contact
-              </MenuItem>
-            </Menu>
-          </Box>
-          {displayLogo ? (
-            <Box component={"img"} src="logo.png" width={"150px"}></Box>
-          ) : (
-            ""
-          )}
           <Stack
             direction="row"
             justifyContent="center"
             alignItems="center"
             spacing={5}
-            display={{ xs: "none", sm: "none", md: "block" }}
+            display={{ xs: "none", sm: "block" }}
           >
             <NavButton href="/shop">Shop</NavButton>
             <NavButton href="/service">Service</NavButton>
@@ -114,14 +88,46 @@ const NavBar = ({ background, position, displayLogo }) => {
           </Stack>
         </Stack>
 
-        <Box>
+        <Box display={{ xs: "none", sm: "block" }}>
           <NavButton href="/contact">
             <LocationOn></LocationOn>
           </NavButton>
+        </Box>
+
+        <Box display={{ xs: "block", sm: "none" }}>
+          <MenuButton onClick={(e) => setOpen(true)}>
+            <MenuIcon></MenuIcon>
+          </MenuButton>
+          <Menu
+            id="basic-menu"
+            open={open}
+            onClose={(e) => setOpen(false)}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
+            <MenuItem onClick={handleClick} id="shop">
+              Shop
+            </MenuItem>
+            <MenuItem onClick={handleClick} id="service">
+              Service
+            </MenuItem>
+            <MenuItem onClick={handleClick} id="contact">
+              Contact
+            </MenuItem>
+          </Menu>
         </Box>
       </StyledToolbar>
     </AppBar>
   );
 };
 
-export default NavBar;
+export default NavBarShop;
