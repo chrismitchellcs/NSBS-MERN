@@ -5,10 +5,10 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Checkbox, { checkboxClasses } from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import CommentIcon from "@mui/icons-material/Comment";
+
 import { Box } from "@mui/material";
-import { all } from "axios";
+
+import { useNavigate } from "react-router-dom";
 
 export default function CheckboxList({
   bikeTypes,

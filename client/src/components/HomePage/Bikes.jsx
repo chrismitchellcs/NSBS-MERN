@@ -77,7 +77,7 @@ const Bikes = ({ brand }) => {
         <Box sx={{ fontSize: { xs: "18px", sm: "24px" }, fontWeight: "400" }}>
           SHOP {uppercase} BIKES
         </Box>
-        <ShopButton href={`shop/${brand.toLowerCase()}`}>See All</ShopButton>
+        <ShopButton href={`shop`}>See All</ShopButton>
       </Stack>
       <Box height={"290px"}>
         {bikes && (
