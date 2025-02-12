@@ -24,7 +24,11 @@ const NavButton = styled(Button)({
   color: "black",
   maxHeight: "40px",
   margin: "10px",
-  fontSize: "14px",
+  fontSize: "16px",
+  textTransform: "none",
+  fontFamily: "Open Sans, sans-serif",
+  letterSpacing: 0,
+  fontWeight: "600",
 
   "&:hover": {
     textDecoration: "underline",

@@ -10,11 +10,15 @@ const InfoButton = styled(Button)({
   marginTop: "5px",
 
   marginBottom: "5px",
-  fontSize: "20px",
-  fontWeight: "normal",
+  fontSize: "22px",
+
   textTransform: "none",
   border: "2px solid white",
   borderRadius: "20px",
+
+  fontFamily: "Open Sans, sans-serif",
+  letterSpacing: 0,
+  fontWeight: "600",
 
   "&:hover": {
     backgroundColor: "white",
@@ -75,7 +79,7 @@ const NSBSInfo = () => {
               </Box>
               <Box
                 sx={{ fontSize: { xs: "18px", sm: "18px" } }}
-                fontWeight={"700"}
+                fontWeight={"600"}
               >
                 SHOP BIKES
               </Box>
@@ -109,7 +113,7 @@ const NSBSInfo = () => {
               </Box>
               <Box
                 sx={{ fontSize: { xs: "18px", sm: "18px" } }}
-                fontWeight={"700"}
+                fontWeight={"600"}
               >
                 SERVICE INFO
               </Box>
@@ -144,7 +148,7 @@ const NSBSInfo = () => {
               </Box>
               <Box
                 sx={{ fontSize: { xs: "18px", sm: "18px" } }}
-                fontWeight={"700"}
+                fontWeight={"600"}
               >
                 CONTACT US
               </Box>
