@@ -73,6 +73,8 @@ app.use("/api/images", imageRoutes);
 //     console.log(error);
 //   });
 
+const serverless = require("serverless-http");
+
 const mongooseConnection = mongoose
   .connect(process.env.ATLAS_URI)
   .then(() => {
@@ -82,9 +84,11 @@ const mongooseConnection = mongoose
     console.error("MongoDB connection error:", error);
   });
 
+const handler = serverless(app);
+
 module.exports = async (req, res) => {
   await mongooseConnection;
-  return app(req, res); // this passes the request to Express
+  return handler(req, res);
 };
 
 // module.exports = app;
