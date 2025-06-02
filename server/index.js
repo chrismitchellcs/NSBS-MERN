@@ -61,16 +61,30 @@ app.use("/api/auth", authRoutes);
 app.use("/api/images", imageRoutes);
 
 // connect to db
-mongoose
+// mongoose
+//   .connect(process.env.ATLAS_URI)
+//   .then(() => {
+//     // listen for requests
+//     app.listen(process.env.PORT, () =>
+//       console.log(`Connected to DB, server running on port ${process.env.PORT}`)
+//     );
+//   })
+//   .catch((error) => {
+//     console.log(error);
+//   });
+
+const mongooseConnection = mongoose
   .connect(process.env.ATLAS_URI)
   .then(() => {
-    // listen for requests
-    app.listen(process.env.PORT, () =>
-      console.log(`Connected to DB, server running on port ${process.env.PORT}`)
-    );
+    console.log("MongoDB connected");
   })
   .catch((error) => {
-    console.log(error);
+    console.error("MongoDB connection error:", error);
   });
 
-module.exports = app;
+module.exports = async (req, res) => {
+  await mongooseConnection;
+  return app(req, res); // this passes the request to Express
+};
+
+// module.exports = app;
