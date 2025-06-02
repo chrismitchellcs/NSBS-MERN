@@ -37,14 +37,8 @@ app.use(
       }
     },
     credentials: true,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
   })
 );
-
-// ADD THIS:
-app.options("*", cors());
 
 app.use(
   session({
