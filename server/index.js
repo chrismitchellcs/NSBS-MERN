@@ -50,9 +50,15 @@ app.use(
 );
 
 // routes
-app.use("/api/bikes", bikeRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/images", imageRoutes);
+const corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true,
+};
+
+// Apply CORS specifically per route
+app.use("/api/bikes", cors(corsOptions), bikeRoutes);
+app.use("/api/auth", cors(corsOptions), authRoutes);
+app.use("/api/images", cors(corsOptions), imageRoutes);
 
 // connect to db
 // mongoose
