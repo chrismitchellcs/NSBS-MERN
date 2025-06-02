@@ -4,33 +4,7 @@ import React, { useEffect, useState } from "react";
 const Sight160 = () => {
   const ShopButton = styled(Button)({
     backgroundColor: "#3c5d4e",
-    margin: "3%",
-    paddingLeft: "7%",
-    paddingRight: "7%",
-    paddingTop: "4%",
-    paddingBottom: "4%",
     color: "white",
-    maxHeight: "40px",
-    fontWeight: "400",
-    fontSize: "20px",
-
-    "&:hover": {
-      backgroundColor: "#4d5e5f",
-      color: "white",
-    },
-  });
-
-  const ShopButtonSmall = styled(Button)({
-    backgroundColor: "#3c5d4e",
-    margin: "3%",
-    paddingLeft: "7%",
-    paddingRight: "7%",
-    paddingTop: "4%",
-    paddingBottom: "4%",
-    color: "white",
-    maxHeight: "40px",
-    fontWeight: "400",
-    fontSize: "14px",
 
     "&:hover": {
       backgroundColor: "#4d5e5f",
@@ -51,14 +25,10 @@ const Sight160 = () => {
             position={"absolute"}
             sx={{
               width: "38%",
-
               mt: { xs: 1, sm: 3, md: 10 },
               left: "50vw",
-
               textAlign: "center",
-
               color: "white",
-
               lineHeight: "1.5",
             }}
             fontWeight={{ xs: "500", sm: "400", md: "350" }}
@@ -74,16 +44,23 @@ const Sight160 = () => {
               src={"norco.svg"}
             />
             <Box
-              sx={{ fontWeight: "600" }}
-              fontSize={{ xs: "20px", sm: "30px", md: "35px" }}
+              mt={{ xs: 0.2, sm: 0.4, md: 0.8 }}
+              sx={{ fontWeight: "500" }}
+              fontSize={{ xs: "12px", sm: "16px", md: "24px" }}
             >
-              NEW Sight 160, now with 170mm front and 160mm rear travel
+              The new Norco Sight 160. 170mm/160mm travel for BC-inspired
+              trails.
             </Box>
-            <Box display={{ xs: "none", sm: "none", md: "block" }}>
-              <ShopButton href={`shop/norco`}>Shop Sale</ShopButton>
-            </Box>
-            <Box display={{ xs: "block", sm: "block", md: "none" }}>
-              <ShopButtonSmall href={`shop/norco`}>Shop Sale</ShopButtonSmall>
+            <Box m={{ xs: 0.5, sm: 1, md: 2 }}>
+              <ShopButton href={`shop/norco`}>
+                <Box
+                  p={{ xs: 0.2, sm: 0.4, md: 0.8 }}
+                  fontSize={{ xs: "10px", sm: "14px", md: "16px" }}
+                  textTransform={"none"}
+                >
+                  Shop Norco
+                </Box>
+              </ShopButton>
             </Box>
           </Box>
         </Fade>

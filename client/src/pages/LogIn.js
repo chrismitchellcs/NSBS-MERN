@@ -5,7 +5,6 @@ const LogIn = () => {
   return (
     <div>
       <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
-      <PasswordForm></PasswordForm>
     </div>
   );
 };

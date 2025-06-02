@@ -26,7 +26,7 @@ const AdminPage = () => {
       <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
 
       <AddBike setBikes={setBikes}></AddBike>
-      <AdminBikes bikes={bikes} setBikes={setBikes}></AdminBikes>
+      {/* <AdminBikes bikes={bikes} setBikes={setBikes}></AdminBikes> */}
     </div>
   );
 };

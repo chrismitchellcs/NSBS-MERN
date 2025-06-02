@@ -62,6 +62,7 @@ const AddImage = () => {
 
   const uploadImage = async (file) => {
     const data = JSON.stringify({ file });
+    console.log(data);
     return new Promise(async (resolve, reject) => {
       await axios
         .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/images`, {

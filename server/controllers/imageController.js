@@ -37,4 +37,26 @@ const getImages = async (req, res) => {
   res.send(publicIds);
 };
 
-module.exports = { uploadImage, getImages };
+const getSignature = async (req, res) => {
+  const { public_id } = req.query;
+  const timestamp = Math.round(new Date().getTime() / 1000);
+
+  const signature = cloudinary.utils.api_sign_request(
+    {
+      timestamp,
+      public_id,
+      folder: "bike-images2", // Optional: where to upload
+    },
+    cloudinary.config().api_secret
+  );
+
+  res.json({
+    timestamp,
+    signature,
+    apiKey: cloudinary.config().api_key,
+    cloudName: cloudinary.config().cloud_name,
+    folder: "bike-images2", // Optional
+  });
+};
+
+module.exports = { uploadImage, getImages, getSignature };

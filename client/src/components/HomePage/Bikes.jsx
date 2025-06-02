@@ -66,7 +66,7 @@ const Bikes = ({ brand }) => {
   }, []);
 
   return (
-    <Box textAlign={"center"} mb={2}>
+    <Box textAlign={"center"} mb={1}>
       <Stack
         direction={"row"}
         alignItems={"center"}
@@ -74,8 +74,8 @@ const Bikes = ({ brand }) => {
         mt={2}
         spacing={3}
       >
-        <Box sx={{ fontSize: { xs: "18px", sm: "24px" }, fontWeight: "400" }}>
-          SHOP {uppercase} BIKES
+        <Box sx={{ fontSize: { xs: "16px", sm: "22px" }, fontWeight: "600" }}>
+          Shop {brand}
         </Box>
         <ShopButton href={`shop`}>See All</ShopButton>
       </Stack>

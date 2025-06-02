@@ -23,7 +23,7 @@ const logoNames = [
 
 const Parts = () => {
   return (
-    <Box textAlign={"center"}>
+    <Box textAlign={"center"} pb={2}>
       <Box
         component={"img"}
         src="bikes-min.jpg"
@@ -31,18 +31,19 @@ const Parts = () => {
         height={"56vw"}
       ></Box>
       <Box
+        pt={1}
         sx={{
-          fontSize: { xs: "26px", sm: "30px" },
+          fontSize: "26px",
+          fontWeight: "600",
           color: "black",
           m: 2,
-          fontWeight: "500",
         }}
       >
-        PARTS & ACCESSORIES
+        Parts & Accessories
       </Box>
       <Box
         sx={{
-          fontSize: { xs: "18px", sm: "20px" },
+          fontSize: { xs: "16px", sm: "18px" },
           fontWeight: "400",
           color: "black",
           width: "60%",
@@ -62,7 +63,7 @@ const Parts = () => {
         m={5}
         sx={{ display: { xs: "none", sm: "none", md: "block" } }}
       >
-        <ImageList sx={{ width: "80%", ml: "10%" }} cols={6} gap={40}>
+        <ImageList sx={{ width: "60%", ml: "20%" }} cols={6} gap={40}>
           {logoNames.map((item) => (
             <ImageListItem key={item}>
               <img

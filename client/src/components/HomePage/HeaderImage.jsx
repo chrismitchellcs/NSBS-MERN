@@ -54,7 +54,7 @@ const HeaderImage = () => {
         </Fade>
         <Fade in={show} timeout={3000}>
           <Box
-            sx={{ fontSize: "2.5vw", fontWeight: "350" }}
+            sx={{ fontSize: "2vw", fontWeight: "350" }}
             display={{ xs: "none", sm: "block" }}
           >
             Proudly Serving the North Shore Since 2007

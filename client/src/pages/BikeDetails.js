@@ -8,6 +8,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import IndividualBikeInfoNew from "components/Shop/IndividualBikeInfoNew";
+import BikeLandingPage from "components/Shop/BikeLandingPage";
 
 const BikeDetails = () => {
   // const location = useLocation();
@@ -66,8 +67,9 @@ const BikeDetails = () => {
         {/* <ShopNote></ShopNote> */}
         <Box>
           {bike ? (
-            <IndividualBikeInfoNew bike={bike}></IndividualBikeInfoNew>
+            <BikeLandingPage bike={bike}></BikeLandingPage>
           ) : (
+            // <IndividualBikeInfoNew bike={bike}></IndividualBikeInfoNew>
             ""
           )}
         </Box>

@@ -33,7 +33,9 @@ export default function ShopContentNew(props) {
       if (brand === undefined) {
         console.log("no brand");
         await axios
-          .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {})
+          .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {
+            withCredentials: true,
+          })
           .then((res) => {
             setBikes(res.data);
             setAllBikes(res.data);

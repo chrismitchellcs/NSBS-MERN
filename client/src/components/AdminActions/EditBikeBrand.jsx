@@ -1,27 +1,39 @@
 import {
   Box,
   Button,
-  Checkbox,
   FormControlLabel,
-  FormGroup,
+  Radio,
+  RadioGroup,
   Stack,
-  TextField,
 } from "@mui/material";
+
 import axios from "axios";
 import { useState } from "react";
+import styled from "styled-components";
+
+const EditButton = styled(Button)({
+  backgroundColor: "transparent",
+  color: "black",
+  maxHeight: "40px",
+  padding: "2px",
+  fontSize: "14px",
+  paddingLeft: "5px",
+  paddingRight: "5px",
+  minWidth: "0px",
+  textTransform: "none",
+  fontFamily: "Open Sans, sans-serif",
+  letterSpacing: 0,
+  fontWeight: "600",
+  "&:hover": {
+    textDecoration: "underline",
+    textDecorationThickness: "2px",
+    textUnderlineOffset: "5px",
+    backgroundColor: "transparent",
+    color: "black",
+  },
+});
 
 const EditBikeBrand = ({ bike, setBikes }) => {
-  const [edit, setEdit] = useState(false);
-  const [newSizes, setNewSizes] = useState([]);
-
-  const handleEditClick = () => {
-    if (edit) {
-      setEdit(false);
-    } else {
-      setEdit(true);
-    }
-  };
-
   const fetchBikes = async () => {
     console.log(process.env.REACT_APP_VERCEL_DOMAIN);
     await axios
@@ -34,42 +46,64 @@ const EditBikeBrand = ({ bike, setBikes }) => {
       });
   };
 
-  const handleSaveClick = async () => {
-    var newBike = bike;
-    newBike.brand = value;
+  const [brand, setBrand] = useState(bike.brand);
 
-    const id = newBike._id;
+  const handleBrandChange = (e) => {
+    e.preventDefault();
+    const brand = e.target.value;
+    setBrand(brand);
+  };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    let newBike = bike;
+    newBike.brand = brand;
     await axios
-      //   .patch(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${id}`, {
-      .patch(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${id}`, {
-        newBike,
-      })
+      .patch(
+        `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${newBike._id}`,
+        {
+          newBike,
+        },
+        { withCredentials: true }
+      )
       .then((res) => {
-        setEdit(false);
         fetchBikes();
-        setValue("");
+        setEdit(false);
       })
       .catch((error) => {
         alert("bike not added");
       });
   };
 
-  const [value, setValue] = useState("");
-
-  const handleChange = (e) => {
-    setValue(e.target.value);
-  };
-
+  const [edit, setEdit] = useState(false);
   return (
     <Stack>
-      <Button onClick={handleEditClick}>Edit</Button>
+      <Stack direction={"row"} alignItems={"center"} spacing={1}>
+        <Box>
+          <b>Brand: </b>
+        </Box>
+        <Box>{bike.brand}</Box>
+        <EditButton onClick={() => setEdit(true)}>Edit</EditButton>
+      </Stack>
       {edit && (
-        <Stack>
-          <TextField value={value} variant="outlined" onChange={handleChange} />
-        </Stack>
+        <RadioGroup
+          onChange={handleBrandChange}
+          row
+          aria-labelledby="demo-radio-buttons-group-label"
+          defaultValue="none"
+          name="radio-buttons-group"
+          value={brand}
+        >
+          <FormControlLabel
+            value="Transition"
+            control={<Radio />}
+            label="Transition"
+          />
+          <FormControlLabel value="Norco" control={<Radio />} label="Norco" />
+          <FormControlLabel value="Ibis" control={<Radio />} label="Ibis" />
+        </RadioGroup>
       )}
-      {edit && <Button onClick={handleSaveClick}>Save</Button>}
+      {edit && <EditButton onClick={handleSubmit}>Save</EditButton>}
     </Stack>
   );
 };

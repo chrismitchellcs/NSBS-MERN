@@ -38,11 +38,20 @@ const bikeSchema = new Schema(
       type: String,
       required: true,
     },
+    colors: {
+      type: String,
+      required: true,
+    },
+    availability: {
+      type: String,
+      required: true,
+    },
     price: { type: Number, required: true },
     saleprice: { type: Number, required: false },
     images: { type: String, required: false },
     description: { type: String, required: false },
     link: { type: String, required: false },
+    year: { type: Number, required: false },
   },
   { timestamps: false }
 );

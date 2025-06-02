@@ -5,21 +5,12 @@ const mongoose = require("mongoose");
 const bikeRoutes = require("./routes/bikes");
 const authRoutes = require("./routes/auth");
 const imageRoutes = require("./routes/images");
+const bcrypt = require("bcrypt");
+const session = require("express-session");
 
 // express
 const app = express();
 const cors = require("cors");
-app.use(cors({ origin: "*" }));
-
-// cors({
-//   origin: ["*"],
-//   methods: ["POST", "GET", "DELETE"],
-//   credentials: true,
-// })
-
-// app.use("/", (req, res) => {
-//   res.send("server is running");
-// });
 
 // middleware
 app.use(express.json({ limit: "50mb" }));
@@ -28,6 +19,22 @@ app.use((req, res, next) => {
   console.log(req.path, req.method);
   next();
 });
+
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Explicitly allow your frontend
+    credentials: true, // Allow cookies/session headers
+  })
+);
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 1000 * 60 * 60 * 2, httpOnly: true }, // 2-hour session
+  })
+);
 
 // routes
 app.use("/api/bikes", bikeRoutes);

@@ -12,6 +12,7 @@ import {
 import React, { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "components/AuthProvider";
 
 const StyledToolbar = styled(Toolbar)({
   justifyContent: "space-between",
@@ -25,7 +26,7 @@ const NavButton = styled(Button)({
   color: "black",
   maxHeight: "40px",
   margin: "10px",
-  fontSize: "16px",
+  fontSize: "14px",
   textTransform: "none",
   fontFamily: "Open Sans, sans-serif",
   letterSpacing: 0,
@@ -64,6 +65,8 @@ const NavBar = ({ background, position, displayLogo }) => {
     shadow = "true";
   }
 
+  const { isAuthenticated } = useAuth();
+
   return (
     <AppBar
       position={position}
@@ -96,6 +99,9 @@ const NavBar = ({ background, position, displayLogo }) => {
             <NavButton href="/shop">Shop</NavButton>
             <NavButton href="/service">Service</NavButton>
             <NavButton href="/contact">Contact</NavButton>
+            {isAuthenticated && (
+              <NavButton href="/admin-dashboard">ADMIN DASHBOARD</NavButton>
+            )}
           </Stack>
         </Stack>
 

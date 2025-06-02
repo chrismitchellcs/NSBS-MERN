@@ -8,7 +8,7 @@ const ShopButton = styled(Button)({
   color: "white",
   maxHeight: "40px",
   fontWeight: "400",
-  fontSize: "16px",
+  fontSize: "14px",
 
   "&:hover": {
     backgroundColor: "#4d5e5f",
@@ -26,18 +26,19 @@ const Service = () => {
         src="IMG_1090.jpg"
       ></Box>
       <Box
+        pt={1}
         sx={{
-          fontSize: { xs: "26px", sm: "30px" },
+          fontSize: "26px",
+          fontWeight: "600",
           color: "black",
           m: 2,
-          fontWeight: "500",
         }}
       >
-        SERVICE
+        Service
       </Box>
       <Box
         sx={{
-          fontSize: { xs: "18px", sm: "20px" },
+          fontSize: { xs: "16px", sm: "18px" },
           fontWeight: "400",
           color: "black",
           width: "60%",

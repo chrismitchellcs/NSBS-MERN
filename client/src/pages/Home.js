@@ -11,6 +11,7 @@ import Announcement from "components/HomePage/Announcements/Announcement";
 import NavBar from "components/General/NavBar";
 import FadeInSection from "components/General/FadeInSection";
 import Announcements from "components/HomePage/Announcements";
+import AboutUs from "components/HomePage/AboutUs";
 
 const Home = () => {
   return (
@@ -26,7 +27,9 @@ const Home = () => {
         displayLogo={1}
       ></NavBar>
       <HeaderImage></HeaderImage>
-      <NSBSInfo></NSBSInfo>
+      {/* <NSBSInfo></NSBSInfo>
+       */}
+      <AboutUs></AboutUs>
       {/* <FadeInSection> */}
       <Announcements></Announcements>
       {/* </FadeInSection> */}

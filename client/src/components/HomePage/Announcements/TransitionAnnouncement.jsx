@@ -4,33 +4,7 @@ import React, { useEffect, useState } from "react";
 const TransitionAnnouncement = () => {
   const ShopButton = styled(Button)({
     backgroundColor: "#3c5d4e",
-    margin: "3%",
-    paddingLeft: "7%",
-    paddingRight: "7%",
-    paddingTop: "4%",
-    paddingBottom: "4%",
     color: "white",
-    maxHeight: "40px",
-    fontWeight: "400",
-    fontSize: "20px",
-
-    "&:hover": {
-      backgroundColor: "#4d5e5f",
-      color: "white",
-    },
-  });
-
-  const ShopButtonSmall = styled(Button)({
-    backgroundColor: "#3c5d4e",
-    margin: "3%",
-    paddingLeft: "7%",
-    paddingRight: "7%",
-    paddingTop: "4%",
-    paddingBottom: "4%",
-    color: "white",
-    maxHeight: "40px",
-    fontWeight: "400",
-    fontSize: "14px",
 
     "&:hover": {
       backgroundColor: "#4d5e5f",
@@ -51,18 +25,12 @@ const TransitionAnnouncement = () => {
             position={"absolute"}
             sx={{
               width: "50%",
-
               mt: { xs: 1, sm: 3, md: 10 },
               left: "5vw",
-
               textAlign: "center",
-
               color: "white",
-
               lineHeight: "1.5",
             }}
-            fontWeight={{ xs: "500", sm: "400", md: "350" }}
-            fontSize={{ xs: "16px", sm: "18px", md: "20px" }}
           >
             <Box
               component="img"
@@ -74,18 +42,22 @@ const TransitionAnnouncement = () => {
               src={"transitionlogowhite.png"}
             />
             <Box
-              sx={{ fontWeight: "600" }}
-              fontSize={{ xs: "20px", sm: "30px", md: "40px" }}
+              mt={{ xs: 0.2, sm: 0.4, md: 0.8 }}
+              sx={{ fontWeight: "500" }}
+              fontSize={{ xs: "12px", sm: "16px", md: "24px" }}
             >
-              Bikes Up To 40% Off
+              Transition Sale! Up to 40% OFF on Bikes
             </Box>
-            <Box display={{ xs: "none", sm: "none", md: "block" }}>
-              <ShopButton href={`shop/transition`}>Shop Sale</ShopButton>
-            </Box>
-            <Box display={{ xs: "block", sm: "block", md: "none" }}>
-              <ShopButtonSmall href={`shop/transition`}>
-                Shop Sale
-              </ShopButtonSmall>
+            <Box m={{ xs: 0.5, sm: 1, md: 2 }}>
+              <ShopButton href={`shop/transition`}>
+                <Box
+                  p={{ xs: 0.2, sm: 0.4, md: 0.8 }}
+                  fontSize={{ xs: "10px", sm: "14px", md: "16px" }}
+                  textTransform={"none"}
+                >
+                  Shop Transition
+                </Box>
+              </ShopButton>
             </Box>
           </Box>
         </Fade>

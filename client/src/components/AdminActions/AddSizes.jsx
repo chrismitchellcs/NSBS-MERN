@@ -2,18 +2,22 @@ import { Box, Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 
 const AddSizes = ({ sizes, setSizes }) => {
   const allSizes = [
+    '10"',
     '12"',
     '14"',
     '16"',
     '20"',
     '24"',
-    "XXS",
-    "XS",
-    "S",
-    "M",
-    "L",
-    "XL",
-    "XXL",
+    "Short",
+    "Long",
+    "X-Long",
+    "XX-Small",
+    "X-Small",
+    "Small",
+    "Medium",
+    "Large",
+    "X-Large",
+    "XX-Large",
     "1",
     "2",
     "3",
@@ -35,8 +39,6 @@ const AddSizes = ({ sizes, setSizes }) => {
   };
 
   const handleClick = (e) => {
-    console.log(e.target.value);
-    console.log(e.target.checked);
     const size = e.target.value;
     const checked = e.target.checked;
 

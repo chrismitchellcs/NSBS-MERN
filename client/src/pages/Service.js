@@ -19,7 +19,7 @@ const Service = () => {
     { item: "Brake Adjustment / Replace Pads", price: "	$25" },
     { item: "Brake Bleed", price: "	$40	" },
     { item: "Wheel True / Spoke Replacement", price: "	$35 - 55" },
-    { item: "Wheel Build (includes spokes, nipples, and tape)", price: "	$145" },
+    { item: "Wheel Build (includes spokes, nipples, and tape)", price: "	$160" },
     { item: "Hub Service", price: "	$45 - $65	" },
     { item: "Headset Install", price: "	$40	" },
     { item: "Bottom Bracket Install", price: "	$40" },

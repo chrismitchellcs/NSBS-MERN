@@ -111,7 +111,6 @@ const EditSizes = ({ bike, setBikes }) => {
                 value={size}
                 control={<Checkbox />}
                 label={size}
-                // labelPlacement="top"
               />
             );
           })}

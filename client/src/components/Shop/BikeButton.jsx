@@ -13,7 +13,10 @@ const BikeButton = ({ bike }) => {
     navigate(`/shop/${brand}/${bike._id}`);
   };
 
-  const image = JSON.parse(bike.images)[0];
+  const images = JSON.parse(bike.colors);
+  const firstImage = Object.values(images)[0];
+
+  const image = firstImage;
   return (
     // <Button
     //   onClick={handleClick}
@@ -124,13 +127,25 @@ const BikeButton = ({ bike }) => {
             ></Box>
           )}
         </Box>
+
         <Image
           cloudName="ds4ukwnxl"
           publicId={image}
           width="270"
           height="180"
           crop="pad"
-        ></Image>
+          background="auto"
+          quality="1" // absolute minimum quality
+          fetchFormat="jpg" // disables WebP/AVIF smart compression
+          alt="bike"
+          style={{
+            width: "270px",
+            height: "180px",
+            objectFit: "contain",
+            display: "block",
+          }}
+        />
+
         {bike.material === "N/A" ? (
           <Box color={"black"} fontSize={"14px"} fontWeight={"400"}>
             {bike.brand} {bike.name}
