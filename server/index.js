@@ -5,20 +5,11 @@ const mongoose = require("mongoose");
 const bikeRoutes = require("./routes/bikes");
 const authRoutes = require("./routes/auth");
 const imageRoutes = require("./routes/images");
-const bcrypt = require("bcrypt");
 const session = require("express-session");
-
-// express
-const app = express();
 const cors = require("cors");
+const serverless = require("serverless-http");
 
-// middleware
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb", extended: true }));
-app.use((req, res, next) => {
-  console.log(req.path, req.method);
-  next();
-});
+const app = express();
 
 const allowedOrigins = [
   "http://localhost:3000",
@@ -27,54 +18,53 @@ const allowedOrigins = [
   "https://www.northshorebikeshop.net",
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
+// Middleware for logging requests
+app.use((req, res, next) => {
+  console.log(req.path, req.method);
+  next();
+});
 
+// Parse JSON and URL-encoded data
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+// CORS options for all routes
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+  optionsSuccessStatus: 204,
+  preflightContinue: false,
+};
+
+// Handle OPTIONS preflight requests *before* other routes
+app.options("*", cors(corsOptions));
+
+// Apply CORS middleware globally (optional; can also be applied per route)
+app.use(cors(corsOptions));
+
+// Session setup
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 2, httpOnly: true }, // 2-hour session
+    cookie: { maxAge: 1000 * 60 * 60 * 2, httpOnly: true }, // 2 hours
   })
 );
 
-// routes
-const corsOptions = {
-  origin: "http://localhost:3000",
-  credentials: true,
-};
-
-// Apply CORS specifically per route
+// Routes with CORS explicitly applied again (safe redundancy)
 app.use("/api/bikes", cors(corsOptions), bikeRoutes);
 app.use("/api/auth", cors(corsOptions), authRoutes);
 app.use("/api/images", cors(corsOptions), imageRoutes);
 
-// connect to db
-// mongoose
-//   .connect(process.env.ATLAS_URI)
-//   .then(() => {
-//     // listen for requests
-//     app.listen(process.env.PORT, () =>
-//       console.log(`Connected to DB, server running on port ${process.env.PORT}`)
-//     );
-//   })
-//   .catch((error) => {
-//     console.log(error);
-//   });
-
-const serverless = require("serverless-http");
-
+// Connect to MongoDB
 const mongooseConnection = mongoose
   .connect(process.env.ATLAS_URI)
   .then(() => {
@@ -84,11 +74,10 @@ const mongooseConnection = mongoose
     console.error("MongoDB connection error:", error);
   });
 
+// Export handler for serverless environment (Vercel)
 const handler = serverless(app);
 
 module.exports = async (req, res) => {
   await mongooseConnection;
   return handler(req, res);
 };
-
-// module.exports = app;
