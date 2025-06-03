@@ -1,9 +1,11 @@
+// api/index.js
 const express = require("express");
 const serverless = require("serverless-http");
 const cors = require("cors");
 
 const app = express();
 
+// CORS - allow frontend
 app.use(
   cors({
     origin: ["http://localhost:3000", "https://your-frontend.vercel.app"],
@@ -11,9 +13,9 @@ app.use(
   })
 );
 
-app.get("/test", (req, res) => {
+// Test route
+app.get("/api/test", (req, res) => {
   res.json({ message: "API working! ✅" });
 });
 
-// ✅ Final export
-module.exports.handler = serverless(app);
+module.exports = serverless(app);
