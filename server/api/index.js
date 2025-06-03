@@ -12,11 +12,11 @@ const MongoStore = require("connect-mongo");
 
 const app = express();
 
-// ✅ CORS Whitelist
 const allowedOrigins = [
   "http://localhost:3000",
   "https://nsbs-mern-frontend-f20uiuyrs-chris-projects-04c8e11c.vercel.app",
   "https://nsbs-mern-frontend-gw2wswtrg-chris-projects-04c8e11c.vercel.app",
+  "https://nsbs-mern-frontend-git-test-branch-chris-projects-04c8e11c.vercel.app", // <--- Add this
   "https://www.northshorebikeshop.net",
 ];
 
