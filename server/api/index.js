@@ -13,9 +13,8 @@ app.use(
   })
 );
 
-// Test route
-app.get("/api/test", (req, res) => {
-  res.json({ message: "API working! ✅" });
+app.get("/", (req, res) => {
+  res.send("Backend root — nothing here except 404 by default.");
 });
 
 module.exports = serverless(app);
