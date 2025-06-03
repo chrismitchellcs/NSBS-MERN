@@ -93,6 +93,18 @@ const AboutUs = () => {
     }
   };
 
+  const testAPI = () => {
+    fetch(
+      "https://nsbs-mern-api-git-test-branch-chris-projects-04c8e11c.vercel.app/api/test",
+      {
+        credentials: "include",
+      }
+    )
+      .then((res) => res.json())
+      .then(console.log)
+      .catch(console.error);
+  };
+
   return (
     <Stack
       pt={5}
@@ -235,6 +247,7 @@ const AboutUs = () => {
           </Fade>
         )}
       </Box>
+      <Button onClick={testAPI}>test</Button>
     </Stack>
   );
 };
