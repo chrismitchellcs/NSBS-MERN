@@ -50,6 +50,8 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+app.options("*", cors(corsOptions));
+
 // ✅ Sessions
 app.use(
   session({
