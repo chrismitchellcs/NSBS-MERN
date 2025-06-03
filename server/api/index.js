@@ -18,5 +18,4 @@ app.get("/api/test", (req, res) => {
   res.json({ message: "API working! ✅" });
 });
 
-module.exports = app;
 module.exports.handler = serverless(app);
