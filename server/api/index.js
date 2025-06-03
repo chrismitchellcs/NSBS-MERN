@@ -38,16 +38,31 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // ✅ CORS
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS: " + origin));
+//     }
+//   },
+//   credentials: true,
+// };
+// app.use(cors(corsOptions));
+
 const corsOptions = {
   origin: function (origin, callback) {
+    console.log("CORS origin:", origin);
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.log("Blocked CORS for origin:", origin);
       callback(new Error("Not allowed by CORS: " + origin));
     }
   },
   credentials: true,
 };
+
 app.use(cors(corsOptions));
 
 app.options("*", cors(corsOptions));
