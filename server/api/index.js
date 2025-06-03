@@ -4,6 +4,7 @@ const serverless = require("serverless-http");
 const cors = require("cors");
 
 const app = express();
+console.log("Starting server...");
 
 // CORS - allow frontend
 app.use(
