@@ -20,7 +20,7 @@ const allowedOrigins = [
 
 // Middleware for logging requests
 app.use((req, res, next) => {
-  console.log(req.path, req.method);
+  console.log(req.path, req.method, req.headers.origin);
   next();
 });
 
@@ -28,9 +28,9 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-// CORS options for all routes
 const corsOptions = {
   origin: function (origin, callback) {
+    console.log("Incoming Origin:", origin);
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -38,18 +38,12 @@ const corsOptions = {
     }
   },
   credentials: true,
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-  optionsSuccessStatus: 204,
-  preflightContinue: false,
 };
 
-// Handle OPTIONS preflight requests *before* other routes
-app.options("*", cors(corsOptions));
-
-// Apply CORS middleware globally (optional; can also be applied per route)
+// ✅ Only apply CORS once, globally
 app.use(cors(corsOptions));
 
-// Session setup
+// ✅ Clean cookie config
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -57,17 +51,17 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 1000 * 60 * 60 * 2,
     },
   })
 );
 
-// Routes with CORS explicitly applied again (safe redundancy)
-app.use("/api/bikes", cors(corsOptions), bikeRoutes);
-app.use("/api/auth", cors(corsOptions), authRoutes);
-app.use("/api/images", cors(corsOptions), imageRoutes);
+// ✅ No need to add CORS to every route again
+app.use("/api/bikes", bikeRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/images", imageRoutes);
 
 // Connect to MongoDB
 const mongooseConnection = mongoose
