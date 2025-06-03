@@ -1,7 +1,19 @@
-module.exports = (req, res) => {
-  if (req.url === "/api/test") {
-    res.status(200).json({ message: "API working! ✅" });
-  } else {
-    res.status(404).json({ error: "Not found" });
-  }
-};
+const express = require("express");
+const serverless = require("serverless-http");
+const cors = require("cors");
+
+const app = express();
+
+app.use(
+  cors({
+    origin: "*", // Or restrict to specific domains
+    credentials: true,
+  })
+);
+
+// Test route
+app.get("/test", (req, res) => {
+  res.json({ message: "Express + Serverless working ✅" });
+});
+
+module.exports = serverless(app);
