@@ -8,6 +8,7 @@ const imageRoutes = require("./routes/images");
 const session = require("express-session");
 const cors = require("cors");
 const serverless = require("serverless-http");
+const MongoStore = require("connect-mongo");
 
 const app = express();
 
@@ -49,6 +50,10 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.ATLAS_URI,
+      collectionName: "sessions",
+    }),
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

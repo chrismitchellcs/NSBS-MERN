@@ -54,7 +54,9 @@ const EditColors = ({ bike, setBikes }) => {
   const fetchBikes = async () => {
     console.log(process.env.REACT_APP_VERCEL_DOMAIN);
     await axios
-      .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {})
+      .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {
+        withCredentials: true,
+      })
       .then((res) => {
         setBikes(res.data);
       })

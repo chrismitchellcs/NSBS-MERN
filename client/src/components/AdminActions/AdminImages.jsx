@@ -9,7 +9,9 @@ const AdminImages = ({ images, setImages }) => {
 
   const loadImages = async () => {
     await axios
-      .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/images`)
+      .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/images`, {
+        withCredentials: true,
+      })
       // .get(`http://localhost:5050/api/images`)
       .then((res) => {
         if (res.data.length > 0) {

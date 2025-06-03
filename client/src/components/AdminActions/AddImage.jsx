@@ -65,9 +65,13 @@ const AddImage = () => {
     console.log(data);
     return new Promise(async (resolve, reject) => {
       await axios
-        .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/images`, {
-          data,
-        })
+        .post(
+          `${process.env.REACT_APP_VERCEL_DOMAIN}/api/images`,
+          {
+            data,
+          },
+          { withCredentials: true }
+        )
         .then((res) => {
           console.log(res);
           resolve();

@@ -34,7 +34,9 @@ const AddNewBike = () => {
 
   const fetchBikes = async () => {
     await axios
-      .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/other`, {})
+      .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/other`, {
+        withCredentials: true,
+      })
       .then((res) => {
         setBikes(res.data);
       })

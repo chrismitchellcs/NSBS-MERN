@@ -32,20 +32,24 @@ const AddBike = ({ setBikes }) => {
     console.log(images);
     console.log(sizes);
     await axios
-      .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {
-        brand,
-        type,
-        material,
-        name,
-        sizes,
-        sizesa,
-        sizesis,
-        price,
-        saleprice,
-        images,
-        description,
-        link,
-      })
+      .post(
+        `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`,
+        {
+          brand,
+          type,
+          material,
+          name,
+          sizes,
+          sizesa,
+          sizesis,
+          price,
+          saleprice,
+          images,
+          description,
+          link,
+        },
+        { withCredentials: true }
+      )
       .then((res) => {
         setBikes(res.data);
       })

@@ -58,7 +58,9 @@ const AdminBikes = () => {
   const handleClick = async (e) => {
     const bikeID = e.target.id;
     await axios
-      .delete(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${bikeID}`, {})
+      .delete(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${bikeID}`, {
+        withCredentials: true,
+      })
       .then((res) => {
         setBikes(res.data);
       })
@@ -70,7 +72,9 @@ const AdminBikes = () => {
     const fetchBikes = async () => {
       console.log(process.env.REACT_APP_VERCEL_DOMAIN);
       await axios
-        .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {})
+        .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {
+          withCredentials: true,
+        })
         .then((res) => {
           setBikes(res.data);
         })
