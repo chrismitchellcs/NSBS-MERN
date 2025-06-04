@@ -38,39 +38,47 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // ✅ CORS
-const corsOptions = {
-  origin: function (origin, callback) {
-    console.log("CORS origin:", origin);
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log("Blocked CORS for origin:", origin);
-      callback(new Error("Not allowed by CORS: " + origin));
-    }
-  },
-  credentials: true,
-};
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     console.log("CORS origin:", origin);
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       console.log("Blocked CORS for origin:", origin);
+//       callback(new Error("Not allowed by CORS: " + origin));
+//     }
+//   },
+//   credentials: true,
+// };
+// app.use(cors(corsOptions));
+// app.options("*", cors(corsOptions));
+app.use(
+  cors({
+    origin: true, // Reflects request origin, allowing all origins
+    credentials: true,
+  })
+);
+
+app.options("*", cors()); // enable pre-flight for all routes
 
 // ✅ Sessions
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET,
-//     resave: false,
-//     saveUninitialized: false,
-//     store: MongoStore.create({
-//       mongoUrl: process.env.ATLAS_URI,
-//       collectionName: "sessions",
-//     }),
-//     cookie: {
-//       httpOnly: true,
-//       secure: process.env.NODE_ENV === "production",
-//       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-//       maxAge: 1000 * 60 * 60 * 2,
-//     },
-//   })
-// );
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.ATLAS_URI,
+      collectionName: "sessions",
+    }),
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 1000 * 60 * 60 * 2,
+    },
+  })
+);
 
 // ✅ Routes
 app.use("/api/bikes", bikeRoutes);
