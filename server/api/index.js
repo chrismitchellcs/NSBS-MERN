@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
-✅ CORS
+// ✅ CORS
 const corsOptions = {
   origin: function (origin, callback) {
     console.log("CORS origin:", origin);
@@ -61,7 +61,7 @@ app.use(
 
 app.options("*", cors()); // enable pre-flight for all routes
 
-✅ Sessions
+// ✅ Sessions
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
