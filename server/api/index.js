@@ -12,6 +12,9 @@ const imageRoutes = require("./routes/images");
 
 const app = express();
 
+// Trust the first proxy (important for secure cookies behind Vercel)
+app.set("trust proxy", 1);
+
 const allowedOrigins = [
   "http://localhost:3000",
   "https://nsbs-mern-frontend-f20uiuyrs-chris-projects-04c8e11c.vercel.app",
@@ -20,7 +23,7 @@ const allowedOrigins = [
   "https://www.northshorebikeshop.net",
 ];
 
-// ✅ Request Logger
+// Request Logger
 app.use((req, res, next) => {
   console.log(
     "PATH:",
@@ -33,11 +36,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ Body Parsers
+// Body Parsers
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
-// ✅ CORS
+// CORS
 const corsOptions = {
   origin: function (origin, callback) {
     console.log("CORS origin:", origin);
@@ -52,13 +55,8 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
-// app.use(
-//   cors({
-//     origin: true, // Reflects request origin, allowing all origins
-//     credentials: true,
-//   })
 
-// ✅ Sessions
+// Sessions
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -72,28 +70,17 @@ app.use(
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 1000 * 60 * 60 * 2,
+      maxAge: 1000 * 60 * 60 * 2, // 2 hours
     },
   })
 );
 
-// app.use(
-//   cors({
-//     origin: "*", // Allow all origins
-//     credentials: false, // No cookies or auth headers
-//   })
-// );
-
-// app.get("/api/debug-test", (req, res) => {
-//   res.json({ success: true });
-// });
-
-// ✅ Routes
+// Routes
 app.use("/api/bikes", bikeRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/images", imageRoutes);
 
-// ✅ MongoDB Connection (cached)
+// MongoDB Connection (cached)
 let connectionPromise;
 if (!connectionPromise) {
   connectionPromise = mongoose
@@ -102,12 +89,13 @@ if (!connectionPromise) {
     .catch((err) => console.error("❌ MongoDB connection error:", err));
 }
 
+// Vercel Serverless Handler
 module.exports = async (req, res) => {
   console.log("✅ Handling request to:", req.method, req.url);
 
   await connectionPromise;
 
-  // Manually run middleware stack
+  // Run Express middleware stack
   await new Promise((resolve, reject) => {
     app(req, res, (err) => {
       if (err) return reject(err);
@@ -120,7 +108,7 @@ module.exports = async (req, res) => {
   }
 };
 
-// ✅ Optional: Local Dev Support
+// Optional: Local Development Support
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
   connectionPromise.then(() => {
