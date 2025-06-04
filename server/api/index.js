@@ -108,13 +108,18 @@ module.exports = async (req, res) => {
   await connectionPromise;
 
   // Manually run middleware stack
-  return new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     app(req, res, (err) => {
       if (err) return reject(err);
       resolve();
     });
   });
+
+  if (!res.writableEnded) {
+    res.end();
+  }
 };
+
 // ✅ Optional: Local Dev Support
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
