@@ -52,14 +52,11 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
-app.use(
-  cors({
-    origin: true, // Reflects request origin, allowing all origins
-    credentials: true,
-  })
-);
-
-app.options("*", cors()); // enable pre-flight for all routes
+// app.use(
+//   cors({
+//     origin: true, // Reflects request origin, allowing all origins
+//     credentials: true,
+//   })
 
 // ✅ Sessions
 app.use(
@@ -87,9 +84,9 @@ app.use(
 //   })
 // );
 
-app.get("/api/debug-test", (req, res) => {
-  res.json({ success: true });
-});
+// app.get("/api/debug-test", (req, res) => {
+//   res.json({ success: true });
+// });
 
 // ✅ Routes
 app.use("/api/bikes", bikeRoutes);
