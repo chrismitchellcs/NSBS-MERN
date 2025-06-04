@@ -82,6 +82,13 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 //   })
 // );
 
+app.use(
+  cors({
+    origin: "*", // Allow all origins
+    credentials: false, // No cookies or auth headers
+  })
+);
+
 app.get("/api/bikes/test", (req, res) => {
   res.json({ success: true, message: "No auth required here" });
 });
