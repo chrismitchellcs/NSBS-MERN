@@ -89,10 +89,9 @@ app.use(
   })
 );
 
-app.get("/api/bikes/test", (req, res) => {
-  res.json({ success: true, message: "No auth required here" });
+app.get("/api/debug-test", (req, res) => {
+  res.json({ success: true });
 });
-
 // ✅ Routes
 app.use("/api/bikes", bikeRoutes);
 app.use("/api/auth", authRoutes);
