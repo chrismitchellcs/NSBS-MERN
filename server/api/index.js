@@ -89,7 +89,7 @@ if (!connectionPromise) {
 // ✅ Vercel Serverless Export
 module.exports = async (req, res) => {
   await connectionPromise;
-  app(req, res); // Let Express handle the request directly
+  return app.handle(req, res); // Let Express handle the request directly
 };
 
 // ✅ Optional: Local Dev Support
