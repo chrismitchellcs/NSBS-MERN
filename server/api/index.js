@@ -92,6 +92,7 @@ app.use(
 app.get("/api/debug-test", (req, res) => {
   res.json({ success: true });
 });
+
 // ✅ Routes
 app.use("/api/bikes", bikeRoutes);
 app.use("/api/auth", authRoutes);
