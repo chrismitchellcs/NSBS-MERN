@@ -52,33 +52,39 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 // };
 // app.use(cors(corsOptions));
 // app.options("*", cors(corsOptions));
-app.use(
-  cors({
-    origin: true, // Reflects request origin, allowing all origins
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: true, // Reflects request origin, allowing all origins
+//     credentials: true,
+//   })
+// );
 
-app.options("*", cors()); // enable pre-flight for all routes
+// app.options("*", cors()); // enable pre-flight for all routes
 
 // ✅ Sessions
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.ATLAS_URI,
-      collectionName: "sessions",
-    }),
-    cookie: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 1000 * 60 * 60 * 2,
-    },
-  })
-);
+// app.use(
+//   session({
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     store: MongoStore.create({
+//       mongoUrl: process.env.ATLAS_URI,
+//       collectionName: "sessions",
+//     }),
+//     cookie: {
+//       httpOnly: true,
+//       // secure: process.env.NODE_ENV === "production",
+//       secure: false,
+//       // sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+//       sameSite: "lax",
+//       maxAge: 1000 * 60 * 60 * 2,
+//     },
+//   })
+// );
+
+app.get("/api/bikes/test", (req, res) => {
+  res.json({ success: true, message: "No auth required here" });
+});
 
 // ✅ Routes
 app.use("/api/bikes", bikeRoutes);
