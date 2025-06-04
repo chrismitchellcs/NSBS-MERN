@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_VERCEL_DOMAIN}/api/auth/login"`,
+        `${process.env.REACT_APP_VERCEL_DOMAIN}/api/auth/login`,
         {
           method: "POST",
           credentials: "include", // Important to include cookies
