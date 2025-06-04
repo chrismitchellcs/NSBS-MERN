@@ -86,12 +86,19 @@ if (!connectionPromise) {
     .catch((err) => console.error("❌ MongoDB connection error:", err));
 }
 
-// ✅ Vercel Serverless Export
 module.exports = async (req, res) => {
-  await connectionPromise;
-  return app.handle(req, res); // Let Express handle the request directly
-};
+  console.log("✅ Handling request to:", req.method, req.url);
 
+  await connectionPromise;
+
+  // Manually run middleware stack
+  return new Promise((resolve, reject) => {
+    app(req, res, (err) => {
+      if (err) return reject(err);
+      resolve();
+    });
+  });
+};
 // ✅ Optional: Local Dev Support
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
