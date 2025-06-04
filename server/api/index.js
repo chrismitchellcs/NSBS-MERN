@@ -16,4 +16,4 @@ app.get("/test", (req, res) => {
   res.json({ message: "Express + Serverless working ✅" });
 });
 
-module.exports = serverless(app);
+module.exports.handler = serverless(app);
