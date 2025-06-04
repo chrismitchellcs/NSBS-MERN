@@ -31,7 +31,7 @@ const Home = () => {
        */}
       <AboutUs></AboutUs>
       {/* <FadeInSection> */}
-      <Announcements></Announcements>
+      {/* <Announcements></Announcements> */}
       {/* </FadeInSection> */}
 
       {/* <FadeInSection> */}

@@ -27,14 +27,17 @@ export const AuthProvider = ({ children }) => {
   // Login function
   const login = async (username, password) => {
     try {
-      const response = await fetch("http://localhost:5050/api/auth/login", {
-        method: "POST",
-        credentials: "include", // Important to include cookies
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_VERCEL_DOMAIN}/api/auth/login"`,
+        {
+          method: "POST",
+          credentials: "include", // Important to include cookies
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        }
+      );
 
       if (response.ok) {
         console.log("setting is authenticated to true");
