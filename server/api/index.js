@@ -6,9 +6,9 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const cors = require("cors");
 
-const bikeRoutes = require("../routes/bikes");
-const authRoutes = require("../routes/auth");
-const imageRoutes = require("../routes/images");
+const bikeRoutes = require("./routes/bikes");
+const authRoutes = require("./routes/auth");
+const imageRoutes = require("./routes/images");
 
 const app = express();
 
