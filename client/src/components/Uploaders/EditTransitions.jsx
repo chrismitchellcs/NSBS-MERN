@@ -24,7 +24,7 @@ const EditTransitions = ({ bikes, setBikes }) => {
 
   const fetchBikes = async () => {
     await axios
-      .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition`, {})
+      .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/alltransition`, {})
       .then((res) => {
         setBikes(res.data);
       })
@@ -96,7 +96,7 @@ const EditTransitions = ({ bikes, setBikes }) => {
         setEdit(false);
       };
 
-      const [type, setType] = useState("");
+      const [type, setType] = useState(bike.type);
 
       const handleTypeChange = (e) => {
         const type = e.target.value;
@@ -182,10 +182,16 @@ const EditTransitions = ({ bikes, setBikes }) => {
               id="description"
               label="Description"
               variant="outlined"
+              defaultValue={bike.description}
               multiline
             />
 
-            <TextField id="link" label="Link" variant="outlined" />
+            <TextField
+              id="link"
+              label="Link"
+              variant="outlined"
+              defaultValue={bike.link}
+            />
             <Button type="submit" variant="contained" color="success">
               Save
             </Button>
@@ -268,7 +274,9 @@ const EditTransitions = ({ bikes, setBikes }) => {
 
         try {
           const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${sigData.cloudName}/image/upload`;
-          const uploadRes = await axios.post(cloudinaryUrl, formData);
+          const uploadRes = await axios.post(cloudinaryUrl, formData, {
+            withCredentials: false,
+          });
           const uploadedData = await uploadRes.data;
           console.log("Uploaded successfully:", uploadedData.secure_url);
           await updatePhoto(uploadedData.secure_url);
