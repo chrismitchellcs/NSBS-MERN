@@ -430,7 +430,9 @@ const AddNewBike = () => {
 
         try {
           const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${sigData.cloudName}/image/upload`;
-          const uploadRes = await axios.post(cloudinaryUrl, formData);
+          const uploadRes = await axios.post(cloudinaryUrl, formData, {
+            withCredentials: false,
+          });
           const uploadedData = await uploadRes.data;
           console.log("Uploaded successfully:", uploadedData.secure_url);
           await updatePhoto(uploadedData.secure_url);
