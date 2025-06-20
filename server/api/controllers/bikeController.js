@@ -162,7 +162,7 @@ function parsePrice(priceString) {
   if (!priceString || typeof priceString !== "string") return 0;
   const cleaned = priceString.replace(/[^0-9.-]+/g, "");
   const parsed = parseFloat(cleaned);
-  return isNaN(parsed) ? 0 : parsed;
+  return isNaN(parsed) ? 0 : Math.round(parsed);
 }
 
 const addTransitions = async (req, res) => {
