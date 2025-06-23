@@ -39,7 +39,15 @@ const BikeGrid = ({ bikes }) => {
         <Grid container>
           {bikes.map((bike) => {
             return (
-              <Grid item xs={12} sm={12} md={6} lg={4} textAlign={"center"}>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={6}
+                lg={4}
+                xl={3}
+                textAlign={"center"}
+              >
                 <BikeButton bike={bike}></BikeButton>
               </Grid>
             );

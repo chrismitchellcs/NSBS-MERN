@@ -163,17 +163,19 @@ export default function CheckboxList({
                 onClick={handleBrandToggle(value)}
                 dense
               >
-                <ListItemIcon>
+                <ListItemIcon sx={{ minWidth: 0 }}>
                   <Checkbox
                     edge="start"
                     checked={checkedBrands.includes(value)}
                     tabIndex={-1}
                     disableRipple
-                    sx={{ pt: 0, pb: 0 }}
-                    inputProps={{ "aria-labelledby": labelId }}
-                    style={{
-                      color: "#3c5d4e",
+                    sx={{
+                      pt: 0,
+                      pb: 0,
+                      transform: "scale(0.8)", // scales checkbox to 80% size
                     }}
+                    inputProps={{ "aria-labelledby": labelId }}
+                    style={{ color: "#3c5d4e" }}
                   />
                 </ListItemIcon>
                 <ListItemText id={labelId} primary={value} />
@@ -202,17 +204,19 @@ export default function CheckboxList({
                 onClick={handleTypeToggle(value)}
                 dense
               >
-                <ListItemIcon>
+                <ListItemIcon sx={{ minWidth: 0 }}>
                   <Checkbox
                     edge="start"
                     checked={checkedTypes.includes(value)}
                     tabIndex={-1}
                     disableRipple
-                    sx={{ pt: 0, pb: 0 }}
-                    inputProps={{ "aria-labelledby": labelId }}
-                    style={{
-                      color: "#3c5d4e",
+                    sx={{
+                      pt: 0,
+                      pb: 0,
+                      transform: "scale(0.8)", // scales checkbox to 80% size
                     }}
+                    inputProps={{ "aria-labelledby": labelId }}
+                    style={{ color: "#3c5d4e" }}
                   />
                 </ListItemIcon>
                 <ListItemText id={labelId} primary={value} />

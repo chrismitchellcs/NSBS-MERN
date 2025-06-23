@@ -2,6 +2,20 @@ import { Box, Button, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Image } from "cloudinary-react";
 import FadeInSection from "components/General/FadeInSection";
+
+function extractPublicId(cloudinaryUrl) {
+  try {
+    const parts = cloudinaryUrl.split("/upload/");
+    if (parts.length < 2) return null;
+
+    // Remove version string if it exists (e.g., v1748840541/)
+    const path = parts[1].replace(/^v\d+\//, "");
+    return decodeURIComponent(path); // handle special characters like é
+  } catch {
+    return null;
+  }
+}
+
 const BikeButton = ({ bike }) => {
   const navigate = useNavigate();
   const handleClick = (e) => {
@@ -17,6 +31,7 @@ const BikeButton = ({ bike }) => {
   const firstImage = Object.values(images)[0];
 
   const image = firstImage;
+
   return (
     // <Button
     //   onClick={handleClick}
@@ -128,18 +143,33 @@ const BikeButton = ({ bike }) => {
           )}
         </Box>
 
-        <Image
+        {/* <Image
           cloudName="ds4ukwnxl"
           publicId={image}
           width="270"
           height="180"
           crop="pad"
-          background="auto"
-          quality="1" // absolute minimum quality
-          fetchFormat="jpg" // disables WebP/AVIF smart compression
           alt="bike"
+          quality="auto:low"
+          fetchFormat="auto"
           style={{
             width: "270px",
+            height: "180px",
+            objectFit: "contain",
+            display: "block",
+          }}
+        /> */}
+        <Image
+          cloudName="ds4ukwnxl"
+          publicId={extractPublicId(image)}
+          width="540" // double the displayed width
+          height="360" // double the displayed height
+          crop="pad"
+          quality="100" // highest quality
+          fetchFormat="auto" // modern formats for sharpness & smaller size
+          alt="bike"
+          style={{
+            width: "270px", // display smaller for crispness
             height: "180px",
             objectFit: "contain",
             display: "block",

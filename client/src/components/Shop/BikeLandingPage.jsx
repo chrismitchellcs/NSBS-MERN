@@ -30,6 +30,7 @@ const availabilityMap = {
   "In Stock": "Available",
   "Pre-Order": "Contact Us",
   "Out of Stock": "Out of Stock",
+  "Out Of Stock": "Out of Stock",
   "Low Stock (1)": "Contact Us",
   "Low Stock (2)": "Contact Us",
   "Low Stock (3)": "Contact Us",
@@ -53,6 +54,19 @@ const SeeMoreButton = styled(Button)({
   },
 });
 
+function extractPublicId(cloudinaryUrl) {
+  try {
+    const parts = cloudinaryUrl.split("/upload/");
+    if (parts.length < 2) return null;
+
+    // Remove version string if it exists (e.g., v1748840541/)
+    const path = parts[1].replace(/^v\d+\//, "");
+    return decodeURIComponent(path); // handle special characters like é
+  } catch {
+    return null;
+  }
+}
+
 const BikeLandingPage = ({ bike }) => {
   const images = JSON.parse(bike.colors);
   const [currentImage, setCurrentImage] = useState(Object.values(images)[0]);
@@ -69,20 +83,24 @@ const BikeLandingPage = ({ bike }) => {
       <Stack
         direction={{ xs: "column", sm: "column", md: "row" }}
         alignItems={{ xs: "center", md: "flex-start" }}
+        spacing={{ xs: 0, md: 5, xl: 10 }}
+        justifyContent={"center"}
       >
         <Stack alignItems={"center"} pt={2}>
           <Image
             cloudName="ds4ukwnxl"
-            publicId={currentImage}
-            alt="bike"
+            publicId={extractPublicId(currentImage)}
+            width="1200" // double width for retina sharpness
+            crop="pad"
+            quality="100" // max quality
+            fetchFormat="auto" // modern format support
+            alt={`bike`}
             style={{
               width: "100%",
-              maxWidth: "800px",
-              height: "auto",
+              display: "block",
+              objectFit: "contain",
             }}
-          >
-            <Transformation crop="pad" />
-          </Image>
+          />
           <Stack direction={"row"} spacing={1}>
             {Object.entries(images).map(([key, value]) => (
               <Button
@@ -109,10 +127,18 @@ const BikeLandingPage = ({ bike }) => {
                 <Stack alignItems={"center"}>
                   <Image
                     cloudName="ds4ukwnxl"
-                    publicId={value}
-                    width="100"
+                    publicId={extractPublicId(value)}
+                    width="150" // double width for retina sharpness
                     crop="pad"
-                  ></Image>
+                    quality="100" // max quality
+                    fetchFormat="auto" // modern format support
+                    alt={`bike`}
+                    style={{
+                      width: "100px",
+                      display: "block",
+                      objectFit: "contain",
+                    }}
+                  />
                   <Box fontSize={"12px"} fontWeight={"300"}>
                     {key}
                   </Box>
@@ -129,9 +155,32 @@ const BikeLandingPage = ({ bike }) => {
 
           <Stack direction={"row"} spacing={1}>
             {" "}
-            <Box fontSize={"24px"} fontWeight={"400"}>
-              ${bike.price}
-            </Box>{" "}
+            {bike.saleprice === 0 ? (
+              <Box fontSize={"24px"} fontWeight={"400"}>
+                ${bike.price.toLocaleString()}
+              </Box>
+            ) : (
+              <Box
+                display={"flex"}
+                justifyContent={{
+                  xs: "center",
+                  sm: "center",
+                  md: "flex-start",
+                }}
+              >
+                <Box
+                  color={"black"}
+                  fontSize={"24px"}
+                  fontWeight={"300"}
+                  sx={{ textDecoration: "line-through", mr: 1 }}
+                >
+                  ${bike.price.toLocaleString()}
+                </Box>
+                <Box color={"black"} fontSize={"24px"} fontWeight={"400"}>
+                  ${bike.saleprice.toLocaleString()}
+                </Box>
+              </Box>
+            )}
             <Box fontSize={"24px"} fontWeight={"300"}>
               CAD
             </Box>
@@ -175,10 +224,18 @@ const BikeLandingPage = ({ bike }) => {
                     <Stack direction={"row"} alignItems={"center"} spacing={1}>
                       <Image
                         cloudName="ds4ukwnxl"
-                        publicId={images[model.color]}
-                        width="75"
+                        publicId={extractPublicId(images[model.color])}
+                        width="150" // double width for retina sharpness
                         crop="pad"
-                      ></Image>
+                        quality="100" // max quality
+                        fetchFormat="auto" // modern format support
+                        alt={`${model.color} bike`}
+                        style={{
+                          width: "75px",
+                          display: "block",
+                          objectFit: "contain",
+                        }}
+                      />
                       <Box fontSize={"12px"} fontWeight={"300"}>
                         {model.color}
                       </Box>

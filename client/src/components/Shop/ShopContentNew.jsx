@@ -14,7 +14,7 @@ import SearchBar from "./SearchBar";
 import { AppBar, Button, Stack, styled } from "@mui/material";
 import LoadingBikes from "./LoadingBikes";
 
-const drawerWidth = 240;
+const drawerWidth = 220;
 
 export default function ShopContentNew(props) {
   function capitalizeFirstLetter(val) {
