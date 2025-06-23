@@ -22,7 +22,7 @@ const ContactInfo = () => {
           fontSize: "22px",
         }}
       >
-        <Box sx={{ fontSize: "30px", margin: 2 }}>NORTH SHORE BIKE SHOP</Box>
+        <Box sx={{ fontSize: "25px", margin: 2 }}>NORTH SHORE BIKE SHOP</Box>
         <Box sx={{ fontSize: "20px", margin: 2, fontWeight: "300" }}>
           North Vancouver
         </Box>

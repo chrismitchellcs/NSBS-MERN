@@ -76,8 +76,6 @@ const BikeLandingPage = ({ bike }) => {
     return a.color.localeCompare(b.color);
   });
 
-  console.log(sortedModels);
-
   return (
     <Stack pl={{ xs: 1, md: 10 }} pr={{ xs: 1, md: 10 }} pb={5} spacing={5}>
       <Stack
