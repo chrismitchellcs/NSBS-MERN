@@ -37,10 +37,12 @@ const getBikesByBrand = async (req, res) => {
   const brand = req.body.brand;
 
   try {
-    const bikes = await AllBikes.find({ brand: brand, public: true }).sort({
-      brand: 1,
-      name: 1,
-    });
+    const bikes = await AllBikes.find({ brand: brand, public: true })
+      .sort({
+        brand: 1,
+        name: 1,
+      })
+      .limit(20);
     res.status(200).json(bikes);
   } catch (error) {
     res.status(400);

@@ -100,49 +100,53 @@ const BikeLandingPage = ({ bike }) => {
             }}
           />
           <Stack direction={"row"} spacing={1}>
-            {Object.entries(images).map(([key, value]) => (
-              <Button
-                sx={{
-                  m: 0,
-                  p: 0.5,
-                  borderRadius: 2,
-                  transition: "background-color 0.5s ease",
-                  textTransform: "none",
-                  color: "black",
-                  "&:hover": {
-                    backgroundColor: "#c0c0c0",
-                    color: "black",
-                    "& img": {
-                      filter: " brightness(0.75)  contrast(1); ", // makes a white image appear dark
-                    },
-                  },
-                  "& img": {
-                    transition: "filter 0.5s ease", // <-- image filter transition
-                  },
-                }}
-                onClick={() => setCurrentImage(value)}
-              >
-                <Stack alignItems={"center"}>
-                  <Image
-                    cloudName="ds4ukwnxl"
-                    publicId={extractPublicId(value)}
-                    width="150" // double width for retina sharpness
-                    crop="pad"
-                    quality="100" // max quality
-                    fetchFormat="auto" // modern format support
-                    alt={`bike`}
-                    style={{
-                      width: "100px",
-                      display: "block",
-                      objectFit: "contain",
+            {Object.entries(images).map(([key, value]) => {
+              if (value !== "") {
+                return (
+                  <Button
+                    sx={{
+                      m: 0,
+                      p: 0.5,
+                      borderRadius: 2,
+                      transition: "background-color 0.5s ease",
+                      textTransform: "none",
+                      color: "black",
+                      "&:hover": {
+                        backgroundColor: "#c0c0c0",
+                        color: "black",
+                        "& img": {
+                          filter: " brightness(0.75)  contrast(1); ", // makes a white image appear dark
+                        },
+                      },
+                      "& img": {
+                        transition: "filter 0.5s ease", // <-- image filter transition
+                      },
                     }}
-                  />
-                  <Box fontSize={"12px"} fontWeight={"300"}>
-                    {key}
-                  </Box>
-                </Stack>
-              </Button>
-            ))}
+                    onClick={() => setCurrentImage(value)}
+                  >
+                    <Stack alignItems={"center"}>
+                      <Image
+                        cloudName="ds4ukwnxl"
+                        publicId={extractPublicId(value)}
+                        width="150" // double width for retina sharpness
+                        crop="pad"
+                        quality="100" // max quality
+                        fetchFormat="auto" // modern format support
+                        alt={`bike`}
+                        style={{
+                          width: "100px",
+                          display: "block",
+                          objectFit: "contain",
+                        }}
+                      />
+                      <Box fontSize={"12px"} fontWeight={"300"}>
+                        {key}
+                      </Box>
+                    </Stack>
+                  </Button>
+                );
+              }
+            })}
           </Stack>
         </Stack>
 
@@ -153,7 +157,7 @@ const BikeLandingPage = ({ bike }) => {
 
           <Stack direction={"row"} spacing={1}>
             {" "}
-            {bike.saleprice === 0 ? (
+            {bike.saleprice === 0 || bike.saleprice === null ? (
               <Box fontSize={"24px"} fontWeight={"400"}>
                 ${bike.price.toLocaleString()}
               </Box>
@@ -186,68 +190,77 @@ const BikeLandingPage = ({ bike }) => {
           <Stack spacing={1}>
             <Box>Select Size / Colour:</Box>
             <Stack spacing={1}>
-              {sortedModels.map((model) => (
-                <Button
-                  sx={{
-                    m: 0,
-                    p: 0,
-                    border: 1,
-                    transition: "background-color 0.5s ease",
-                    textTransform: "none",
-                    color: "black",
+              {sortedModels.map((model) => {
+                if (model.availability !== "Out of Stock") {
+                  return (
+                    <Button
+                      sx={{
+                        m: 0,
+                        p: 0,
+                        border: 1,
+                        transition: "background-color 0.5s ease",
+                        textTransform: "none",
+                        color: "black",
 
-                    "&:hover": {
-                      backgroundColor: "#c0c0c0",
-                      color: "black",
-                      "& img": {
-                        filter: " brightness(0.75) saturate(0) contrast(1); ", // makes a white image appear dark
-                      },
-                    },
-                    "& img": {
-                      transition: "filter 0.5s ease", // <-- image filter transition
-                    },
-                  }}
-                  onClick={() => setCurrentImage(images[model.color])}
-                >
-                  <Stack
-                    direction={"row"}
-                    p={0.5}
-                    pl={1}
-                    pr={2}
-                    justifyContent={"space-between"}
-                    width={{ xs: "350px", md: "400px" }}
-                    flex={1}
-                    alignItems={"center"}
-                  >
-                    <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                      <Image
-                        cloudName="ds4ukwnxl"
-                        publicId={extractPublicId(images[model.color])}
-                        width="150" // double width for retina sharpness
-                        crop="pad"
-                        quality="100" // max quality
-                        fetchFormat="auto" // modern format support
-                        alt={`${model.color} bike`}
-                        style={{
-                          width: "75px",
-                          display: "block",
-                          objectFit: "contain",
-                        }}
-                      />
-                      <Box fontSize={"12px"} fontWeight={"300"}>
-                        {model.color}
-                      </Box>
-                      <Box fontSize={"12px"} fontWeight={"600"}>
-                        {model.size}
-                      </Box>
-                    </Stack>
+                        "&:hover": {
+                          backgroundColor: "#c0c0c0",
+                          color: "black",
+                          "& img": {
+                            filter:
+                              " brightness(0.75) saturate(0) contrast(1); ", // makes a white image appear dark
+                          },
+                        },
+                        "& img": {
+                          transition: "filter 0.5s ease", // <-- image filter transition
+                        },
+                      }}
+                      onClick={() => setCurrentImage(images[model.color])}
+                    >
+                      <Stack
+                        direction={"row"}
+                        p={0.5}
+                        pl={1}
+                        pr={2}
+                        justifyContent={"space-between"}
+                        width={{ xs: "350px", md: "400px" }}
+                        flex={1}
+                        alignItems={"center"}
+                      >
+                        <Stack
+                          direction={"row"}
+                          alignItems={"center"}
+                          spacing={1}
+                        >
+                          <Image
+                            cloudName="ds4ukwnxl"
+                            publicId={extractPublicId(images[model.color])}
+                            width="150" // double width for retina sharpness
+                            crop="pad"
+                            quality="100" // max quality
+                            fetchFormat="auto" // modern format support
+                            alt={`${model.color} bike`}
+                            style={{
+                              width: "75px",
+                              display: "block",
+                              objectFit: "contain",
+                            }}
+                          />
+                          <Box fontSize={"12px"} fontWeight={"300"}>
+                            {model.color}
+                          </Box>
+                          <Box fontSize={"12px"} fontWeight={"600"}>
+                            {model.size}
+                          </Box>
+                        </Stack>
 
-                    <Box fontSize={"12px"} fontWeight={"300"}>
-                      {availabilityMap[model.availability]}
-                    </Box>
-                  </Stack>
-                </Button>
-              ))}
+                        <Box fontSize={"12px"} fontWeight={"300"}>
+                          {availabilityMap[model.availability]}
+                        </Box>
+                      </Stack>
+                    </Button>
+                  );
+                }
+              })}
             </Stack>
           </Stack>
         </Stack>
