@@ -79,16 +79,16 @@ const BikeLandingPage = ({ bike }) => {
   return (
     <Stack pl={{ xs: 1, md: 10 }} pr={{ xs: 1, md: 10 }} pb={5} spacing={5}>
       <Stack
-        direction={{ xs: "column", sm: "column", md: "row" }}
-        alignItems={{ xs: "center", md: "flex-start" }}
-        spacing={{ xs: 0, md: 5, xl: 10 }}
+        direction={{ xs: "column", sm: "column", md: "column", lg: "row" }}
+        alignItems={{ xs: "center", lg: "flex-start" }}
+        spacing={{ xs: 0, lg: 5, xl: 10 }}
         justifyContent={"center"}
       >
         <Stack alignItems={"center"} pt={2}>
           <Image
             cloudName="ds4ukwnxl"
             publicId={extractPublicId(currentImage)}
-            width="1200" // double width for retina sharpness
+            width="1000" // double width for retina sharpness
             crop="pad"
             quality="100" // max quality
             fetchFormat="auto" // modern format support
@@ -99,6 +99,7 @@ const BikeLandingPage = ({ bike }) => {
               objectFit: "contain",
             }}
           />
+
           <Stack direction={"row"} spacing={1}>
             {Object.entries(images).map(([key, value]) => {
               if (value !== "") {
