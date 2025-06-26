@@ -17,6 +17,7 @@ const SearchBar = ({
 
     var query = e.target.value;
     query = query.trim();
+    query = query.toLowerCase();
 
     if (query.length > 0 && allBikes) {
       var bikes = [];
