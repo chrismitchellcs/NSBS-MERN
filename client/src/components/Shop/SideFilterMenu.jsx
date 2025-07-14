@@ -19,7 +19,7 @@ const FilterButton = styled(Button)({
   },
 });
 
-const SideFilterMenu = ({ setBikes }) => {
+const SideFilterMenu = () => {
   const bikeTypes = [
     "DH",
     "Enduro / All Mountain",
@@ -86,25 +86,12 @@ const SideFilterMenu = ({ setBikes }) => {
           })}
         </Stack>
       </Box>
-      <Box width={"240px"} height={"100%"} borderRight={1} bgcolor={"white"}>
-        {/* <Stack alignItems={"center"} p={3} borderBottom={1}>
-          <Box sx={{ fontSize: "16px", fontWeight: "600", padding: "10px" }}>
-            BRAND
-          </Box>
-          <FilterButton>All Bikes</FilterButton>
-          <FilterButton>Transition</FilterButton>
-          <FilterButton>Norco</FilterButton>
-          <FilterButton>Ibis</FilterButton>
-        </Stack>
-        <Stack alignItems={"center"} p={3}>
-          <Box sx={{ fontSize: "16px", fontWeight: "600", padding: "10px" }}>
-            TYPE
-          </Box>
-          {bikeTypes.map((type) => {
-            return <FilterButton id={type}>{type}</FilterButton>;
-          })}
-        </Stack> */}
-      </Box>
+      <Box
+        width={"240px"}
+        height={"100%"}
+        borderRight={1}
+        bgcolor={"white"}
+      ></Box>
     </div>
   );
 };

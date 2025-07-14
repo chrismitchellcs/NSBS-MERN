@@ -2,7 +2,6 @@ import { Stack, Box, Button } from "@mui/material";
 import AddNewBike from "components/AdminActions/AddNewBike";
 import { useAuth } from "components/AuthProvider";
 import NavBar from "components/General/NavBar";
-import UploadTransitions from "components/Uploaders/UploadTransitions";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 

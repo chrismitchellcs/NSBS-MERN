@@ -143,22 +143,6 @@ const BikeButton = ({ bike }) => {
           )}
         </Box>
 
-        {/* <Image
-          cloudName="ds4ukwnxl"
-          publicId={image}
-          width="270"
-          height="180"
-          crop="pad"
-          alt="bike"
-          quality="auto:low"
-          fetchFormat="auto"
-          style={{
-            width: "270px",
-            height: "180px",
-            objectFit: "contain",
-            display: "block",
-          }}
-        /> */}
         <Image
           cloudName="ds4ukwnxl"
           publicId={extractPublicId(image)}
@@ -176,15 +160,10 @@ const BikeButton = ({ bike }) => {
           }}
         />
 
-        {bike.material === "N/A" ? (
-          <Box color={"black"} fontSize={"14px"} fontWeight={"400"}>
-            {bike.brand} {bike.name}
-          </Box>
-        ) : (
-          <Box color={"black"} fontSize={"14px"} fontWeight={"400"}>
-            {bike.brand} {bike.name} {bike.material}
-          </Box>
-        )}
+        <Box color={"black"} fontSize={"14px"} fontWeight={"400"}>
+          {bike.brand} {bike.name}
+        </Box>
+
         {bike.saleprice ? (
           <Box display={"flex"} justifyContent={"center"}>
             <Box

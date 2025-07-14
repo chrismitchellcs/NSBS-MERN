@@ -180,31 +180,10 @@ const AddNewBike = () => {
   };
 
   const BikeBox = ({ bike }) => {
-    // console.log(bike);
-    // const modelMatrix = {};
-    // const models = JSON.parse(bike.models);
-    // const [colors, setColors] = useState([]);
     let colors = [];
     if (bike.colors !== undefined) {
       colors = JSON.parse(bike.colors);
     }
-
-    // models.map((model) => {
-    //   if (!modelMatrix[model.color]) {
-    //     modelMatrix[model.color] = {};
-    //   }
-    //   modelMatrix[model.color][model.size] = {
-    //     partNumber: model.partNumber,
-    //     availability: model.availability,
-    //   };
-    // });
-
-    // useEffect(() => {
-    //   if (bike.colors !== undefined) {
-    //     setColors(JSON.parse(bike.colors));
-    //   }
-    // });
-    // const colors = JSON.parse(bike.colors);
 
     const [isPublic, setIsPublic] = useState(bike.public);
     const handleChange = async (event) => {
@@ -236,17 +215,16 @@ const AddNewBike = () => {
         setEdit(false);
       };
 
-      const [type, setType] = useState("");
-      const [material, setMaterial] = useState("");
+      const [type, setType] = useState(bike.type);
+      const [description, setDescription] = useState(bike.description);
+      const [link, setLink] = useState(bike.link);
+      const [price, setPrice] = useState(bike.price);
+      const [saleprice, setSaleprice] = useState(bike.saleprice);
+      const [year, setYear] = useState(bike.year);
 
       const handleTypeChange = (e) => {
         const type = e.target.value;
         setType(type);
-      };
-
-      const handleMaterialChange = (e) => {
-        const material = e.target.value;
-        setMaterial(material);
       };
 
       const handleSubmit = async (e) => {
@@ -256,12 +234,10 @@ const AddNewBike = () => {
         const year = e.target.year.value;
         const price = e.target.price.value;
         const saleprice = e.target.saleprice.value;
-        console.log(type, material, description, link);
         let newBike = bike;
         newBike.type = type;
         newBike.description = description;
         newBike.link = link;
-        newBike.material = link;
         newBike.year = year;
         newBike.price = price;
         newBike.saleprice = saleprice;
@@ -336,15 +312,34 @@ const AddNewBike = () => {
               id="description"
               label="Description"
               variant="outlined"
+              defaultValue={description}
               multiline
             />
-            <TextField id="link" label="Link" variant="outlined" />
-            <TextField id="year" label="Year" variant="outlined" multiline />
-            <TextField id="price" label="Price" variant="outlined" multiline />
+            <TextField
+              id="link"
+              label="Link"
+              variant="outlined"
+              defaultValue={link}
+            />
+            <TextField
+              id="year"
+              label="Year"
+              variant="outlined"
+              multiline
+              defaultValue={year}
+            />
+            <TextField
+              id="price"
+              label="Price"
+              variant="outlined"
+              multiline
+              defaultValue={price}
+            />
             <TextField
               id="saleprice"
               label="Sale Price"
               variant="outlined"
+              defaultValue={saleprice}
               multiline
             />
 

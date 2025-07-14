@@ -10,9 +10,8 @@ import {
   Switch,
   TextField,
 } from "@mui/material";
-import { type } from "@testing-library/user-event/dist/type";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const EditTransitions = ({ bikes, setBikes }) => {
   const CustomButton = styled(Button)({
@@ -34,21 +33,13 @@ const EditTransitions = ({ bikes, setBikes }) => {
   };
 
   const BikeBox = ({ bike }) => {
-    // console.log(bike);
     const modelMatrix = {};
     const models = JSON.parse(bike.models);
-    // const [colors, setColors] = useState([]);
+
     let colors = [];
     if (bike.colors !== undefined) {
       colors = JSON.parse(bike.colors);
     }
-
-    // useEffect(() => {
-    //   if (bike.colors !== undefined) {
-    //     setColors(JSON.parse(bike.colors));
-    //   }
-    // });
-    // const colors = JSON.parse(bike.colors);
 
     const [isPublic, setIsPublic] = useState(bike.public);
     const handleChange = async (event) => {
@@ -56,7 +47,6 @@ const EditTransitions = ({ bikes, setBikes }) => {
       newBike.public = event.target.checked;
       setIsPublic(event.target.checked);
       await axios
-        //   .patch(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${id}`, {
         .patch(
           `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition/${newBike._id}`,
           {
@@ -70,7 +60,6 @@ const EditTransitions = ({ bikes, setBikes }) => {
         });
     };
 
-    // console.log(models);
     models.map((model) => {
       if (!modelMatrix[model.color]) {
         modelMatrix[model.color] = {};
@@ -79,11 +68,6 @@ const EditTransitions = ({ bikes, setBikes }) => {
         partNumber: model.partNumber,
         availability: model.availability,
       };
-      //   modelMatrix[model.color] = {
-      //     size: model.size,
-      //     partNumber: model.partNumber,
-      //     availability: model.availability,
-      //   };
     });
 
     const [edit, setEdit] = useState(false);
@@ -113,7 +97,6 @@ const EditTransitions = ({ bikes, setBikes }) => {
         newBike.link = link;
 
         await axios
-          //   .patch(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${id}`, {
           .patch(
             `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition/${newBike._id}`,
             {
@@ -223,7 +206,6 @@ const EditTransitions = ({ bikes, setBikes }) => {
         newBike.colors = JSON.stringify(newColors);
 
         await axios
-          //   .patch(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${id}`, {
           .patch(
             `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition/${newBike._id}`,
             {

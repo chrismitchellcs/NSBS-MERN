@@ -1,38 +1,15 @@
-import IndividualBikeInfo from "components/Shop/IndividualBikeInfo";
 import NavBar from "components/General/NavBar";
-import { useLocation } from "react-router-dom";
-import ShopNote from "components/Shop/ShopNote";
 import Closer from "components/General/Closer";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import IndividualBikeInfoNew from "components/Shop/IndividualBikeInfoNew";
 import BikeLandingPage from "components/Shop/BikeLandingPage";
 
 const BikeDetails = () => {
-  // const location = useLocation();
-  // const bike = location.state;
   const { bikeid } = useParams();
 
   const [bike, setBike] = useState(null);
-
-  // useEffect(() => {
-  //   const fetchBike = async () => {
-  //     await axios
-  //       .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${bikeid}`, {})
-  //       .then((res) => {
-  //         console.log("bike:" + res.data);
-  //         setBike(res.data);
-  //         // setCurrentBike(res.data);
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   };
-
-  //   fetchBike();
-  // }, []);
 
   useEffect(() => {
     const fetchBikes = async () => {
@@ -64,15 +41,7 @@ const BikeDetails = () => {
         }}
       >
         <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
-        {/* <ShopNote></ShopNote> */}
-        <Box>
-          {bike ? (
-            <BikeLandingPage bike={bike}></BikeLandingPage>
-          ) : (
-            // <IndividualBikeInfoNew bike={bike}></IndividualBikeInfoNew>
-            ""
-          )}
-        </Box>
+        <Box>{bike ? <BikeLandingPage bike={bike}></BikeLandingPage> : ""}</Box>
       </div>
 
       <Closer></Closer>

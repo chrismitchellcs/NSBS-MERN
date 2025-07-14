@@ -1,9 +1,6 @@
 import { Box, Button, Link, Snackbar, Stack, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useEffect, useState } from "react";
-import * as XLSX from "xlsx";
-import Papa from "papaparse";
-import cheerio from "cheerio";
 import axios from "axios";
 import EditTransitions from "./EditTransitions";
 
@@ -49,6 +46,7 @@ const UploadTransitions = () => {
         const html = e.target.result;
 
         const parser = new DOMParser();
+        // @ts-ignore
         const doc = parser.parseFromString(html, "text/html");
 
         const table = doc.querySelector("table");
@@ -93,7 +91,7 @@ const UploadTransitions = () => {
           .filter(Boolean);
 
         setData(parsedData);
-        resolve(parsedData); // Let the caller know it's done
+        resolve(parsedData);
       };
 
       reader.onerror = () => reject(reader.error);
@@ -203,33 +201,6 @@ const UploadTransitions = () => {
         </Link>
         , login, click on "Stock List", then click on "Download Excel"
       </Box>
-      {/* <Box>
-        <Button
-          component="label"
-          role={undefined}
-          variant="contained"
-          tabIndex={-1}
-          startIcon={<CloudUploadIcon />}
-        >
-          Upload file
-          <VisuallyHiddenInput type="file" onChange={uploadFile} multiple />
-        </Button>
-      </Box>
-
-      <Box>
-        <Button
-          component="label"
-          onClick={transformStockList}
-          variant="contained"
-        >
-          Transform Stock List
-        </Button>
-      </Box>
-      <Box>
-        <Button component="label" onClick={addBikesToDB} variant="contained">
-          Add Bikes to DB
-        </Button>
-      </Box> */}
 
       <Box>
         <Button

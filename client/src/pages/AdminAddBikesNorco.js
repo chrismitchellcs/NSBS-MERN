@@ -1,7 +1,6 @@
 import { Box, Button, Stack } from "@mui/material";
 import { useAuth } from "components/AuthProvider";
 import NavBar from "components/General/NavBar";
-import UploadTransitions from "components/Uploaders/UploadTransitions";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 

@@ -1,6 +1,5 @@
 import { Box, Fade, Stack } from "@mui/material";
 import Closer from "components/General/Closer";
-import FadeInSection from "components/General/FadeInSection";
 import NavBar from "components/General/NavBar";
 import { useState, useEffect } from "react";
 
@@ -150,39 +149,8 @@ const Service = () => {
           </Box>
         </Box>
       </Stack>
-      {/* </FadeInSection> */}
       <Closer></Closer>
     </Stack>
-
-    // <Stack justifyContent={"center"}>
-    //   <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
-    //   <Stack justifyContent={"center"} alignItems={"center"}>
-    //     <Box component={"img"} src={"service-stretch.jpg"} width={"100%"}></Box>
-    //     <Box sx={{ fontSize: "36px", m: 2 }}>NSBS SERVICE</Box>
-    //     <Box sx={{ fontSize: "18px", width: "60%", mb: 2 }}>
-    //       Our service department is tidy, fast, and staffed with competent
-    //       mechanics who are eager to see you back on your bike. Our turn-around
-    //       time is unmatched anywhere else in town. We fix everything bicycle
-    //       related.
-    //     </Box>
-    //     <Box sx={{ fontSize: "18px", width: "60%", mb: 2 }}>
-    //       At NSBS we operate on a first come first serve basis. Bring your bike
-    //       in anytime and leave it with us for some time depending on how busy it
-    //       is. We will give an accurate estimate of how long you will be without
-    //       it. Feel free to call or email to get the current ETA for service. You
-    //       do not need to call ahead to book your bike in.
-    //     </Box>
-
-    //     <Box width={"95%"} height={"2px"} bgcolor={"grey"}></Box>
-    //     <Box sx={{ fontSize: "18px", width: "95%", mb: 2 }}>
-    //       At NSBS we operate on a first come first serve basis. Bring your bike
-    //       in anytime and leave it with us for some time depending on how busy it
-    //       is. We will give an accurate estimate of how long you will be without
-    //       it. Feel free to call or email to get the current ETA for service. You
-    //       do not need to call ahead to book your bike in.
-    //     </Box>
-    //   </Stack>
-    // </Stack>
   );
 };
 

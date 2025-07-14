@@ -24,14 +24,13 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
-  // Login function
   const login = async (username, password) => {
     try {
       const response = await fetch(
         `${process.env.REACT_APP_VERCEL_DOMAIN}/api/auth/login`,
         {
           method: "POST",
-          credentials: "include", // Important to include cookies
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
@@ -53,9 +52,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    checkAuthStatus(); // Initial check on page load
-    const interval = setInterval(checkAuthStatus, 300000); // Check every 5 minutes (300,000ms)
-    return () => clearInterval(interval); // Cleanup on unmount
+    checkAuthStatus();
+    const interval = setInterval(checkAuthStatus, 300000); // check every 5 minutes
+    return () => clearInterval(interval);
   }, []);
 
   return (

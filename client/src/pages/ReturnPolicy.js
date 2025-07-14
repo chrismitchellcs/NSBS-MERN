@@ -1,7 +1,6 @@
 import { Box } from "@mui/material";
 import Closer from "components/General/Closer";
 import NavBar from "components/General/NavBar";
-import ShopContent from "components/Shop/ShopContent";
 
 const ReturnPolicy = () => {
   return (
@@ -19,7 +18,7 @@ const ReturnPolicy = () => {
         }}
       >
         <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
-        {/* <ShopNote></ShopNote> */}
+
         <Box m={5}>
           <Box mb={2} sx={{ fontSize: "30px", fontWeight: "600" }}>
             Return Policy
