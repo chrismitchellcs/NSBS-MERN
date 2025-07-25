@@ -36,6 +36,8 @@ const EditTransitions = ({ bikes, setBikes }) => {
     const modelMatrix = {};
     const models = JSON.parse(bike.models);
 
+    const [inStoreBikes, setInStoreBikes] = useState(JSON.parse(bike.inStock));
+
     let colors = [];
     if (bike.colors !== undefined) {
       colors = JSON.parse(bike.colors);
@@ -289,6 +291,103 @@ const EditTransitions = ({ bikes, setBikes }) => {
       );
     };
 
+    const addInStore = async (size, partNumber, color) => {
+      const stockItem = {
+        size: size,
+        partNumber: partNumber,
+        color: color,
+        availability: "In Store",
+      };
+      const oldStock = JSON.parse(bike.inStock);
+
+      const isAlreadyAdded = oldStock.some(
+        (item) => item.partNumber === partNumber
+      );
+
+      if (!isAlreadyAdded) {
+        let newBike = bike;
+        oldStock.push(stockItem);
+
+        newBike.inStock = JSON.stringify(oldStock);
+
+        await axios
+          .patch(
+            `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition/${newBike._id}`,
+            {
+              newBike,
+            },
+            { withCredentials: true }
+          )
+          .then((res) => {
+            setInStoreBikes(oldStock);
+          })
+          .catch((error) => {
+            alert("bike not added");
+          });
+      }
+    };
+
+    const removeFromStore = async (partNumber) => {
+      const newInStoreBikes = inStoreBikes.filter(
+        (item) => item.partNumber !== partNumber
+      );
+      let newBike = bike;
+      newBike.inStock = JSON.stringify(newInStoreBikes);
+      await axios
+        .patch(
+          `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition/${newBike._id}`,
+          {
+            newBike,
+          },
+          { withCredentials: true }
+        )
+        .then((res) => {
+          setInStoreBikes(newInStoreBikes);
+        })
+        .catch((error) => {
+          alert("bike not added");
+        });
+    };
+
+    const [newBikeColor, setNewBikeColor] = useState("");
+    const [newBikeSize, setNewBikeSize] = useState("");
+
+    const addOtherBikeToStore = async () => {
+      const stockItem = {
+        size: newBikeSize,
+        partNumber: Date.now(),
+        color: newBikeColor,
+        availability: "In Store",
+      };
+      const oldStock = JSON.parse(bike.inStock);
+
+      // const isAlreadyAdded = oldStock.some(
+      //   (item) => item.partNumber === stockItem.partNumber
+      // );
+
+      let newBike = bike;
+      oldStock.push(stockItem);
+
+      newBike.inStock = JSON.stringify(oldStock);
+
+      await axios
+        .patch(
+          `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition/${newBike._id}`,
+          {
+            newBike,
+          },
+          { withCredentials: true }
+        )
+        .then((res) => {
+          setInStoreBikes(oldStock);
+          setNewBikeColor("");
+          setNewBikeSize("");
+        })
+        .catch((error) => {
+          alert("bike not added");
+        });
+    };
+
     return (
       <Stack
         borderBottom={1}
@@ -322,11 +421,97 @@ const EditTransitions = ({ bikes, setBikes }) => {
                       <Box>{key2}</Box>
                       <Box>{value2.partNumber}</Box>
                       <Box>{value2.availability}</Box>
+                      <Box>
+                        <Button
+                          onClick={() =>
+                            addInStore(key2, value2.partNumber, key)
+                          }
+                          variant="contained"
+                          color="success"
+                          sx={{
+                            fontSize: "12px",
+                            p: 0.5,
+                            m: 0,
+                            textTransform: "none",
+                          }}
+                        >
+                          In Store
+                        </Button>
+                      </Box>
                     </Stack>
                   </Box>
                 ))}
               </Stack>
             ))}
+          </Stack>
+          <Box mt={1} fontWeight={"600"}>
+            Add Other Bike:
+          </Box>
+          <Box mt={1} mb={1} fontWeight={"400"} width={"400px"}>
+            Use this if the bike we want to display is not shown above. Please
+            ensure the name of the colour and size is correct.
+          </Box>
+          <Stack bgcolor={"white"} p={1} spacing={1}>
+            <TextField
+              id="outlined-controlled"
+              label="Color"
+              value={newBikeColor}
+              onChange={(event) => {
+                setNewBikeColor(event.target.value);
+              }}
+            />
+            <TextField
+              id="outlined-controlled"
+              label="Size"
+              value={newBikeSize}
+              onChange={(event) => {
+                setNewBikeSize(event.target.value);
+              }}
+            />
+            <Box>
+              <Button
+                onClick={() => addOtherBikeToStore()}
+                variant="contained"
+                color="success"
+              >
+                Add Bike
+              </Button>
+            </Box>
+          </Stack>
+          <Box mt={1} fontWeight={"600"}>
+            In Store Bikes:
+          </Box>
+          <Stack direction={"row"}>
+            {inStoreBikes.map((bike) => {
+              return (
+                <Stack
+                  fontSize={"13px"}
+                  spacing={0.5}
+                  m={0.5}
+                  bgcolor={"white"}
+                  p={0.5}
+                >
+                  <Box>{bike.color}</Box>
+                  <Box>{bike.size}</Box>
+                  <Box>{bike.partNumber}</Box>
+                  <Box>
+                    <Button
+                      onClick={() => removeFromStore(bike.partNumber)}
+                      variant="contained"
+                      color="error"
+                      sx={{
+                        fontSize: "12px",
+                        p: 0.5,
+                        m: 0,
+                        textTransform: "none",
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </Box>
+                </Stack>
+              );
+            })}
           </Stack>
         </Stack>
         {edit ? (

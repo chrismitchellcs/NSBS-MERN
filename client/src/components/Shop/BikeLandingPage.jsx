@@ -28,14 +28,14 @@ const allSizes = [
 
 const availabilityMap = {
   "In Stock": "Available",
-  "Pre-Order": "Contact Us",
+  "Pre-Order": "Pre-Order",
   "Out of Stock": "Out of Stock",
   "Out Of Stock": "Out of Stock",
-  "Low Stock (1)": "Contact Us",
-  "Low Stock (2)": "Contact Us",
-  "Low Stock (3)": "Contact Us",
-  "Low Stock (4)": "Contact Us",
-  "Low Stock (5)": "Contact Us",
+  "Low Stock (1)": "Low Stock",
+  "Low Stock (2)": "Low Stock",
+  "Low Stock (3)": "Low Stock",
+  "Low Stock (4)": "Low Stock",
+  "Low Stock (5)": "Low Stock",
   "Available to Order": "Available to Order",
   "In Store": "In Store",
 };
@@ -70,7 +70,13 @@ function extractPublicId(cloudinaryUrl) {
 const BikeLandingPage = ({ bike }) => {
   const images = JSON.parse(bike.colors);
   const [currentImage, setCurrentImage] = useState(Object.values(images)[0]);
-  const sortedModels = JSON.parse(bike.models).sort((a, b) => {
+  const models = JSON.parse(bike.models);
+  let storeModels = [];
+  try {
+    storeModels = JSON.parse(bike.inStock);
+  } catch {}
+  const allModels = [...models, ...storeModels];
+  const sortedModels = allModels.sort((a, b) => {
     const sizeDiff = allSizes.indexOf(a.size) - allSizes.indexOf(b.size);
     if (sizeDiff !== 0) return sizeDiff;
     return a.color.localeCompare(b.color);
@@ -253,7 +259,7 @@ const BikeLandingPage = ({ bike }) => {
                             {model.size}
                           </Box>
                         </Stack>
-
+                        {/* <Availability model={model}></Availability> */}
                         <Box fontSize={"12px"} fontWeight={"300"}>
                           {availabilityMap[model.availability]}
                         </Box>
