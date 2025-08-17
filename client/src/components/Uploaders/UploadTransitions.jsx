@@ -103,7 +103,13 @@ const UploadTransitions = () => {
     let stock = {};
 
     inputData.forEach((item) => {
-      const cleaned = item.PRODUCT.replace("Complete: ", "").trim();
+      let cleaned = item.PRODUCT.replace("Complete: ", "")
+      cleaned = cleaned.replace(" - USA", "").trim()
+
+      if (cleaned.includes("Complete: ")) {
+        cleaned = cleaned.replace("Complete: ", "")
+      }
+
       const [namePart, metaPart] = cleaned.split(" (");
       const [size, color] = metaPart
         .replace(")", "")
@@ -154,7 +160,7 @@ const UploadTransitions = () => {
         },
         { withCredentials: true }
       )
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         alert("bike not added");
       });
