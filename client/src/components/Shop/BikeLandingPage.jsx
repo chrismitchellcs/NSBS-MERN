@@ -54,12 +54,13 @@ const SeeMoreButton = styled(Button)({
   },
 });
 
+
+
 function extractPublicId(cloudinaryUrl) {
   try {
     const parts = cloudinaryUrl.split("/upload/");
     if (parts.length < 2) return null;
 
-    // Remove version string if it exists (e.g., v1748840541/)
     const path = parts[1].replace(/^v\d+\//, "");
     return decodeURIComponent(path); // handle special characters like é
   } catch {
@@ -74,7 +75,7 @@ const BikeLandingPage = ({ bike }) => {
   let storeModels = [];
   try {
     storeModels = JSON.parse(bike.inStock);
-  } catch {}
+  } catch { }
   const allModels = [...models, ...storeModels];
   const sortedModels = allModels.sort((a, b) => {
     const sizeDiff = allSizes.indexOf(a.size) - allSizes.indexOf(b.size);
@@ -90,7 +91,7 @@ const BikeLandingPage = ({ bike }) => {
         spacing={{ xs: 0, lg: 5, xl: 10 }}
         justifyContent={"center"}
       >
-        <Stack alignItems={"center"} pt={2}>
+        <Stack alignItems={"flex-start"} spacing={2} pt={2} width="100%">
           <Image
             cloudName="ds4ukwnxl"
             publicId={extractPublicId(currentImage)}
@@ -105,6 +106,7 @@ const BikeLandingPage = ({ bike }) => {
               objectFit: "contain",
             }}
           />
+          <Box sx={{ fontSize: "16px", fontWeight: "700" }}>Colors:</Box>
 
           <Stack direction={"row"} spacing={1}>
             {Object.entries(images).map(([key, value]) => {
@@ -350,6 +352,8 @@ const BikeLandingPage = ({ bike }) => {
           </Stack>
         </Stack>
       </Stack>
+
+
     </Stack>
   );
 };
