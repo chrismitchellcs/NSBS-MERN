@@ -24,19 +24,19 @@ const BikeGrid = ({ bikes }) => {
       );
     } else if (bikes.length == 2) {
       return (
-        <Grid container>
+        <Grid container spacing={2}>
           {bikes.map((bike) => {
             return (
-              <Grid item xs={12} sm={12} md={6} lg={6} textAlign={"center"}>
+              <Grid item xs={12} sm={6} md={6} lg={6} textAlign={"center"} key={bike._id}>
                 <BikeButton bike={bike}></BikeButton>
               </Grid>
             );
-          })}{" "}
+          })}
         </Grid>
       );
     } else {
       return (
-        <Grid container>
+        <Grid container spacing={2}>
           {bikes.map((bike) => {
             return (
               <Grid
@@ -47,11 +47,12 @@ const BikeGrid = ({ bikes }) => {
                 lg={4}
                 xl={3}
                 textAlign={"center"}
+                key={bike._id}
               >
                 <BikeButton bike={bike}></BikeButton>
               </Grid>
             );
-          })}{" "}
+          })}
         </Grid>
       );
     }

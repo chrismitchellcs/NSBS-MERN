@@ -83,7 +83,7 @@ const NavBar = ({ background, position, displayLogo }) => {
                 component={"img"}
                 src="/logo.png"
                 width={{ xs: "60px", sm: "80px", md: "100px" }}
-                // height={"60px"}
+              // height={"60px"}
               ></Box>
             </Button>
           ) : (

@@ -11,20 +11,35 @@ import { useState } from "react";
 import FilterList from "./FilterList";
 import PriceSlider from "./priceSlider";
 import SearchBar from "./SearchBar";
-import { AppBar, Button, Stack, styled } from "@mui/material";
+import {
+  AppBar,
+  Button,
+  Stack,
+  styled,
+  useTheme,
+  useMediaQuery,
+  IconButton,
+  Typography
+} from "@mui/material";
+import { FilterList as FilterIcon, Close as CloseIcon } from "@mui/icons-material";
 import LoadingBikes from "./LoadingBikes";
 
-const drawerWidth = 220;
+const drawerWidth = 260;
 
 export default function ShopContentNew(props) {
   function capitalizeFirstLetter(val) {
     return String(val).charAt(0).toUpperCase() + String(val).slice(1);
   }
+
   const [bikes, setBikes] = useState(null);
   const [allBikes, setAllBikes] = useState(null);
   const [checkedBrands, setCheckedBrands] = React.useState([]);
   const [checkedTypes, setCheckedTypes] = React.useState([]);
   const [price, setPrice] = React.useState([0, 15000]);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   var { brand } = useParams();
 
@@ -40,7 +55,7 @@ export default function ShopContentNew(props) {
             setBikes(res.data);
             setAllBikes(res.data);
           })
-          .catch((error) => {});
+          .catch((error) => { });
       } else if (
         brand === "transition" ||
         brand === "norco" ||
@@ -54,13 +69,13 @@ export default function ShopContentNew(props) {
           .then((res) => {
             setBikes(res.data);
           })
-          .catch((error) => {});
+          .catch((error) => { });
         await axios
           .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {})
           .then((res) => {
             setAllBikes(res.data);
           })
-          .catch((error) => {});
+          .catch((error) => { });
       } else {
         var newBrand = brand.replace(/\+/g, " ");
         newBrand = newBrand.replace(/\=/g, "/");
@@ -79,13 +94,13 @@ export default function ShopContentNew(props) {
           .then((res) => {
             setBikes(res.data);
           })
-          .catch((error) => {});
+          .catch((error) => { });
         await axios
           .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {})
           .then((res) => {
             setAllBikes(res.data);
           })
-          .catch((error) => {});
+          .catch((error) => { });
       }
     };
 
@@ -105,52 +120,92 @@ export default function ShopContentNew(props) {
 
   const bikeBrands = ["Transition", "Norco", "Ibis"];
 
-  const [open, setOpen] = React.useState(false);
-
-  const toggleDrawer = () => {
-    setOpen(!open);
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
   };
 
-  const SeeMoreButton = styled(Button)({
+  const FilterButton = styled(Button)({
     color: "white",
-
     maxHeight: "40px",
-    fontWeight: "400",
+    fontWeight: "500",
     fontSize: "14px",
     backgroundColor: "#3c5d4e",
-    marginTop: "15px",
     paddingLeft: "20px",
     paddingRight: "20px",
+    borderRadius: "8px",
+    textTransform: "none",
+    boxShadow: "0 2px 8px rgba(60, 93, 78, 0.3)",
 
     "&:hover": {
-      backgroundColor: "#4d5e5f",
+      backgroundColor: "#4d6e5f",
       color: "white",
+      boxShadow: "0 4px 16px rgba(60, 93, 78, 0.4)",
     },
   });
+
+  const drawerContent = (
+    <>
+      <Toolbar />
+      <Box sx={{ overflow: "auto", height: "100%", px: { xs: 1, sm: 2 } }}>
+        <SearchBar
+          allBikes={allBikes}
+          setBikes={setBikes}
+          setCheckedBrands={setCheckedBrands}
+          setCheckedTypes={setCheckedTypes}
+          price={price}
+          setPrice={setPrice}
+        />
+
+        <FilterList
+          allBikes={allBikes}
+          setBikes={setBikes}
+          bikeTypes={bikeTypes}
+          bikeBrands={bikeBrands}
+          checkedBrands={checkedBrands}
+          setCheckedBrands={setCheckedBrands}
+          checkedTypes={checkedTypes}
+          setCheckedTypes={setCheckedTypes}
+          price={price}
+          setPrice={setPrice}
+        />
+
+        <Box m={2} fontWeight={500} fontSize={"14px"} color="#495057" lineHeight={1.5}>
+          We do our best to keep our inventory updated but it isn't always
+          correct. Feel free to contact us with any inquiries.
+        </Box>
+      </Box>
+    </>
+  );
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <NavBarShop></NavBarShop>
-      {!open && (
-        <Box display={{ xs: "block", sm: "none", md: "none" }}>
-          <AppBar
-            position="fixed"
-            elevation={0}
-            sx={{
-              mt: "76px",
-              bgcolor: "transparent",
-            }}
-          >
-            <Toolbar sx={{ bgcolor: "transparent", justifyContent: "center" }}>
-              <SeeMoreButton onClick={toggleDrawer}>
-                Filter Results
-              </SeeMoreButton>
-            </Toolbar>
-          </AppBar>
-        </Box>
+      <NavBarShop />
+
+      {/* Mobile Filter Button */}
+      {isMobile && (
+        <AppBar
+          position="fixed"
+          elevation={0}
+          sx={{
+            top: "76px",
+            bgcolor: "transparent",
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+          }}
+        >
+          <Toolbar sx={{ bgcolor: "transparent", justifyContent: "center", mt: 2 }}>
+            <FilterButton
+              onClick={handleDrawerToggle}
+              startIcon={<FilterIcon />}
+            >
+              Filters & Search
+            </FilterButton>
+          </Toolbar>
+        </AppBar>
       )}
-      <Box display={{ xs: "none", sm: "block", md: "block" }}>
+
+      {/* Desktop Permanent Drawer */}
+      {!isMobile && (
         <Drawer
           variant="permanent"
           sx={{
@@ -159,129 +214,79 @@ export default function ShopContentNew(props) {
             [`& .MuiDrawer-paper`]: {
               width: drawerWidth,
               boxSizing: "border-box",
+              borderRight: "1px solid #e0e0e0",
             },
           }}
         >
-          <Toolbar />
-
-          <Box sx={{ overflow: "auto" }}>
-            <SearchBar
-              allBikes={allBikes}
-              setBikes={setBikes}
-              setCheckedBrands={setCheckedBrands}
-              setCheckedTypes={setCheckedTypes}
-              price={price}
-              setPrice={setPrice}
-            ></SearchBar>
-
-            <FilterList
-              allBikes={allBikes}
-              setBikes={setBikes}
-              bikeTypes={bikeTypes}
-              bikeBrands={bikeBrands}
-              checkedBrands={checkedBrands}
-              setCheckedBrands={setCheckedBrands}
-              checkedTypes={checkedTypes}
-              setCheckedTypes={setCheckedTypes}
-              price={price}
-              setPrice={setPrice}
-            ></FilterList>
-
-            {/* <Box mt={2} ml={2} fontWeight={700}>
-              PRICE
-            </Box> */}
-            {/* <PriceSlider
-              allBikes={allBikes}
-              setBikes={setBikes}
-              bikes={bikes}
-              setPrice={setPrice}
-              price={price}
-            ></PriceSlider> */}
-            <Box m={2} fontWeight={400} fontSize={"14px"}>
-              We do our best to keep our inventory updated but it isn't always
-              correct. Feel free to contact us with any inquiries.
-            </Box>
-          </Box>
+          {drawerContent}
         </Drawer>
-      </Box>
-      {open && (
-        <Box>
-          <Drawer
-            variant="permanent"
-            sx={{
+      )}
+
+      {/* Mobile Temporary Drawer */}
+      {isMobile && (
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better mobile performance
+          }}
+          sx={{
+            display: { xs: "block", lg: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
               width: drawerWidth,
-              flexShrink: 0,
-              [`& .MuiDrawer-paper`]: {
-                width: drawerWidth,
-                boxSizing: "border-box",
-              },
+              borderRight: "1px solid #e0e0e0",
+            },
+          }}
+        >
+          {/* Mobile Drawer Header */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              p: 2,
+              borderBottom: "1px solid #e0e0e0",
+              bgcolor: "#f8f9fa",
             }}
           >
-            <Toolbar />
+            <Typography variant="h6" sx={{ fontWeight: "600", color: "#1a1a1a" }}>
+              Filters
+            </Typography>
+            <IconButton onClick={handleDrawerToggle}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
 
-            <Stack sx={{ overflow: "auto", justifyContent: "center" }}>
-              <SearchBar
-                allBikes={allBikes}
-                setBikes={setBikes}
-                setCheckedBrands={setCheckedBrands}
-                setCheckedTypes={setCheckedTypes}
-                price={price}
-                setPrice={setPrice}
-              ></SearchBar>
-
-              <FilterList
-                allBikes={allBikes}
-                setBikes={setBikes}
-                bikeTypes={bikeTypes}
-                bikeBrands={bikeBrands}
-                checkedBrands={checkedBrands}
-                setCheckedBrands={setCheckedBrands}
-                checkedTypes={checkedTypes}
-                setCheckedTypes={setCheckedTypes}
-                price={price}
-                setPrice={setPrice}
-              ></FilterList>
-
-              {/* <Box mt={2} ml={2} fontWeight={700}>
-                PRICE
-              </Box>
-              <PriceSlider
-                allBikes={allBikes}
-                setBikes={setBikes}
-                bikes={bikes}
-                setPrice={setPrice}
-                price={price}
-              ></PriceSlider> */}
-
-              <Box
-                justifySelf={"center"}
-                justifyContent={"center"}
-                alignItems={"center"}
-                textAlign={"center"}
-                mb={5}
-              >
-                <SeeMoreButton onClick={toggleDrawer}>
-                  Show Results
-                </SeeMoreButton>
-              </Box>
-            </Stack>
-          </Drawer>
-        </Box>
+          {drawerContent}
+        </Drawer>
       )}
+
+      {/* Main Content */}
       <Box
         component="main"
-        mt={{ xs: 18, sm: 12 }}
-        sx={{ flexGrow: 1 }}
-        justifyContent={"center"}
-        alignItems={"center"}
+        sx={{
+          flexGrow: 1,
+          mt: { xs: isMobile ? 18 : 12, sm: 12 },
+          ml: { xs: 0, sm: 0, lg: 0 },
+          px: { xs: 2, sm: 3, lg: 4 },
+          maxWidth: "100%",
+          transition: theme.transitions.create('margin', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+          }),
+        }}
       >
-        {bikes ? (
-          <BikeGrid bikes={bikes}></BikeGrid>
-        ) : (
-          <Box justifyContent={"center"}>
-            <LoadingBikes></LoadingBikes>
-          </Box>
-        )}
+        <Box sx={{ maxWidth: "100%", overflow: "hidden" }}>
+          {bikes ? (
+            <BikeGrid bikes={bikes} />
+          ) : (
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+              <LoadingBikes />
+            </Box>
+          )}
+        </Box>
       </Box>
     </Box>
   );
