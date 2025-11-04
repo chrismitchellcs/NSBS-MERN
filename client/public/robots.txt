@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin-dashboard
+Disallow: /admin-login
+Disallow: /admin-addbikes-*
+Disallow: /admin-oldadd
+
+Sitemap: https://www.northshorebikeshop.net/sitemap.xml

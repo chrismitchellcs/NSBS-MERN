@@ -2,6 +2,7 @@ import { Box, Fade, Stack } from "@mui/material";
 import Closer from "components/General/Closer";
 import NavBar from "components/General/NavBar";
 import { useState, useEffect } from "react";
+import SEO from "components/General/SEO";
 
 const Service = () => {
   const [show, setShow] = useState(false);
@@ -29,6 +30,13 @@ const Service = () => {
   ];
   return (
     <Stack alignItems={"center"}>
+      <SEO
+        title="Bike Service & Repair | North Shore Bike Shop"
+        description="Professional bike service and repair in North Vancouver. Fast turnaround times, expert mechanics, tune-ups, brake bleeds, suspension service, and more. All bike types welcome."
+        keywords="bike service, bike repair, bike tune-up, brake bleed, suspension service, wheel build, bike shop service, North Vancouver bike repair"
+        url="https://www.northshorebikeshop.net/service"
+        image="/service-xstretch-min.jpg"
+      />
       <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
       <Fade in={show} timeout={1000}>
         <Box

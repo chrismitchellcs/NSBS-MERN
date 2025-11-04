@@ -116,7 +116,7 @@ const UploadTransitions = () => {
         .split(", ")
         .map((s) => s.trim());
       const name = namePart;
-
+      console.log(color)
       const numbers = item["PART NUMBER"].split(".");
       const modelYear = numbers[1];
 

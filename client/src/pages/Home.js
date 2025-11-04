@@ -8,10 +8,17 @@ import Service from "components/HomePage/Service";
 import IbisHome from "components/HomePage/IbisHome";
 import NavBar from "components/General/NavBar";
 import AboutUs from "components/HomePage/AboutUs";
+import SEO from "components/General/SEO";
 
 const Home = () => {
   return (
     <div>
+      <SEO
+        title="North Shore Bike Shop | Premium Mountain Bikes & Expert Service"
+        description="North Shore Bike Shop - Your premier destination for Transition, Norco, and Ibis mountain bikes. Expert bike service, repairs, and tune-ups in British Columbia."
+        keywords="mountain bikes BC, bike shop Vancouver, Transition bikes, Norco bikes, Ibis bikes, bike service, bike repair, North Vancouver bike shop"
+        url="https://www.northshorebikeshop.net"
+      />
       <NavBar
         background="transparent"
         position={"absolute"}
