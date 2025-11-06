@@ -103,46 +103,52 @@ const UploadTransitions = () => {
     let stock = {};
 
     inputData.forEach((item) => {
-      let cleaned = item.PRODUCT.replace("Complete: ", "")
-      cleaned = cleaned.replace(" - USA", "").trim()
+      try {
+        let cleaned = item.PRODUCT.replace("Complete: ", "");
+        cleaned = cleaned.replace(" - USA", "").trim();
 
-      if (cleaned.includes("Complete: ")) {
-        cleaned = cleaned.replace("Complete: ", "")
-      }
-
-      const [namePart, metaPart] = cleaned.split(" (");
-      const [size, color] = metaPart
-        .replace(")", "")
-        .split(", ")
-        .map((s) => s.trim());
-      const name = namePart;
-      console.log(color)
-      const numbers = item["PART NUMBER"].split(".");
-      const modelYear = numbers[1];
-
-      if (numbers[1].length === 2) {
-        let fullName = `${modelYear} ${name}`.trim();
-
-        const bikeData = {
-          size,
-          color,
-          partNumber: item["PART NUMBER"],
-          availability: item["AVAILABILITY"],
-        };
-
-        if (!stock[fullName]) {
-          stock[fullName] = {
-            bikes: [],
-            modelYear,
-            regularRetail: item["REGULAR RETAIL"],
-            saleRetail: item["SALE RETAIL"],
-            name,
-            colors: {},
-          };
+        if (cleaned.includes("Complete: ")) {
+          cleaned = cleaned.replace("Complete: ", "");
         }
 
-        stock[fullName].bikes.push(bikeData);
-        stock[fullName].colors[color] = "";
+        const [namePart, metaPart] = cleaned.split(" (");
+        const [size, color] = metaPart
+          .replace(")", "")
+          .split(", ")
+          .map((s) => s.trim());
+        const name = namePart;
+        if (!item["PART NUMBER"].includes(".")) {
+          return;
+        }
+        const numbers = item["PART NUMBER"].split(".");
+        const modelYear = numbers[1];
+
+        if (numbers[1].length === 2) {
+          let fullName = `${modelYear} ${name}`.trim();
+
+          const bikeData = {
+            size,
+            color,
+            partNumber: item["PART NUMBER"],
+            availability: item["AVAILABILITY"],
+          };
+
+          if (!stock[fullName]) {
+            stock[fullName] = {
+              bikes: [],
+              modelYear,
+              regularRetail: item["REGULAR RETAIL"],
+              saleRetail: item["SALE RETAIL"],
+              name,
+              colors: {},
+            };
+          }
+
+          stock[fullName].bikes.push(bikeData);
+          stock[fullName].colors[color] = "";
+        }
+      } catch (error) {
+        console.log("error uploading this bike: ", item);
       }
     });
 
@@ -160,7 +166,7 @@ const UploadTransitions = () => {
         },
         { withCredentials: true }
       )
-      .then((res) => { })
+      .then((res) => {})
       .catch((error) => {
         alert("bike not added");
       });
