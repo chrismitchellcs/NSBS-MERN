@@ -36,13 +36,14 @@
     <priority>0.7</priority>
   </url>
   
-  <!-- Return Policy Page -->
+
   <url>
-    <loc>https://www.northshorebikeshop.net/return-policy</loc>
-    <lastmod>2025-11-04</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
+  <loc>https://www.northshorebikeshop.net/</loc>
+  <image:image>
+    <image:loc>https://www.northshorebikeshop.net/logosquare.png</image:loc>
+    <image:title>North Shore Bike Shop Logo</image:title>
+  </image:image>
+</url>
   
   <!-- Transition Bandit Hardtail -->
   <url>
