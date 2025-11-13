@@ -8,6 +8,7 @@ import BikeCard from "components/Shop/BikeCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import "../../index.css";
+import { useNavigate } from "react-router-dom";
 
 const responsive = {
   desktop: {
@@ -34,6 +35,7 @@ const responsive = {
 
 const Bikes = ({ brand }) => {
   const [bikes, setBikes] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBikes = async () => {
@@ -63,7 +65,10 @@ const Bikes = ({ brand }) => {
         <div className="xs:text-xl sm:text-2xl font-medium">
           Shop {brand} Bikes
         </div>
-        <button className="xs:text-xl sm:text-2xl text-gray-500 hover:text-gray-700 flex flex-row items-center ">
+        <button
+          onClick={() => navigate(`/shop/${brand.toLowerCase()}`)}
+          className="xs:text-xl sm:text-2xl text-gray-500 hover:text-gray-700 flex flex-row items-center "
+        >
           <div className="font-medium">See All</div>
           <div className="">
             <FontAwesomeIcon icon={faArrowRight} />

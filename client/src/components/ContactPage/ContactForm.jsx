@@ -15,7 +15,8 @@ const ContactForm = () => {
     setFormSent(false);
     setFormNotSent(false);
 
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     const name = formData.get("name")?.toString().trim();
     const email = formData.get("email")?.toString().trim();
     const subject = formData.get("subject")?.toString().trim();
@@ -42,8 +43,9 @@ const ContactForm = () => {
         }
       );
       setFormSent(true);
-      e.currentTarget.reset();
+      form.reset();
     } catch (error) {
+      console.log(error);
       setFormNotSent(true);
     } finally {
       setIsSubmitting(false);

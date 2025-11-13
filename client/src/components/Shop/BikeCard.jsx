@@ -1,4 +1,5 @@
 import { Image } from "cloudinary-react";
+import { useNavigate } from "react-router-dom";
 
 function extractPublicId(cloudinaryUrl) {
   try {
@@ -14,10 +15,11 @@ function extractPublicId(cloudinaryUrl) {
 }
 
 export default function BikeCard({ bike }) {
+  const navigate = useNavigate();
+
   const handleClick = () => {
-    console.log("Bike card clicked!");
-    console.log(bike);
     // TODO: Navigate to bike details page
+    navigate(`/shop/${bike.brand}/${bike._id}`);
   };
 
   const images = JSON.parse(bike.colors);
