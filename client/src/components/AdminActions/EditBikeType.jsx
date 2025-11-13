@@ -6,7 +6,6 @@ import {
   RadioGroup,
   Stack,
 } from "@mui/material";
-import { type } from "@testing-library/user-event/dist/type";
 import axios from "axios";
 import { useState } from "react";
 import styled from "styled-components";

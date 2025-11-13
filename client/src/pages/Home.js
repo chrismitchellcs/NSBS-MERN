@@ -7,8 +7,8 @@ import Parts from "components/HomePage/Parts";
 import Service from "components/HomePage/Service";
 import IbisHome from "components/HomePage/IbisHome";
 import NavBar from "components/General/NavBar";
-import AboutUs from "components/HomePage/AboutUs";
 import SEO from "components/General/SEO";
+import AboutImages from "components/HomePage/AboutImages";
 
 const Home = () => {
   return (
@@ -26,8 +26,8 @@ const Home = () => {
       ></NavBar>
       <HeaderImage></HeaderImage>
 
-      <AboutUs></AboutUs>
-
+      {/* <AboutUs></AboutUs> */}
+      <AboutImages></AboutImages>
       <TransitionHome></TransitionHome>
 
       <Bikes brand={"Transition"}></Bikes>

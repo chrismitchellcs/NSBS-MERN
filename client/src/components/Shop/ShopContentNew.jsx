@@ -9,19 +9,20 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import FilterList from "./FilterList";
-import PriceSlider from "./priceSlider";
 import SearchBar from "./SearchBar";
 import {
   AppBar,
   Button,
-  Stack,
   styled,
   useTheme,
   useMediaQuery,
   IconButton,
-  Typography
+  Typography,
 } from "@mui/material";
-import { FilterList as FilterIcon, Close as CloseIcon } from "@mui/icons-material";
+import {
+  FilterList as FilterIcon,
+  Close as CloseIcon,
+} from "@mui/icons-material";
 import LoadingBikes from "./LoadingBikes";
 
 const drawerWidth = 260;
@@ -39,7 +40,7 @@ export default function ShopContentNew(props) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   var { brand } = useParams();
 
@@ -55,7 +56,7 @@ export default function ShopContentNew(props) {
             setBikes(res.data);
             setAllBikes(res.data);
           })
-          .catch((error) => { });
+          .catch((error) => {});
       } else if (
         brand === "transition" ||
         brand === "norco" ||
@@ -69,16 +70,16 @@ export default function ShopContentNew(props) {
           .then((res) => {
             setBikes(res.data);
           })
-          .catch((error) => { });
+          .catch((error) => {});
         await axios
           .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {})
           .then((res) => {
             setAllBikes(res.data);
           })
-          .catch((error) => { });
+          .catch((error) => {});
       } else {
         var newBrand = brand.replace(/\+/g, " ");
-        newBrand = newBrand.replace(/\=/g, "/");
+        newBrand = newBrand.replace(/=/g, "/");
         newBrand = newBrand
           .split(" ")
           .map((word) => word[0].toUpperCase() + word.slice(1))
@@ -94,18 +95,18 @@ export default function ShopContentNew(props) {
           .then((res) => {
             setBikes(res.data);
           })
-          .catch((error) => { });
+          .catch((error) => {});
         await axios
           .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {})
           .then((res) => {
             setAllBikes(res.data);
           })
-          .catch((error) => { });
+          .catch((error) => {});
       }
     };
 
     fetchBikes();
-  }, []);
+  }, [brand]);
 
   const bikeTypes = [
     "DH",
@@ -169,7 +170,13 @@ export default function ShopContentNew(props) {
           setPrice={setPrice}
         />
 
-        <Box m={2} fontWeight={500} fontSize={"14px"} color="#495057" lineHeight={1.5}>
+        <Box
+          m={2}
+          fontWeight={500}
+          fontSize={"14px"}
+          color="#495057"
+          lineHeight={1.5}
+        >
           We do our best to keep our inventory updated but it isn't always
           correct. Feel free to contact us with any inquiries.
         </Box>
@@ -193,7 +200,9 @@ export default function ShopContentNew(props) {
             zIndex: (theme) => theme.zIndex.drawer + 1,
           }}
         >
-          <Toolbar sx={{ bgcolor: "transparent", justifyContent: "center", mt: 2 }}>
+          <Toolbar
+            sx={{ bgcolor: "transparent", justifyContent: "center", mt: 2 }}
+          >
             <FilterButton
               onClick={handleDrawerToggle}
               startIcon={<FilterIcon />}
@@ -251,7 +260,10 @@ export default function ShopContentNew(props) {
               bgcolor: "#f8f9fa",
             }}
           >
-            <Typography variant="h6" sx={{ fontWeight: "600", color: "#1a1a1a" }}>
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: "600", color: "#1a1a1a" }}
+            >
               Filters
             </Typography>
             <IconButton onClick={handleDrawerToggle}>
@@ -272,7 +284,7 @@ export default function ShopContentNew(props) {
           ml: { xs: 0, sm: 0, lg: 0 },
           px: { xs: 2, sm: 3, lg: 4 },
           maxWidth: "100%",
-          transition: theme.transitions.create('margin', {
+          transition: theme.transitions.create("margin", {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
           }),
@@ -282,7 +294,12 @@ export default function ShopContentNew(props) {
           {bikes ? (
             <BikeGrid bikes={bikes} />
           ) : (
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              minHeight="400px"
+            >
               <LoadingBikes />
             </Box>
           )}

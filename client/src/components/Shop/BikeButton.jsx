@@ -1,7 +1,6 @@
 import { Box, Button, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Image } from "cloudinary-react";
-import FadeInSection from "components/General/FadeInSection";
 
 function extractPublicId(cloudinaryUrl) {
   try {

@@ -2,10 +2,6 @@ import {
   Box,
   Button,
   Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Grid,
-  IconButton,
   List,
   ListItem,
   ListItemButton,
@@ -60,7 +56,6 @@ const allSizes = [
 ];
 
 const EditSizes = ({ bike, setBikes, sizes, target }) => {
-  const [newSizes, setNewSizes] = useState([]);
   const [edit, setEdit] = useState(false);
 
   const [checked, setChecked] = useState([]);

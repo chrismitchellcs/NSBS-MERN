@@ -1,54 +1,36 @@
-import { Box } from "@mui/material";
-
 const NorcoHome = () => {
   return (
-    <Box sx={{ mb: -0.5 }} textAlign={"center"}>
-      <Box
-        position={"absolute"}
-        sx={{
-          width: "40%",
-          color: "white",
-          ml: "9%",
-          mt: "15%",
+    <div className="relative text-center mb-[-2px] overflow-hidden">
+      {/* Text Content Overlay */}
+      <div className="absolute text-white left-1/2 -translate-x-1/2 bottom-8 md:top-1/2 md:-translate-y-1/2 md:bottom-auto w-[90%] md:w-[40%] md:ml-[9%] md:left-0 md:translate-x-0 z-10">
+        <div className="backdrop-blur-sm bg-black/40 rounded-lg p-4 md:p-6 text-center">
+          <div className="mb-4 md:mb-6 flex justify-center">
+            <img
+              src="norco.svg"
+              alt="Norco Logo"
+              className="w-3/4 md:w-4/5 max-w-[600px]"
+            />
+          </div>
+          <div className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed font-light drop-shadow-lg">
+            Norco is a local brand from Coquitlam, BC, offering bikes for every
+            rider. Whether you're a beginner exploring trails and city streets
+            or an expert seeking the fastest, most advanced bike available,
+            Norco has you covered.
+          </div>
+        </div>
+      </div>
 
-          fontWeight: "400",
-          lineHeight: "1.5",
-        }}
-        fontSize={{ xs: "16px", sm: "14px", md: "16px", lg: "18px" }}
-      >
-        <Box
-          component="img"
-          sx={{
-            width: "80%",
-            mb: 2,
-          }}
+      {/* Hero Image */}
+      <div className="relative overflow-hidden">
+        <img
+          src="gracey2-min.jpg"
           alt="NSBS"
-          src={"norco.svg"}
+          className="w-full h-[80vh] md:h-[45.1vw] object-cover object-[70%_center] md:object-center"
         />
-
-        <Box
-          sx={{
-            display: { xs: "none", sm: "none", md: "block", lg: "block" },
-          }}
-        >
-          Norco is a local brand from Coquitlam, BC, offering bikes for every
-          rider. Whether you're a beginner exploring trails and city streets or
-          an expert seeking the fastest, most advanced bike available, Norco has
-          you covered.
-        </Box>
-      </Box>
-      <Box
-        component="img"
-        sx={{
-          width: "100%",
-          height: "45.1vw",
-          mh: 5,
-          p: 0,
-        }}
-        alt="NSBS"
-        src={"gracey2-min.jpg"}
-      />
-    </Box>
+        {/* Gradient overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent pointer-events-none z-0" />
+      </div>
+    </div>
   );
 };
 

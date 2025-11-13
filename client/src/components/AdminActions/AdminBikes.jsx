@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Link,
   Paper,
   Stack,
   styled,
@@ -11,26 +10,15 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
 } from "@mui/material";
 import axios from "axios";
-
 import { Image } from "cloudinary-react";
-import EditSizes from "./EditSizes";
 import EditBikeBrand from "./EditBikeBrand";
-import EditBikeName from "./EditBikeName";
 import EditBikeMaterial from "./EditBikeMaterial";
-import EditBikePrice from "./EditBikePrice";
-import EditBikeSalePrice from "./EditBikeSalePrice";
-import EditSizesAvailiable from "./EditSizesAvailiable";
-import EditSizesInStock from "./EditSizesInStock";
 import { useEffect, useState } from "react";
 import EditBikeDetail from "./EditBikeDetail";
 import EditBikeType from "./EditBikeType";
 import EditBikeSizes from "./EditBikeSizes";
-import EditBikeColors from "./EditBikeColors";
-import EditBikeAvailability from "./EditBikeAvailability";
-import { Edit } from "@mui/icons-material";
 
 const EditButton = styled(Button)({
   backgroundColor: "transparent",
@@ -55,18 +43,6 @@ const EditButton = styled(Button)({
 });
 
 const AdminBikes = () => {
-  const handleClick = async (e) => {
-    const bikeID = e.target.id;
-    await axios
-      .delete(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${bikeID}`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        setBikes(res.data);
-      })
-      .catch((error) => {});
-  };
-
   const [bikes, setBikes] = useState([]);
   useEffect(() => {
     const fetchBikes = async () => {
@@ -210,8 +186,6 @@ const AdminBikes = () => {
       </TableRow>
     );
   };
-
-  const handleSizeClick = () => {};
 
   return (
     <Box width={"100%"}>

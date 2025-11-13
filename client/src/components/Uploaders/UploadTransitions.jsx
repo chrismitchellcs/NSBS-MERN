@@ -18,7 +18,7 @@ const VisuallyHiddenInput = styled("input")({
 
 const UploadTransitions = () => {
   const [data, setData] = useState(null);
-  const [stock, setStock] = useState(null);
+  // const [stock, setStock] = useState(null);
   const [bikes, setBikes] = useState([]);
 
   const fetchBikes = async () => {
@@ -152,12 +152,10 @@ const UploadTransitions = () => {
       }
     });
 
-    setStock(stock);
     return stock;
   };
 
   const addBikesToDB = async (stockData = data) => {
-    console.log("Uploading stock to DB:", stockData);
     await axios
       .post(
         `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition`,

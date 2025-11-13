@@ -1,120 +1,141 @@
-import { Alert, Button, Stack, TextField } from "@mui/material";
-import ReCAPTCHA from "react-google-recaptcha";
 import { useRef, useState } from "react";
 import axios from "axios";
+import ReCAPTCHA from "react-google-recaptcha";
 import CheckIcon from "@mui/icons-material/Check";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 const ContactForm = () => {
   const [formSent, setFormSent] = useState(false);
   const [formNotSent, setFormNotSent] = useState(false);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const captchaRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const name = e.target[0].value;
-    const email = e.target[2].value;
-    const subject = e.target[4].value;
-    const message = e.target[7].value;
-    const token = captchaRef.current.getValue();
-    captchaRef.current.reset();
+    setFormSent(false);
+    setFormNotSent(false);
 
-    await axios
-      .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/sendform`, {
-        token,
-        name,
-        email,
-        subject,
-        message,
-      })
-      .then((res) => {
-        setFormSent(true);
-        setFormNotSent(false);
-      })
-      .catch((error) => {
-        setFormNotSent(true);
-        setFormSent(false);
-      });
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name")?.toString().trim();
+    const email = formData.get("email")?.toString().trim();
+    const subject = formData.get("subject")?.toString().trim();
+    const message = formData.get("message")?.toString().trim();
+    const token = captchaRef.current?.getValue();
+
+    if (!token) {
+      setFormNotSent(true);
+      return;
+    }
+
+    captchaRef.current?.reset();
+
+    try {
+      setIsSubmitting(true);
+      await axios.post(
+        `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/sendform`,
+        {
+          token,
+          name,
+          email,
+          subject,
+          message,
+        }
+      );
+      setFormSent(true);
+      e.currentTarget.reset();
+    } catch (error) {
+      setFormNotSent(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {/* <label htmlFor="name">Name</label> */}
-      {/* <input type="text" id="name" className="input" /> */}
-      <Stack spacing={2} ml={5} width={{ xs: "80%", sm: "60%" }}>
-        <Stack direction={"row"} justifyContent={"space-between"}>
-          <TextField
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <label htmlFor="name" className="text-sm font-medium text-slate-200">
+            Name
+          </label>
+          <input
             id="name"
-            label="Name"
-            variant="outlined"
-            sx={{ width: "48%" }}
-          />{" "}
-          <TextField
-            id="email"
-            label="Email"
-            variant="outlined"
-            sx={{ width: "48%" }}
+            name="name"
+            type="text"
+            required
+            className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-400 outline-none transition focus:border-gray-300 focus:bg-white/20"
+            placeholder="Your name"
           />
-        </Stack>
-        <TextField
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="email" className="text-sm font-medium text-slate-200">
+            Email
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-400 outline-none transition focus:border-gray-300 focus:bg-white/20"
+            placeholder="you@example.com"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <label htmlFor="subject" className="text-sm font-medium text-slate-200">
+          Subject
+        </label>
+        <input
           id="subject"
-          label="Subject"
-          variant="outlined"
-          multiline
-          sx={{ width: "100%" }}
+          name="subject"
+          type="text"
+          className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-400 outline-none transition focus:border-gray-300 focus:bg-white/20"
+          placeholder="How can we help?"
         />
-        <TextField
+      </div>
+
+      <div className="space-y-2">
+        <label htmlFor="message" className="text-sm font-medium text-slate-200">
+          Message
+        </label>
+        <textarea
           id="message"
-          label="Message"
-          variant="outlined"
-          multiline
-          sx={{ width: "100%" }}
+          name="message"
+          rows={5}
+          className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-400 outline-none transition focus:border-gray-300 focus:bg-white/20"
+          placeholder="Tell us more about your bike, service request, or question."
         />
-      </Stack>
-      <Stack
-        width={"60%"}
-        direction={{ xs: "column", sm: "row" }}
-        sx={{ m: 2, ml: 5 }}
-        spacing={2}
-      >
+      </div>
+
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <ReCAPTCHA
           sitekey="6LcIjDQpAAAAANHNJdQQTrJy-LQLR7oAWIWontHU"
           ref={captchaRef}
         />
-        <Button
+        <button
           type="submit"
-          sx={{
-            color: "white",
-            backgroundColor: "#3c5d4e",
-            width: "20%",
-            "&:hover": {
-              color: "white",
-              bgcolor: "#4d5e5f",
-            },
-          }}
+          disabled={isSubmitting}
+          className="inline-flex items-center justify-center rounded-full bg-gray-500 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Submit
-        </Button>
-      </Stack>
+          {isSubmitting ? "Sending..." : "Submit"}
+        </button>
+      </div>
+
       {formSent && (
-        <Alert
-          sx={{ width: "40%", m: 3, ml: 5, mr: 5 }}
-          icon={<CheckIcon fontSize="inherit" />}
-          severity="success"
-        >
-          Email sent! We will reply ASAP.
-        </Alert>
+        <div className="flex items-center gap-3 rounded-2xl border border-gray-400/40 bg-gray-500/10 px-4 py-3 text-sm text-gray-200">
+          <CheckIcon fontSize="small" />
+          <span>Email sent! We&apos;ll reply as soon as we can.</span>
+        </div>
       )}
+
       {formNotSent && (
-        <Alert
-          sx={{ width: { xs: "70%", sm: "70%", md: "40%" }, m: 3, ml: 5 }}
-          icon={<ErrorOutlineIcon fontSize="inherit" />}
-          severity="error"
-        >
-          Email not sent. Please try again or use our email
-          northshorebikeshop@gmail.com
-        </Alert>
+        <div className="flex items-center gap-3 rounded-2xl border border-rose-400/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+          <ErrorOutlineIcon fontSize="small" />
+          <span>
+            Something went wrong. Please try again or email us directly at{" "}
+            northshorebikeshop@gmail.com.
+          </span>
+        </div>
       )}
     </form>
   );

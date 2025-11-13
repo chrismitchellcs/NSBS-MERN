@@ -9,17 +9,24 @@ const AddImage = () => {
   const fileSelectedHandler = (e) => {
     const selectedFiles = e.target.files;
     var selectedFilesArray = Array.from(selectedFiles);
-    console.log(selectedFilesArray[0].name);
+
     setSizeOK(true);
-    selectedFilesArray.some((file) => {
-      console.log(file.size);
+    if (hasTooLargeFiles(selectedFilesArray)) {
+      alert("One of the files is too large. The maximum is 10MB");
+      selectedFilesArray = [];
+      setSizeOK(false);
+    } else {
+      previewFiles(selectedFilesArray);
+    }
+  };
+
+  const hasTooLargeFiles = (filesArray) => {
+    return filesArray.some((file) => {
       if (file.size > 10485760) {
-        alert("One of the files is too large. The maximum is 10MB");
-        selectedFilesArray = [];
-        setSizeOK(false);
+        return true;
       }
+      return false;
     });
-    previewFiles(selectedFilesArray);
   };
 
   const previewFiles = async (filesArray) => {
@@ -29,7 +36,7 @@ const AddImage = () => {
         return loadedFile;
       })
     );
-    console.log(base64Array);
+
     setSelectedFiles(base64Array);
   };
 
@@ -49,11 +56,7 @@ const AddImage = () => {
   const fileUploadHandler = async (e) => {
     e.preventDefault();
     if (selectedFiles.length > 0) {
-      await Promise.all(
-        selectedFiles.map((file) => {
-          uploadImage(file);
-        })
-      );
+      await Promise.all(selectedFiles.map((file) => uploadImage(file)));
       alert("images uploaded");
     } else {
       alert("no files to upload");
@@ -62,7 +65,7 @@ const AddImage = () => {
 
   const uploadImage = async (file) => {
     const data = JSON.stringify({ file });
-    console.log(data);
+
     return new Promise(async (resolve, reject) => {
       await axios
         .post(
@@ -73,7 +76,6 @@ const AddImage = () => {
           { withCredentials: true }
         )
         .then((res) => {
-          console.log(res);
           resolve();
         })
         .catch((error) => {

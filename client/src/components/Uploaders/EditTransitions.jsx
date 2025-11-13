@@ -6,7 +6,6 @@ import {
   Radio,
   RadioGroup,
   Stack,
-  styled,
   Switch,
   TextField,
 } from "@mui/material";
@@ -14,13 +13,6 @@ import axios from "axios";
 import { useState } from "react";
 
 const EditTransitions = ({ bikes, setBikes }) => {
-  const CustomButton = styled(Button)({
-    color: "darkslategray",
-    backgroundColor: "aliceblue",
-    padding: 8,
-    borderRadius: 4,
-  });
-
   const fetchBikes = async () => {
     await axios
       .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/alltransition`, {})
@@ -62,7 +54,7 @@ const EditTransitions = ({ bikes, setBikes }) => {
         });
     };
 
-    models.map((model) => {
+    models.forEach((model) => {
       if (!modelMatrix[model.color]) {
         modelMatrix[model.color] = {};
       }
@@ -78,10 +70,6 @@ const EditTransitions = ({ bikes, setBikes }) => {
     };
 
     const EditMenu = () => {
-      const saveEdit = () => {
-        setEdit(false);
-      };
-
       const [type, setType] = useState(bike.type);
 
       const handleTypeChange = (e) => {
@@ -203,7 +191,7 @@ const EditTransitions = ({ bikes, setBikes }) => {
       const updatePhoto = async (url) => {
         let newColors = colors;
         newColors[color] = url;
-        console.log(newColors);
+
         let newBike = bike;
         newBike.colors = JSON.stringify(newColors);
 
@@ -262,7 +250,6 @@ const EditTransitions = ({ bikes, setBikes }) => {
             withCredentials: false,
           });
           const uploadedData = await uploadRes.data;
-          console.log("Uploaded successfully:", uploadedData.secure_url);
           await updatePhoto(uploadedData.secure_url);
           setUploading(false);
         } catch (error) {

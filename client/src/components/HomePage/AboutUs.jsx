@@ -3,7 +3,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
 import EmailIcon from "@mui/icons-material/Email";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const ServiceButton = styled(Button)({
   backgroundColor: "transparent",

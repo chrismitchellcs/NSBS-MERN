@@ -1,18 +1,9 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Button, Stack, TextField } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
 
 const EditBikeName = ({ bike, setBikes }) => {
   const [edit, setEdit] = useState(false);
-  const [newSizes, setNewSizes] = useState([]);
 
   const handleEditClick = () => {
     if (edit) {

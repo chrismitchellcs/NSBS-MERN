@@ -61,7 +61,7 @@ const NavBar = ({ background, position, displayLogo }) => {
     navigate(`/${page}`);
   };
   var shadow = "none";
-  if (background == "white") {
+  if (background === "white") {
     shadow = "true";
   }
 
@@ -82,8 +82,8 @@ const NavBar = ({ background, position, displayLogo }) => {
               <Box
                 component={"img"}
                 src="/logo.png"
-                width={{ xs: "60px", sm: "80px", md: "100px" }}
-              // height={"60px"}
+                width={{ xs: "100px", sm: "80px", md: "100px" }}
+                // height={"60px"}
               ></Box>
             </Button>
           ) : (

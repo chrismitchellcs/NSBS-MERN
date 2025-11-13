@@ -1,23 +1,8 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Grid,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Stack,
-  styled,
-  TextField,
-} from "@mui/material";
+import { Box, Button, Stack, styled, TextField } from "@mui/material";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
+
 const EditButton = styled(Button)({
   backgroundColor: "transparent",
   color: "black",
@@ -45,26 +30,6 @@ const EditColors = ({ bike, setBikes }) => {
   const [edit, setEdit] = useState(false);
   const [value, setValue] = useState("");
 
-  //   useEffect(() => {
-  //     if (bike.colors !== undefined) {
-  //       setNewColors(JSON.parse(bike.colors));
-  //     }
-  //   });
-
-  const fetchBikes = async () => {
-    console.log(process.env.REACT_APP_VERCEL_DOMAIN);
-    await axios
-      .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        setBikes(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   const handleSave = async (e) => {
     e.preventDefault();
     let newBike = bike;
@@ -83,25 +48,6 @@ const EditColors = ({ bike, setBikes }) => {
       .catch((error) => {
         alert("bike not added");
       });
-    // e.preventDefault();
-    // let newBike = bike;
-    // newBike[target] = JSON.stringify(checked);
-    // await axios
-    //   .patch(
-    //     `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${newBike._id}`,
-    //     {
-    //       newBike,
-    //     },
-    //     { withCredentials: true }
-    //   )
-    //   .then((res) => {
-    //     setChecked([]);
-    //     fetchBikes();
-    //     setEdit(false);
-    //   })
-    //   .catch((error) => {
-    //     alert("bike not added");
-    //   });
   };
 
   const addColor = (e) => {

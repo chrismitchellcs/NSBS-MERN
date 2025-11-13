@@ -1,6 +1,6 @@
 import { Box, Button, Stack, styled } from "@mui/material";
 import { useState } from "react";
-import { Image, Transformation } from "cloudinary-react";
+import { Image } from "cloudinary-react";
 
 const allSizes = [
   '10"',
@@ -54,8 +54,6 @@ const SeeMoreButton = styled(Button)({
   },
 });
 
-
-
 function extractPublicId(cloudinaryUrl) {
   try {
     const parts = cloudinaryUrl.split("/upload/");
@@ -75,7 +73,7 @@ const BikeLandingPage = ({ bike }) => {
   let storeModels = [];
   try {
     storeModels = JSON.parse(bike.inStock);
-  } catch { }
+  } catch {}
   const allModels = [...models, ...storeModels];
   const sortedModels = allModels.sort((a, b) => {
     const sizeDiff = allSizes.indexOf(a.size) - allSizes.indexOf(b.size);
@@ -124,11 +122,11 @@ const BikeLandingPage = ({ bike }) => {
                         backgroundColor: "#c0c0c0",
                         color: "black",
                         "& img": {
-                          filter: " brightness(0.75)  contrast(1); ", // makes a white image appear dark
+                          filter: " brightness(0.75)  contrast(1); ",
                         },
                       },
                       "& img": {
-                        transition: "filter 0.5s ease", // <-- image filter transition
+                        transition: "filter 0.5s ease",
                       },
                     }}
                     onClick={() => setCurrentImage(value)}
@@ -137,10 +135,10 @@ const BikeLandingPage = ({ bike }) => {
                       <Image
                         cloudName="ds4ukwnxl"
                         publicId={extractPublicId(value)}
-                        width="150" // double width for retina sharpness
+                        width="150"
                         crop="pad"
-                        quality="100" // max quality
-                        fetchFormat="auto" // modern format support
+                        quality="100"
+                        fetchFormat="auto"
                         alt={`bike`}
                         style={{
                           width: "100px",
@@ -155,6 +153,7 @@ const BikeLandingPage = ({ bike }) => {
                   </Button>
                 );
               }
+              return null;
             })}
           </Stack>
         </Stack>
@@ -269,6 +268,7 @@ const BikeLandingPage = ({ bike }) => {
                     </Button>
                   );
                 }
+                return null;
               })}
             </Stack>
           </Stack>
@@ -352,8 +352,6 @@ const BikeLandingPage = ({ bike }) => {
           </Stack>
         </Stack>
       </Stack>
-
-
     </Stack>
   );
 };

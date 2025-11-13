@@ -8,7 +8,7 @@ import {
   Snackbar,
 } from "@mui/material";
 import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 const EditAvailability = ({ bike }) => {
   const [models, setModels] = useState(JSON.parse(bike.models));

@@ -1,5 +1,4 @@
-import { Box, Stack, TextField } from "@mui/material";
-import { useState } from "react";
+import { Box, TextField } from "@mui/material";
 
 const SearchBar = ({
   allBikes,
@@ -9,8 +8,6 @@ const SearchBar = ({
   setPrice,
   price,
 }) => {
-  const [b, setB] = useState([]);
-
   const onChange = (e) => {
     setCheckedBrands([]);
     setCheckedTypes([]);
@@ -23,11 +20,12 @@ const SearchBar = ({
       var bikes = [];
 
       // splits all bike names into arrays for each word
-      allBikes.map((bike) => {
-        if (bike.material == "N/A") {
-          var fullName = bike.brand + " " + bike.name;
+      allBikes.forEach((bike) => {
+        var fullName = "";
+        if (bike.material === "N/A") {
+          fullName = bike.brand + " " + bike.name;
         } else {
-          var fullName = bike.brand + " " + bike.name + " " + bike.material;
+          fullName = bike.brand + " " + bike.name + " " + bike.material;
         }
         fullName = fullName.toLowerCase();
         const bikeArray = fullName.split(" ");
@@ -38,12 +36,12 @@ const SearchBar = ({
       const queryArray = query.split(" ");
 
       var queriedBikes = [];
-      bikes.map((bike) => {
+      bikes.forEach((bike) => {
         var hits = 0;
-        bike[0].map((word) => {
+        bike[0].forEach((word) => {
           var hit = false;
 
-          queryArray.map((q) => {
+          queryArray.forEach((q) => {
             if (word.startsWith(q)) {
               hit = true;
             }
@@ -54,7 +52,7 @@ const SearchBar = ({
           console.log(word + hits);
         });
         console.log(bike + " has " + hits);
-        if (hits == queryArray.length && bike.length) {
+        if (hits === queryArray.length && bike.length) {
           console.log(bike);
 
           queriedBikes.push(bike);
@@ -62,14 +60,13 @@ const SearchBar = ({
       });
 
       var finalBikes = [];
-      const ids = queriedBikes.map((queriedBike) => {
-        allBikes.map((bike) => {
-          if (bike._id == queriedBike[1]) {
+      queriedBikes.forEach((queriedBike) => {
+        allBikes.forEach((bike) => {
+          if (bike._id === queriedBike[1]) {
             finalBikes.push(bike);
           }
         });
       });
-      console.log(ids);
       setPrice([0, 15000]);
       setBikes(finalBikes);
     } else {
@@ -77,16 +74,6 @@ const SearchBar = ({
       setBikes(allBikes);
     }
   };
-
-  const colorArray = [
-    "red",
-    "orange",
-    "violet",
-    "green",
-    "blue",
-    "indigo",
-    "yellow",
-  ];
 
   return (
     <Box>
@@ -97,18 +84,6 @@ const SearchBar = ({
         sx={{ mt: 5, ml: 2, mr: 2 }}
         onChange={onChange}
       />
-
-      {/* <Stack direction="column">
-        {b.map((bike) => {
-          return (
-            <Stack direction={"row"}>
-              {bike.map((word, index) => {
-                return <Box color={colorArray[index]}>{word}</Box>;
-              })}
-            </Stack>
-          );
-        })}
-      </Stack> */}
     </Box>
   );
 };

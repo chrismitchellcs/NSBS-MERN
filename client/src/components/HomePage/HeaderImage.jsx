@@ -1,12 +1,7 @@
-import { Box, Fade, Skeleton, Stack } from "@mui/material";
+import { Box, Fade, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 
 const HeaderImage = () => {
-  const [load, setLoad] = useState(true);
-  const handleLoad = () => {
-    setLoad(true);
-  };
-
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -14,48 +9,45 @@ const HeaderImage = () => {
   }, []);
 
   return (
-    <Box sx={{ mb: -0.5 }}>
-      {/* <Box
-        component="img"
-        position={"absolute"}
-        display={{ xs: "none", sm: "none" }}
-        sx={{
-          width: "20%",
-          ml: "auto",
-          mr: "auto",
-          mt: "20%",
-          left: 0,
-          right: 0,
-          textAlign: "center",
-        }}
-        alt="NSBS"
-        src={"logowhitehq.png"}
-      /> */}
-
+    <Box sx={{ mb: -0.5, position: "relative" }}>
       <Stack
         position={"absolute"}
         sx={{
-          width: "80%",
+          width: { xs: "90%", sm: "85%", md: "80%" },
           ml: "auto",
           mr: "auto",
-          mt: { xs: "50vw", sm: "45vw", md: "22vw" },
+          top: { xs: "60%", sm: "60%", md: "60%" },
+          transform: "translateY(-50%)",
           left: 0,
           right: 0,
           textAlign: "center",
-          fontSize: "4vw",
           color: "white",
+          zIndex: 10,
         }}
         spacing={1}
       >
         <Fade in={show} timeout={1500}>
-          <Box fontSize={{ xs: "24px", sm: "4vw" }}>
-            <b>NORTH SHORE</b> BIKE SHOP
+          <Box
+            sx={{
+              fontSize: { xs: "44px", sm: "36px", md: "4vw", lg: "4.5vw" },
+              fontWeight: "bold",
+              letterSpacing: { xs: "-1px", sm: "-0.5px", md: "0px" },
+
+              lineHeight: { xs: 1.2, md: 1.3 },
+            }}
+          >
+            NORTH SHORE BIKE SHOP
           </Box>
         </Fade>
         <Fade in={show} timeout={3000}>
           <Box
-            sx={{ fontSize: "2vw", fontWeight: "350" }}
-            display={{ xs: "none", sm: "block" }}
+            sx={{
+              fontSize: { xs: "24px", sm: "20px", md: "2vw", lg: "2.2vw" },
+              fontWeight: "400",
+              letterSpacing: { xs: "-0.5px", sm: "0px", md: "0.5px" },
+
+              mt: { xs: 0.5, md: 0 },
+            }}
           >
             Proudly Serving the North Shore Since 2007
           </Box>
@@ -63,6 +55,7 @@ const HeaderImage = () => {
       </Stack>
 
       {/* {load ? ( */}
+
       <Box
         display={{ xs: "none", sm: "none", md: "block" }}
         component="img"
@@ -74,21 +67,18 @@ const HeaderImage = () => {
         }}
         alt="NSBS"
         src={"trees-edit-min.png"}
-        // src={{xs: "2-Norco-BC.png", sm: "2-Norco-BC.png", md: "trees-edit-min.png"}}
-        onLoad={handleLoad}
       />
-      {/* ) : (
-        <Skeleton variant="rectangular" width={210} height={118} />
-      )} */}
 
       <Box
         display={{ xs: "block", sm: "block", md: "none" }}
         component="img"
         sx={{
           width: "100%",
-          height: "66.65vw",
+          height: { xs: "70vh", sm: "75vh", md: "66.65vw" },
           m: 0,
           p: 0,
+          objectFit: "cover",
+          objectPosition: "top center",
         }}
         alt="NSBS"
         src={"2-Norco-BC-min.png"}

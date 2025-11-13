@@ -13,9 +13,9 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import AddImage from "./AddImage";
+
 import AddSizes from "./AddSizes";
-import SelectImages from "./SelectImages";
+
 import CloseIcon from "@mui/icons-material/Close";
 import EditAvailability from "./EditAvailability";
 
@@ -56,7 +56,6 @@ const AddNewBike = () => {
   const handleBrandChange = (e) => {
     const brand = e.target.value;
     setBrand(brand);
-    console.log(brand);
   };
 
   const [type, setType] = useState("");
@@ -64,7 +63,6 @@ const AddNewBike = () => {
   const handleTypeChange = (e) => {
     const type = e.target.value;
     setType(type);
-    console.log(type);
   };
 
   const [colors, setColors] = useState([]);
@@ -132,22 +130,18 @@ const AddNewBike = () => {
 
     let availabilityArray = [];
     let colorObject = {};
-    colors.map((color) => {
-      colorObject[color] = "";
-    });
+    colors.map((color) => (colorObject[color] = ""));
 
-    console.log(colorObject);
-
-    sizeArray.map((size) => {
-      colors.map((color) => {
+    sizeArray.map((size) =>
+      colors.map((color) =>
         availabilityArray.push({
           size: size,
           color: color,
           partNumber: "N/A",
           availability: "Out of Stock",
-        });
-      });
-    });
+        })
+      )
+    );
 
     await axios
       .post(
@@ -169,7 +163,6 @@ const AddNewBike = () => {
         { withCredentials: true }
       )
       .then((res) => {
-        console.log(res);
         fetchBikes();
         setOpen(true);
         // setBikes(res.data);
@@ -211,16 +204,23 @@ const AddNewBike = () => {
     };
 
     const EditMenu = () => {
-      const saveEdit = () => {
-        setEdit(false);
-      };
+      // const saveEdit = () => {
+      //   setEdit(false);
+      // };
 
-      const [type, setType] = useState(bike.type);
-      const [description, setDescription] = useState(bike.description);
-      const [link, setLink] = useState(bike.link);
-      const [price, setPrice] = useState(bike.price);
-      const [saleprice, setSaleprice] = useState(bike.saleprice);
-      const [year, setYear] = useState(bike.year);
+      // const [type, setType] = useState(bike.type);
+      // const [description, setDescription] = useState(bike.description);
+      // const [link, setLink] = useState(bike.link);
+      // const [price, setPrice] = useState(bike.price);
+      // const [saleprice, setSaleprice] = useState(bike.saleprice);
+      // const [year, setYear] = useState(bike.year);
+
+      const type = bike.type;
+      const description = bike.description;
+      const link = bike.link;
+      const price = bike.price;
+      const saleprice = bike.saleprice;
+      const year = bike.year;
 
       const handleTypeChange = (e) => {
         const type = e.target.value;
@@ -369,7 +369,7 @@ const AddNewBike = () => {
       const updatePhoto = async (url) => {
         let newColors = colors;
         newColors[color] = url;
-        console.log(newColors);
+
         let newBike = bike;
         newBike.colors = JSON.stringify(newColors);
 
@@ -429,7 +429,6 @@ const AddNewBike = () => {
             withCredentials: false,
           });
           const uploadedData = await uploadRes.data;
-          console.log("Uploaded successfully:", uploadedData.secure_url);
           await updatePhoto(uploadedData.secure_url);
 
           setUploading(false);

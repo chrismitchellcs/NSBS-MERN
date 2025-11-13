@@ -22,15 +22,13 @@ const AddBike = ({ setBikes }) => {
     const price = e.target.price.value;
     const saleprice = e.target.saleprice.value;
     const description = e.target.description.value;
-    console.log(description);
     const link = e.target.link.value;
     const sizes = JSON.stringify(sizeArray);
     const sizesa = JSON.stringify(sizeAArray);
     const sizesis = JSON.stringify(sizeISArray);
     const images = JSON.stringify(imagesSelected);
     setImagesSelected([]);
-    console.log(images);
-    console.log(sizes);
+
     await axios
       .post(
         `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`,
@@ -68,7 +66,6 @@ const AddBike = ({ setBikes }) => {
   const handleBrandChange = (e) => {
     const brand = e.target.value;
     setBrand(brand);
-    console.log(brand);
   };
 
   const [type, setType] = useState("");
@@ -76,7 +73,6 @@ const AddBike = ({ setBikes }) => {
   const handleTypeChange = (e) => {
     const type = e.target.value;
     setType(type);
-    console.log(type);
   };
 
   const [material, setMaterial] = useState("");
@@ -84,7 +80,6 @@ const AddBike = ({ setBikes }) => {
   const handleMaterialChange = (e) => {
     const material = e.target.value;
     setMaterial(material);
-    console.log(material);
   };
 
   return (

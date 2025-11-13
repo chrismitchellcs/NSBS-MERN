@@ -12,7 +12,6 @@ import {
 import React, { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useAuth } from "components/AuthProvider";
-import { useNavigate } from "react-router-dom";
 
 const StyledToolbar = styled(Toolbar)({
   justifyContent: "space-between",
@@ -31,7 +30,6 @@ const NavButton = styled(Button)({
   fontFamily: "Open Sans, sans-serif",
   letterSpacing: 0,
   fontWeight: "600",
-
   "&:hover": {
     textDecoration: "underline",
     textDecorationThickness: "2px",
@@ -63,8 +61,6 @@ const NavBarShop = () => {
   };
 
   const { isAuthenticated } = useAuth();
-
-  const navigate = useNavigate();
 
   return (
     <AppBar

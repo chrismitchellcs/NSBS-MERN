@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.react-multiple-carousel__arrow {
+  background-color: black;
+
+  opacity: 0.8 !important;
+  visibility: visible !important;
+}
+
+.react-multiple-carousel__arrow::before {
+  color: white; /* or white, depending on your background */
+}
+
+.react-multiple-carousel__arrow:hover {
+  opacity: 1 !important;
+}

@@ -18,7 +18,6 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       })
       .catch(() => {
-        console.log("error");
         setIsAuthenticated(false);
         setLoading(false);
       });
@@ -39,13 +38,13 @@ export const AuthProvider = ({ children }) => {
       );
 
       if (response.ok) {
-        console.log("setting is authenticated to true");
         setIsAuthenticated(true);
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || "Login failed");
       }
     } catch (err) {
+      setError(err);
       console.error("Login error:", err);
       throw new Error("Login failed");
     }

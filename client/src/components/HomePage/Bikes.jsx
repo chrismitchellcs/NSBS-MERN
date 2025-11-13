@@ -1,26 +1,14 @@
-import { Box, Button, Stack, capitalize, styled } from "@mui/material";
-import BikeButton from "../Shop/BikeButton";
+import { Box, Stack } from "@mui/material";
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import Slider from "react-slick";
+import BikeCard from "components/Shop/BikeCard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import "../../index.css";
 
-const ShopButton = styled(Button)({
-  backgroundColor: "#3c5d4e",
-  margin: "1%",
-  paddingLeft: "1%",
-  paddingRight: "1%",
-  color: "white",
-  maxHeight: "40px",
-  fontWeight: "400",
-  fontSize: "14px",
-
-  "&:hover": {
-    backgroundColor: "#4d5e5f",
-    color: "white",
-  },
-});
 const responsive = {
   desktop: {
     breakpoint: { max: 10000, min: 1200 },
@@ -47,8 +35,6 @@ const responsive = {
 const Bikes = ({ brand }) => {
   const [bikes, setBikes] = useState(null);
 
-  const uppercase = brand.toUpperCase();
-
   useEffect(() => {
     const fetchBikes = async () => {
       await axios
@@ -63,23 +49,28 @@ const Bikes = ({ brand }) => {
         });
     };
     fetchBikes();
-  }, []);
+  }, [brand]);
 
   return (
-    <Box textAlign={"center"} mb={1}>
+    <Box textAlign={"center"} bgcolor={"white"} p={3} pt={6}>
       <Stack
         direction={"row"}
         alignItems={"center"}
-        justifyContent={"center"}
-        mt={2}
+        justifyContent={{ xs: "center", sm: "flex-start" }}
         spacing={3}
+        pl={3}
       >
-        <Box sx={{ fontSize: { xs: "16px", sm: "22px" }, fontWeight: "600" }}>
-          Shop {brand}
-        </Box>
-        <ShopButton href={`shop`}>See All</ShopButton>
+        <div className="xs:text-xl sm:text-2xl font-medium">
+          Shop {brand} Bikes
+        </div>
+        <button className="xs:text-xl sm:text-2xl text-gray-500 hover:text-gray-700 flex flex-row items-center ">
+          <div className="font-medium">See All</div>
+          <div className="">
+            <FontAwesomeIcon icon={faArrowRight} />
+          </div>
+        </button>
       </Stack>
-      <Box height={"290px"}>
+      <Box height={"350px"}>
         {bikes && (
           <Carousel
             swipeable={true}
@@ -99,7 +90,7 @@ const Bikes = ({ brand }) => {
             itemClass="carousel-item-padding-40-px"
           >
             {bikes.map((bike) => {
-              return <BikeButton bike={bike}></BikeButton>;
+              return <BikeCard bike={bike}></BikeCard>;
             })}
           </Carousel>
         )}

@@ -1,21 +1,25 @@
-import { Box, Stack } from "@mui/material";
-
 const FormDescription = () => {
   return (
-    <Box m={5}>
-      <Stack direction={"column"} spacing={2} lineHeight={"1.5"}>
-        <Box sx={{ fontSize: "30px", fontWeight: "400" }}>CONTACT US</Box>
-        <Box sx={{ fontSize: "20px", fontWeight: "300" }}>
-          If you have any questions, inquiries, or just want to chat about
-          bikes, don't hesitate to contact us! We try to reply to emails within
-          the business day. Fill out the form below and we will reply via email
-          or you can just use <b>northshorebikeshop@gmail.com</b> to email us.
-        </Box>
-        <Box sx={{ fontSize: "20px", fontWeight: "300" }}>
-          You can also call us or text us at <b>(604) 929-6727</b>.
-        </Box>
-      </Stack>
-    </Box>
+    <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-xl backdrop-blur-sm sm:p-8">
+      <h2 className="text-2xl font-semibold text-white sm:text-4xl">
+        Contact Us
+      </h2>
+      <p className="mt-4 text-sm leading-relaxed text-slate-200 sm:text-base">
+        If you have any questions, inquiries, or just want to chat about bikes,
+        don&apos;t hesitate to reach out. We try to reply to emails within the
+        business day. Fill out the form and we&apos;ll respond via email, or use
+        <span className="font-semibold text-gray-300">
+          {" "}
+          northshorebikeshop@gmail.com
+        </span>{" "}
+        to contact us directly.
+      </p>
+      <p className="mt-3 text-sm leading-relaxed text-slate-200 sm:text-base">
+        Prefer to talk it through? Call or text us at
+        <span className="font-semibold text-gray-300"> (604) 929-6727</span>.
+        We&apos;re here to help you keep your ride dialled.
+      </p>
+    </div>
   );
 };
 
