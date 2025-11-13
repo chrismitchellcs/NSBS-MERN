@@ -27,11 +27,11 @@ const ContactPage = () => {
         </div>
       </section>
 
-      <section className="bg-slate-950 px-4 py-16 sm:px-6 lg:px-8">
+      <section className="bg-white px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl" data-background>
           <div className="grid gap-8 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] items-start">
             <FormDescription />
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8 shadow-xl">
+            <div className="rounded-3xl border border-gray-500 bg-gray-200 p-6 sm:p-8 shadow-xl">
               <ContactForm />
             </div>
           </div>

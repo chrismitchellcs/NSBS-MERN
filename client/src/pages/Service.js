@@ -3,6 +3,7 @@ import Closer from "components/General/Closer";
 import NavBar from "components/General/NavBar";
 import { useState, useEffect } from "react";
 import SEO from "components/General/SEO";
+import ServiceImage from "components/ServicePage/ServiceImage";
 
 const Service = () => {
   const [show, setShow] = useState(false);
@@ -38,57 +39,60 @@ const Service = () => {
         image="/service-xstretch-min.jpg"
       />
       <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
-      <Fade in={show} timeout={1000}>
+      {/* <Fade in={show} timeout={1000}>
         <Box
           component={"img"}
           src={"service-xstretch-min.jpg"}
           width={"100%"}
         ></Box>
-      </Fade>
+      </Fade> */}
       <Fade in={show} timeout={1500}>
-        <Stack
-          width={"100%"}
-          bgcolor={"black"}
-          color={"white"}
-          justifyContent={"center"}
-          alignItems={"center"}
-          pt={5}
-          pb={5}
-        >
-          <Box
-            width={{ xs: "80%", sm: "80%", md: "60%" }}
-            fontSize={"26px"}
-            fontWeight={"400"}
-            m={1}
+        <Box>
+          <ServiceImage />
+          <Stack
+            width={"100%"}
+            bgcolor={"black"}
+            color={"white"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            pt={5}
+            pb={5}
           >
-            NSBS SERVICE
-          </Box>
-          <Box
-            width={{ xs: "80%", sm: "80%", md: "60%" }}
-            fontSize={"1.1rem"}
-            fontWeight={"300"}
-            m={1}
-            lineHeight={"1.5"}
-          >
-            Our service department is tidy, fast, and staffed with competent
-            mechanics who are eager to see you back on your bike. Our
-            turn-around time is unmatched anywhere else in town. We fix
-            everything bicycle related. Feel free to contact us about any
-            service inquiries.
-          </Box>
-          <Box
-            width={{ xs: "80%", sm: "80%", md: "60%" }}
-            fontSize={"1.1rem"}
-            fontWeight={"300"}
-            m={1}
-            lineHeight={"1.5"}
-          >
-            While we are a mountain bike-focused shop, we stock parts and
-            service all types of bikes! The only exception is some e-bikes, as
-            we may not have all the necessary parts. If you have any questions
-            about this, please feel free to call or email us before coming in.
-          </Box>
-        </Stack>
+            <Box
+              width={{ xs: "80%", sm: "80%", md: "60%" }}
+              fontSize={"26px"}
+              fontWeight={"400"}
+              m={1}
+            >
+              NSBS SERVICE
+            </Box>
+            <Box
+              width={{ xs: "80%", sm: "80%", md: "60%" }}
+              fontSize={"1.1rem"}
+              fontWeight={"300"}
+              m={1}
+              lineHeight={"1.5"}
+            >
+              Our service department is tidy, fast, and staffed with competent
+              mechanics who are eager to see you back on your bike. Our
+              turn-around time is unmatched anywhere else in town. We fix
+              everything bicycle related. Feel free to contact us about any
+              service inquiries.
+            </Box>
+            <Box
+              width={{ xs: "80%", sm: "80%", md: "60%" }}
+              fontSize={"1.1rem"}
+              fontWeight={"300"}
+              m={1}
+              lineHeight={"1.5"}
+            >
+              While we are a mountain bike-focused shop, we stock parts and
+              service all types of bikes! The only exception is some e-bikes, as
+              we may not have all the necessary parts. If you have any questions
+              about this, please feel free to call or email us before coming in.
+            </Box>
+          </Stack>
+        </Box>
       </Fade>
       {/* <FadeInSection> */}
       <Stack
