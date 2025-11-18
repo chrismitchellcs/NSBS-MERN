@@ -49,7 +49,7 @@ const Service = () => {
       <Fade in={show} timeout={1500}>
         <Box>
           <ServiceImage />
-          <Stack
+          {/* <Stack
             width={"100%"}
             bgcolor={"black"}
             color={"white"}
@@ -91,7 +91,7 @@ const Service = () => {
               we may not have all the necessary parts. If you have any questions
               about this, please feel free to call or email us before coming in.
             </Box>
-          </Stack>
+          </Stack> */}
         </Box>
       </Fade>
       {/* <FadeInSection> */}
