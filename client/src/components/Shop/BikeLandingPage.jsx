@@ -75,7 +75,23 @@ const BikeLandingPage = ({ bike }) => {
     storeModels = JSON.parse(bike.inStock);
   } catch {}
   const allModels = [...models, ...storeModels];
-  const sortedModels = allModels.sort((a, b) => {
+  // Remove duplicates based on color and size combination, prioritizing 'In Store' availability
+  const uniqueModelsMap = new Map();
+  allModels.forEach((model) => {
+    const key = `${model.color}-${model.size}`;
+    const existing = uniqueModelsMap.get(key);
+
+    if (!existing) {
+      uniqueModelsMap.set(key, model);
+    } else if (
+      model.availability === "In Store" &&
+      existing.availability !== "In Store"
+    ) {
+      uniqueModelsMap.set(key, model);
+    }
+  });
+  const uniqueModels = Array.from(uniqueModelsMap.values());
+  const sortedModels = uniqueModels.sort((a, b) => {
     const sizeDiff = allSizes.indexOf(a.size) - allSizes.indexOf(b.size);
     if (sizeDiff !== 0) return sizeDiff;
     return a.color.localeCompare(b.color);
