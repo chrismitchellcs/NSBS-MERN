@@ -346,7 +346,27 @@ const sendForm = async (req, res) => {
 };
 
 const sendBikeForm = async (req, res) => {
-  const { token, name, email, bikename, color, size, message } = req.body;
+  const {
+    token,
+    bike,
+    bikecolor,
+    bikesize,
+    bikeprice,
+    bikeavailability,
+    bikeid,
+    name,
+    email,
+    phone,
+    deliveryOption,
+    firstName,
+    lastName,
+    address,
+    apartmentSuite,
+    city,
+    province,
+    postalCode,
+    message,
+  } = req.body;
 
   try {
     const response = await axios.post(
@@ -354,7 +374,27 @@ const sendBikeForm = async (req, res) => {
     );
 
     if (response.data.success) {
-      await sendBikeEmail(name, email, bikename, color, size, message);
+      await sendBikeEmail(
+        token,
+        bike,
+        bikecolor,
+        bikesize,
+        bikeprice,
+        bikeavailability,
+        bikeid,
+        name,
+        email,
+        phone,
+        deliveryOption,
+        firstName,
+        lastName,
+        address,
+        apartmentSuite,
+        city,
+        province,
+        postalCode,
+        message
+      );
       res.status(200).send();
     } else {
       res.status(500).send("Robot");
