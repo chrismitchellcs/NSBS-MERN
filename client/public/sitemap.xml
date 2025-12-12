@@ -7,7 +7,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://www.northshorebikeshop.net/</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -15,7 +15,7 @@
   <!-- Shop Page -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
@@ -23,7 +23,7 @@
   <!-- Service Page -->
   <url>
     <loc>https://www.northshorebikeshop.net/service</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -31,24 +31,23 @@
   <!-- Contact Page -->
   <url>
     <loc>https://www.northshorebikeshop.net/contact</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
-
+  <!-- Return Policy Page -->
   <url>
-  <loc>https://www.northshorebikeshop.net/</loc>
-  <image:image>
-    <image:loc>https://www.northshorebikeshop.net/logosquare.png</image:loc>
-    <image:title>North Shore Bike Shop Logo</image:title>
-  </image:image>
-</url>
+    <loc>https://www.northshorebikeshop.net/return-policy</loc>
+    <lastmod>2025-12-12</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
   
   <!-- Transition Bandit Hardtail -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53d3</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -56,7 +55,7 @@
   <!-- Transition Bottlerocket Dual Crown -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/68e7e0cdac0d13dc13e8d55d</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -64,15 +63,7 @@
   <!-- Transition Bottlerocket Single Crown -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/68e7e0cdac0d13dc13e8d55e</loc>
-    <lastmod>2025-11-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- Transition PBJ -->
-  <url>
-    <loc>https://www.northshorebikeshop.net/shop/transition/683d2e77cbcf14dfedec6131</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -80,7 +71,15 @@
   <!-- Transition PBJ -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/68d468ee5cc936a143ba24fe</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Transition PBJ -->
+  <url>
+    <loc>https://www.northshorebikeshop.net/shop/transition/683d2e77cbcf14dfedec6131</loc>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -88,7 +87,7 @@
   <!-- Transition PBJ 24 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/68d591355cc936a143ba33f8</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -96,7 +95,7 @@
   <!-- Transition Patrol Alloy Custom Build -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/68868a873dd4fdc07aed876c</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -104,7 +103,7 @@
   <!-- Transition Patrol Alloy Eagle 70 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53d4</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -112,7 +111,7 @@
   <!-- Transition Patrol Alloy Eagle 90 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53d5</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -120,7 +119,7 @@
   <!-- Transition Patrol Carbon Eagle 90 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/6870319b289fc1cdddf233bc</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -128,7 +127,7 @@
   <!-- Transition Patrol Carbon GX -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53d8</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -136,7 +135,7 @@
   <!-- Transition Patrol Carbon GX AXS -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53da</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -144,7 +143,7 @@
   <!-- Transition Regulator CX Deore -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53de</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -152,7 +151,7 @@
   <!-- Transition Regulator CX XT -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53df</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -160,7 +159,7 @@
   <!-- Transition Regulator SX Deore -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53e1</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -168,7 +167,7 @@
   <!-- Transition Regulator SX XT -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53e2</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -176,7 +175,7 @@
   <!-- Transition Relay Alloy Deore -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53e3</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -184,7 +183,7 @@
   <!-- Transition Relay Alloy NX -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53e4</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -192,7 +191,7 @@
   <!-- Transition Relay Alloy PNW GX  -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53e5</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -200,7 +199,7 @@
   <!-- Transition Relay Carbon Deore -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53e6</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -208,7 +207,7 @@
   <!-- Transition Relay Carbon GX -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53e7</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -216,7 +215,7 @@
   <!-- Transition Relay Carbon GX AXS -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53e8</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -224,7 +223,7 @@
   <!-- Transition Relay Carbon GX Mechanical -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53e9</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -232,7 +231,7 @@
   <!-- Transition Relay Carbon PNW GX -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53ea</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -240,7 +239,7 @@
   <!-- Transition Relay Carbon XO AXS -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53eb</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -248,23 +247,15 @@
   <!-- Transition Relay PNW Alloy GX -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53ec</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   
-  <!-- Transition Repeater Carbon GX AXS -->
+  <!-- Transition Relay PNW Carbon Eagle 90 -->
   <url>
-    <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53ee</loc>
-    <lastmod>2025-11-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- Transition Repeater Carbon XO AXS -->
-  <url>
-    <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53ef</loc>
-    <lastmod>2025-11-04</lastmod>
+    <loc>https://www.northshorebikeshop.net/shop/transition/690fafba59be81f91a09362c</loc>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -272,7 +263,7 @@
   <!-- Transition Repeater PT Carbon GX AXS -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53f0</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -280,7 +271,7 @@
   <!-- Transition Repeater PT Carbon XO AXS -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53f1</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -288,7 +279,7 @@
   <!-- Transition Ripcord -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53f2</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -296,7 +287,7 @@
   <!-- Transition Scout Alloy Deore -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53f3</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -304,7 +295,7 @@
   <!-- Transition Scout Alloy XT -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53f4</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -312,7 +303,7 @@
   <!-- Transition Sentinel Alloy Deore -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53f6</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -320,7 +311,7 @@
   <!-- Transition Sentinel Alloy Eagle 90 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/6870319b289fc1cdddf233bd</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -328,7 +319,7 @@
   <!-- Transition Sentinel Alloy XT -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53f7</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -336,7 +327,7 @@
   <!-- Transition Sentinel Carbon Deore -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53f8</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -344,15 +335,7 @@
   <!-- Transition Sentinel Carbon Eagle 90 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/6870319b289fc1cdddf233be</loc>
-    <lastmod>2025-11-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- Transition Sentinel Carbon GX -->
-  <url>
-    <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53f9</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -360,7 +343,7 @@
   <!-- Transition Sentinel Carbon XO AXS -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53fa</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -368,7 +351,7 @@
   <!-- Transition Sentinel Carbon XT -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53fb</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -376,7 +359,7 @@
   <!-- Transition Sentinel Carbon XT Di2 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/68acedc3adfe49ddfb3c5367</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -384,7 +367,7 @@
   <!-- Transition Sentinel Carbon XTR Di2 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/6891028a173c28fa13759956</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -392,7 +375,7 @@
   <!-- Transition Smuggler Alloy Deore -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53fc</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -400,7 +383,7 @@
   <!-- Transition Smuggler Carbon Deore  -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53fe</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -408,7 +391,7 @@
   <!-- Transition Smuggler Carbon Eagle 90 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/6870319b289fc1cdddf233bf</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -416,7 +399,7 @@
   <!-- Transition Smuggler Carbon GX -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec53ff</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -424,7 +407,7 @@
   <!-- Transition Smuggler Carbon GX AXS -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec5401</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -432,7 +415,7 @@
   <!-- Transition Smuggler Carbon GX AXS -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec5400</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -440,15 +423,7 @@
   <!-- Transition Smuggler Carbon GX Mechanical  -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec5402</loc>
-    <lastmod>2025-11-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- Transition Smuggler Carbon XO AXS -->
-  <url>
-    <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec5404</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -456,7 +431,31 @@
   <!-- Transition Smuggler Carbon XO AXS -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec5403</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Transition Smuggler Carbon XO AXS -->
+  <url>
+    <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec5404</loc>
+    <lastmod>2025-12-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Transition Spire Alloy Eagle 70 -->
+  <url>
+    <loc>https://www.northshorebikeshop.net/shop/transition/69349e01da40678880b8f712</loc>
+    <lastmod>2025-12-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Transition Spire Alloy Eagle 90 -->
+  <url>
+    <loc>https://www.northshorebikeshop.net/shop/transition/69349e01da40678880b8f713</loc>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -464,7 +463,7 @@
   <!-- Transition Spire Alloy GX -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec5405</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -472,7 +471,15 @@
   <!-- Transition Spire Alloy NX -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec5406</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Transition Spire Carbon Eagle 90 -->
+  <url>
+    <loc>https://www.northshorebikeshop.net/shop/transition/69349e01da40678880b8f714</loc>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -480,7 +487,7 @@
   <!-- Transition Spire Carbon GX -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec5407</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -488,7 +495,7 @@
   <!-- Transition Spire Carbon XO AXS -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec5408</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -496,7 +503,7 @@
   <!-- Transition Spur Deore -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec5409</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -504,7 +511,7 @@
   <!-- Transition Spur Eagle 90 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/6870319b289fc1cdddf233c0</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -512,7 +519,7 @@
   <!-- Transition Spur GX -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec540a</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -520,7 +527,7 @@
   <!-- Transition Spur XO AXS -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec540d</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -528,7 +535,7 @@
   <!-- Transition TR11 Alloy GX -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec540e</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -536,7 +543,7 @@
   <!-- Transition TR11 Alloy XO -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec5410</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -544,7 +551,7 @@
   <!-- Transition TransAM -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/transition/683bb6eacbcf14dfedec5411</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -552,7 +559,7 @@
   <!-- Norco Fluid FS A3 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/685a33104cddc3ae7fdff115</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -560,7 +567,7 @@
   <!-- Norco Rampage 1 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/688920dc6d8cfd23ec49d8e0</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -568,7 +575,15 @@
   <!-- Norco Rampage Youth 24 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/68891bf93ba0872081bbdf15</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Norco Range VLT CX C1 -->
+  <url>
+    <loc>https://www.northshorebikeshop.net/shop/norco/693b184eb8d8a1e32f82dbf4</loc>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -576,7 +591,7 @@
   <!-- Norco Runner 10 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/68891640ba13392771775043</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -584,7 +599,7 @@
   <!-- Norco Runner 12 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/688918c5249366ea4626c3ad</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -592,7 +607,7 @@
   <!-- Norco Sight A1 160 MX  -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/683d3030417231473f7db404</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -600,7 +615,7 @@
   <!-- Norco Sight A3 150 MX -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/685c7761a3ccd48c3fcc1128</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -608,7 +623,7 @@
   <!-- Norco Sight C1 160 MX -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/683d2f20417231473f7db3f9</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -616,7 +631,23 @@
   <!-- Norco Sight C2 MX 150 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/683bbadc198a8ee03c3a7dfb</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Norco Sight VLT CX C1 -->
+  <url>
+    <loc>https://www.northshorebikeshop.net/shop/norco/6939c5db7d67195353404559</loc>
+    <lastmod>2025-12-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Norco Sight VLT CX C2 -->
+  <url>
+    <loc>https://www.northshorebikeshop.net/shop/norco/6939c58b7d67195353404554</loc>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -624,7 +655,7 @@
   <!-- Norco Sight VLT CX C3 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/68fe8033f9667feab5cbc630</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -632,7 +663,7 @@
   <!-- Norco Storm 100 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/685c7573a3ccd48c3fcc110c</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -640,7 +671,7 @@
   <!-- Norco Storm 14 Single Speed -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/685c6dc5a3ccd48c3fcc10ec</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -648,7 +679,7 @@
   <!-- Norco Storm 16 Single Speed -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/685c6e24a3ccd48c3fcc10f3</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -656,7 +687,7 @@
   <!-- Norco Storm 24 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/68891b1e64b821afeea68395</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -664,7 +695,7 @@
   <!-- Norco Storm Youth 20 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/685c6f27a3ccd48c3fcc10fe</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -672,7 +703,7 @@
   <!-- Norco Storm Youth 26 -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/norco/685c7058a3ccd48c3fcc1105</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -680,7 +711,7 @@
   <!-- Ibis HD6 XT -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/ibis/685a34ebfa2e8919f46a9c61</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -688,7 +719,7 @@
   <!-- Ibis Ripmo AF UDH Deore -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/ibis/6841f949317442293a9120f1</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -696,7 +727,7 @@
   <!-- Ibis Ripmo V3 XT Custom Build Mixed Wheel -->
   <url>
     <loc>https://www.northshorebikeshop.net/shop/ibis/685a3889fa2e8919f46a9c71</loc>
-    <lastmod>2025-11-04</lastmod>
+    <lastmod>2025-12-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

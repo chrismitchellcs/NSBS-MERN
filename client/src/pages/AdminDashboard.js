@@ -24,15 +24,14 @@ const AdminDashboard = () => {
             Add Bikes
           </Button>
         </Stack>
-        <Stack bgcolor={"#F5F5F5"} p={5} spacing={2}>
+        {/* <Stack bgcolor={"#F5F5F5"} p={5} spacing={2}>
           <Box>To add and update norco bikes, go here:</Box>
           <Button onClick={() => navigate("/admin-addbikes-norco")}>
             Add Bikes
           </Button>
-        </Stack>
-
+        </Stack> */}
         <Stack bgcolor={"#F5F5F5"} p={5} spacing={2}>
-          <Box>To add other bikes:</Box>
+          <Box>To add other bikes (Norco, Ibis, Custom Transitions):</Box>
           <Button onClick={() => navigate("/admin-addbikes-new")}>
             Add Bikes
           </Button>
