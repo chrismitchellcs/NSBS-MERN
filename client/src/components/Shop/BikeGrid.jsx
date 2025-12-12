@@ -1,5 +1,4 @@
 import { Box, Grid, Stack } from "@mui/material";
-import BikeButton from "./BikeButton";
 import BikeCard from "./BikeCard";
 
 const BikeGrid = ({ bikes }) => {
@@ -34,7 +33,9 @@ const BikeGrid = ({ bikes }) => {
                 textAlign={"center"}
                 key={bike._id}
               >
-                <BikeButton bike={bike}></BikeButton>
+                <Box sx={{ display: "inline-block" }}>
+                  <BikeCard bike={bike} />
+                </Box>
               </Grid>
             );
           })}
@@ -69,21 +70,7 @@ const BikeGrid = ({ bikes }) => {
     }
   };
 
-  return (
-    <Box>{bikes && <Bikes></Bikes>}</Box>
-    // <Box>
-    //   <Grid container>
-    //     {bikes &&
-    //       bikes.map((bike) => {
-    //         return (
-    //           <Grid item xs={12} sm={6} md={4} lg={4} textAlign={"center"}>
-    //             <BikeButton bike={bike}></BikeButton>
-    //           </Grid>
-    //         );
-    //       })}
-    //   </Grid>
-    // </Box>
-  );
+  return <Box>{bikes && <Bikes></Bikes>}</Box>;
 };
 
 export default BikeGrid;

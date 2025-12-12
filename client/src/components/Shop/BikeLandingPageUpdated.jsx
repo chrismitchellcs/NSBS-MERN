@@ -256,7 +256,10 @@ const BikeLandingPageUpdated = ({ bike }) => {
             <div className="text-lg text-gray-900 mb-2">
               Select Size / Colour:
             </div>
-            <Stack spacing={1}>
+            <Stack
+              spacing={1}
+              minWidth={{ xs: "320px", sm: "320px", md: "340px", lg: "400px" }}
+            >
               {sortedModels.map((model) => {
                 if (model.availability !== "Out of Stock") {
                   const isSelected =
