@@ -14,6 +14,7 @@ import AdminAddBikesTransition from "pages/AdminAddBikesTransition";
 import AdminAddBikesNorco from "pages/AdminAddBikesNorco";
 import AdminAddBikesNew from "pages/AdminAddBikesNew";
 import { HelmetProvider } from "react-helmet-async";
+import Checkout from "pages/Checkout";
 
 const App = () => {
   return (
@@ -32,7 +33,7 @@ const App = () => {
                 </Route>
                 <Route path="/shop/:brand/:bikeid" element={<BikeDetails />} />
                 <Route path="/bike" element={<Shop />} />
-
+                <Route path="/checkout" element={<Checkout />} />
                 <Route path="/return-policy" element={<ReturnPolicy />} />
                 <Route path="/admin-oldadd" element={<AdminBikes />} />
                 <Route path="/admin-dashboard" element={<AdminDashboard />} />

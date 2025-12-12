@@ -25,6 +25,7 @@ const IbisHome = () => {
           src="ibisriding.jpeg"
           alt="NSBS"
           className="w-full h-[80vh] md:h-[45.1vw] object-cover object-[75%_center] md:object-center"
+          loading="lazy"
         />
         {/* Gradient overlay for better text readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent pointer-events-none z-0" />

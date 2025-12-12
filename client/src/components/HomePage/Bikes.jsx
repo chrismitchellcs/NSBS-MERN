@@ -1,7 +1,5 @@
 import { Box, Stack } from "@mui/material";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import BikeCard from "components/Shop/BikeCard";
@@ -14,44 +12,27 @@ const responsive = {
   desktop: {
     breakpoint: { max: 10000, min: 1200 },
     items: 4,
-    slidesToSlide: 4, // optional, default to 1.
+    slidesToSlide: 4,
   },
   desktopSmall: {
     breakpoint: { max: 1200, min: 860 },
     items: 3,
-    slidesToSlide: 3, // optional, default to 1.
+    slidesToSlide: 3,
   },
   tablet: {
     breakpoint: { max: 860, min: 599 },
     items: 2,
-    slidesToSlide: 2, // optional, default to 1.
+    slidesToSlide: 2,
   },
   mobile: {
     breakpoint: { max: 599, min: 0 },
     items: 1,
-    slidesToSlide: 1, // optional, default to 1.
+    slidesToSlide: 1,
   },
 };
 
-const Bikes = ({ brand }) => {
-  const [bikes, setBikes] = useState(null);
+const Bikes = ({ brand, bikes }) => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchBikes = async () => {
-      await axios
-        .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/brand`, {
-          brand,
-        })
-        .then((res) => {
-          setBikes(res.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-    fetchBikes();
-  }, [brand]);
 
   return (
     <Box textAlign={"center"} bgcolor={"white"} p={3} pt={6}>
@@ -66,7 +47,7 @@ const Bikes = ({ brand }) => {
           Shop {brand} Bikes
         </div>
         <button
-          onClick={() => navigate(`/shop/${brand.toLowerCase()}`)}
+          onClick={() => navigate(`/shop`, { state: { brand: brand } })}
           className="xs:text-xl sm:text-2xl text-gray-500 hover:text-gray-700 flex flex-row items-center "
         >
           <div className="font-medium">See All</div>
@@ -82,7 +63,7 @@ const Bikes = ({ brand }) => {
             draggable={false}
             showDots={false}
             responsive={responsive}
-            ssr={false} // means to render carousel on server-side.
+            ssr={false}
             infinite={true}
             autoPlay={false}
             autoPlaySpeed={5000}
@@ -90,53 +71,23 @@ const Bikes = ({ brand }) => {
             customTransition="transform 500ms ease-in-out"
             transitionDuration={0}
             containerClass="carousel-container"
-            //   deviceType={this.props.deviceType}
             dotListClass="custom-dot-list-style"
             itemClass="carousel-item-padding-40-px"
           >
-            {bikes.map((bike) => {
-              return <BikeCard bike={bike}></BikeCard>;
+            {bikes.slice(0, 20).map((bike) => {
+              if (bike.brand.toLowerCase() === brand.toLowerCase()) {
+                return (
+                  <Box sx={{ display: "inline-block" }}>
+                    <BikeCard bike={bike}></BikeCard>
+                  </Box>
+                );
+              } else {
+                return null;
+              }
             })}
           </Carousel>
         )}
       </Box>
-
-      {/* <Box
-        display="flex"
-        sx={{
-          backgroundColor: "white",
-          width: "100%",
-          height: "300px",
-          p: 0,
-
-          display: "-ms-flexbox",
-          WebkitBoxPack: "center",
-          MsFlexPack: "center",
-
-          padding: "0px",
-          margin: "0px",
-        }}
-      >
-        <Stack>
-          <Stack
-            direction="row"
-            display={"-ms-flexbox"}
-            onWheel={handleScroll}
-            sx={{
-              overflowX: "scroll",
-              width: "100%",
-              MsFlexPack: "center",
-              pt: 1,
-              pb: 1,
-            }}
-          >
-            {bikes &&
-              bikes.map((bike) => {
-                return <BikeButton bike={bike}></BikeButton>;
-              })}
-          </Stack>
-        </Stack>
-      </Box> */}
     </Box>
   );
 };

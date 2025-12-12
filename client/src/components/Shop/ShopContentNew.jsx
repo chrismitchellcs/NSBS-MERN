@@ -6,7 +6,7 @@ import Toolbar from "@mui/material/Toolbar";
 import NavBarShop from "components/General/NavBarShop";
 import BikeGrid from "./BikeGrid";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import FilterList from "./FilterList";
 import SearchBar from "./SearchBar";
@@ -28,10 +28,6 @@ import LoadingBikes from "./LoadingBikes";
 const drawerWidth = 260;
 
 export default function ShopContentNew(props) {
-  function capitalizeFirstLetter(val) {
-    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
-  }
-
   const [bikes, setBikes] = useState(null);
   const [allBikes, setAllBikes] = useState(null);
   const [checkedBrands, setCheckedBrands] = React.useState([]);
@@ -42,71 +38,86 @@ export default function ShopContentNew(props) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  var { brand } = useParams();
+  const location = useLocation();
+  const state = location.state;
 
   React.useEffect(() => {
     const fetchBikes = async () => {
-      if (brand === undefined) {
-        console.log("no brand");
-        await axios
-          .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {
-            withCredentials: true,
-          })
-          .then((res) => {
+      await axios
+        .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {
+          withCredentials: true,
+        })
+        .then((res) => {
+          if (state && state.brand) {
+            setCheckedBrands([state.brand]);
+            setBikes(res.data.filter((bike) => bike.brand === state.brand));
+          } else {
             setBikes(res.data);
-            setAllBikes(res.data);
-          })
-          .catch((error) => {});
-      } else if (
-        brand === "transition" ||
-        brand === "norco" ||
-        brand === "ibis"
-      ) {
-        console.log("brand");
-        await axios
-          .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/brand`, {
-            brand: capitalizeFirstLetter(brand),
-          })
-          .then((res) => {
-            setBikes(res.data);
-          })
-          .catch((error) => {});
-        await axios
-          .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {})
-          .then((res) => {
-            setAllBikes(res.data);
-          })
-          .catch((error) => {});
-      } else {
-        var newBrand = brand.replace(/\+/g, " ");
-        newBrand = newBrand.replace(/=/g, "/");
-        newBrand = newBrand
-          .split(" ")
-          .map((word) => word[0].toUpperCase() + word.slice(1))
-          .join(" ");
-        console.log("new brand: " + newBrand);
-        if (newBrand === "E-bike") {
-          newBrand = "E-Bike";
-        }
-        await axios
-          .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/type`, {
-            type: newBrand,
-          })
-          .then((res) => {
-            setBikes(res.data);
-          })
-          .catch((error) => {});
-        await axios
-          .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {})
-          .then((res) => {
-            setAllBikes(res.data);
-          })
-          .catch((error) => {});
-      }
+          }
+          setAllBikes(res.data);
+        })
+        .catch((error) => {});
+      // if (brand === undefined) {
+      //   console.log("no brand");
+      //   await axios
+      //     .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {
+      //       withCredentials: true,
+      //     })
+      //     .then((res) => {
+      //       setBikes(res.data);
+      //       setAllBikes(res.data);
+      //     })
+      //     .catch((error) => {});
+      // } else if (
+      //   brand === "transition" ||
+      //   brand === "norco" ||
+      //   brand === "ibis"
+      // ) {
+      //   console.log("brand");
+      //   await axios
+      //     .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/brand`, {
+      //       brand: capitalizeFirstLetter(brand),
+      //     })
+      //     .then((res) => {
+      //       setBikes(res.data);
+      //     })
+      //     .catch((error) => {});
+      //   await axios
+      //     .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {})
+      //     .then((res) => {
+      //       setAllBikes(res.data);
+      //     })
+      //     .catch((error) => {});
+      // } else {
+      //   var newBrand = brand.replace(/\+/g, " ");
+      //   newBrand = newBrand.replace(/=/g, "/");
+      //   newBrand = newBrand
+      //     .split(" ")
+      //     .map((word) => word[0].toUpperCase() + word.slice(1))
+      //     .join(" ");
+      //   console.log("new brand: " + newBrand);
+      //   if (newBrand === "E-bike") {
+      //     newBrand = "E-Bike";
+      //   }
+      //   await axios
+      //     .post(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/type`, {
+      //       type: newBrand,
+      //     })
+      //     .then((res) => {
+      //       setBikes(res.data);
+      //     })
+      //     .catch((error) => {});
+      //   await axios
+      //     .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`, {})
+      //     .then((res) => {
+      //       setAllBikes(res.data);
+      //     })
+      //     .catch((error) => {});
+      // }
     };
 
     fetchBikes();
-  }, [brand]);
+  }, [state]);
 
   const bikeTypes = [
     "DH",

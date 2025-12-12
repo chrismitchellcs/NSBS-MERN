@@ -28,7 +28,7 @@ export default function BikeCard({ bike }) {
   return (
     <button
       onClick={handleClick}
-      className="relative flex flex-shrink-0 flex-col overflow-hidden rounded-lg border-2 border-gray-300 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-gray-500 hover:shadow-sm m-4 border-gray-400 shadow-lg"
+      className="relative flex flex-shrink-0 flex-col border border-gray-300 overflow-hidden rounded-lg border-1  bg-white transition-all duration-300 hover:-translate-y-1 hover:border-gray-500 hover:shadow-sm m-4 "
     >
       <Image
         cloudName="ds4ukwnxl"
@@ -45,7 +45,7 @@ export default function BikeCard({ bike }) {
           display: "block",
         }}
       />
-      <div className="flex flex-col bg-white px-4 py-3 text-left">
+      <div className="flex flex-col bg-white px-4 py-3 text-left w-full">
         {bike.saleprice ? (
           <div className="absolute right-4 top-2 text-white bg-red-400 px-2 py-1 text-xs rounded-md">
             Sale
@@ -59,11 +59,11 @@ export default function BikeCard({ bike }) {
         <div className="mt-2 font-medium flex flex-row justify-between border-t border-gray-600 py-2 text-sm text-gray-700">
           {bike.saleprice ? (
             <div className="flex flex-row items-center gap-1">
-              <div className="line-through">${bike.price}</div>
-              <div>${bike.saleprice}</div>
+              <div className="line-through">${bike.price.toLocaleString()}</div>
+              <div>${bike.saleprice.toLocaleString()}</div>
             </div>
           ) : (
-            <div>${bike.price}</div>
+            <div>${bike.price.toLocaleString()}</div>
           )}
           <div className="flex flex-row items-center gap-1">{bike.type}</div>
         </div>

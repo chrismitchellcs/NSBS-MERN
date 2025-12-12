@@ -9,8 +9,32 @@ import IbisHome from "components/HomePage/IbisHome";
 import NavBar from "components/General/NavBar";
 import SEO from "components/General/SEO";
 import AboutImages from "components/HomePage/AboutImages";
+import { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+
+function groupBikesByBrand(bikes = []) {
+  return bikes.reduce((acc, bike) => {
+    const brand = bike.brand;
+    if (!acc[brand]) acc[brand] = [];
+    acc[brand].push(bike);
+    return acc;
+  }, {});
+}
 
 const Home = () => {
+  const [bikes, setBikes] = useState([]);
+  useEffect(() => {
+    const fetchBikes = async () => {
+      const response = await axios.get(
+        `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`
+      );
+      setBikes(response.data);
+    };
+    fetchBikes();
+  }, []);
+
+  const bikesByBrand = useMemo(() => groupBikesByBrand(bikes ?? []), [bikes]);
+
   return (
     <div>
       <SEO
@@ -22,7 +46,7 @@ const Home = () => {
       <NavBar
         background="transparent"
         position={"absolute"}
-        displayLogo={1}
+        displayLogo={true}
       ></NavBar>
       <HeaderImage></HeaderImage>
 
@@ -30,15 +54,15 @@ const Home = () => {
       <AboutImages></AboutImages>
       <TransitionHome></TransitionHome>
 
-      <Bikes brand={"Transition"}></Bikes>
+      <Bikes brand={"Transition"} bikes={bikesByBrand["Transition"]}></Bikes>
 
       <NorcoHome></NorcoHome>
 
-      <Bikes brand={"Norco"}></Bikes>
+      <Bikes brand={"Norco"} bikes={bikesByBrand["Norco"]}></Bikes>
 
       <IbisHome></IbisHome>
 
-      <Bikes brand={"Ibis"}></Bikes>
+      <Bikes brand={"Ibis"} bikes={bikesByBrand["Ibis"]}></Bikes>
 
       <Parts></Parts>
 

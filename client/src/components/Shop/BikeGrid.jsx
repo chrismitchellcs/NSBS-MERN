@@ -54,8 +54,13 @@ const BikeGrid = ({ bikes }) => {
                 xl={3}
                 textAlign={"center"}
                 key={bike._id}
+                sx={{
+                  justifyContent: "center",
+                }}
               >
-                <BikeCard bike={bike}></BikeCard>
+                <Box sx={{ display: "inline-block" }}>
+                  <BikeCard bike={bike} />
+                </Box>
               </Grid>
             );
           })}

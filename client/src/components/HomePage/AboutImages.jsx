@@ -5,7 +5,7 @@ const cards = [
     title: "Shop Mountain Bikes",
     description: "Premium bikes from Transition, Norco, & Ibis",
     buttonText: "Shop Bikes",
-    image: "sentinelwhite-min.jpg",
+    image: "LIT01445 copy-min.jpg",
 
     link: "/shop",
   },
@@ -67,10 +67,10 @@ const AboutImages = () => {
             transform: "translateZ(0)", // GPU layer
           }}
         >
-          <h3 className="text-white xs:text-xl sm:text-xl md:text-2xl font-[400] mb-2 drop-shadow-lg pointer-events-none">
+          <h3 className="text-white xs:text-xl sm:text-xl md:text-2xl font-[400] mb-2 drop-shadow-lg pointer-events-none tracking-tight">
             {card.title}
           </h3>
-          <p className="text-white text-sm md:text-base mb-4 opacity-90 drop-shadow-md pointer-events-none">
+          <p className="text-white text-sm md:text-base mb-4 opacity-90 drop-shadow-md pointer-events-none tracking-tight">
             {card.description}
           </p>
           <div className="pointer-events-auto">

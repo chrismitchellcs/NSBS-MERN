@@ -44,7 +44,7 @@ const HeaderImage = () => {
             sx={{
               fontSize: { xs: "24px", sm: "20px", md: "2vw", lg: "2.2vw" },
               fontWeight: "400",
-              letterSpacing: { xs: "-0.5px", sm: "0px", md: "0.5px" },
+              letterSpacing: { xs: "-0.5px", sm: "0px", md: "0px" },
 
               mt: { xs: 0.5, md: 0 },
             }}

@@ -4,12 +4,11 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import BikeLandingPage from "components/Shop/BikeLandingPage";
 import SEO from "components/General/SEO";
+import BikeLandingPageUpdated from "components/Shop/BikeLandingPageUpdated";
 
 const BikeDetails = () => {
   const { bikeid, brand } = useParams();
-
   const [bike, setBike] = useState(null);
 
   useEffect(() => {
@@ -94,7 +93,13 @@ const BikeDetails = () => {
       >
         <SEO {...seoData} />
         <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
-        <Box>{bike ? <BikeLandingPage bike={bike}></BikeLandingPage> : ""}</Box>
+        <Box>
+          {bike ? (
+            <BikeLandingPageUpdated bike={bike}></BikeLandingPageUpdated>
+          ) : (
+            ""
+          )}
+        </Box>
       </div>
 
       <Closer></Closer>

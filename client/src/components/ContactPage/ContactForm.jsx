@@ -56,7 +56,7 @@ const ContactForm = () => {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <label htmlFor="name" className="text-sm font-medium text-gray-800">
+          <label htmlFor="name" className="text-sm font-semibold text-gray-900">
             Name
           </label>
           <input
@@ -64,12 +64,15 @@ const ContactForm = () => {
             name="name"
             type="text"
             required
-            className="w-full rounded-2xl border border-gray-500 bg-gray-200 px-4 py-3 text-sm text-gray-800 placeholder:text-gray-800 outline-none transition focus:border-gray-300 focus:bg-white/20"
+            className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 outline-none transition-all focus:border-black focus:ring-2 focus:ring-black focus:ring-offset-0"
             placeholder="Your name"
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor="email" className="text-sm font-medium text-gray-800">
+          <label
+            htmlFor="email"
+            className="text-sm font-semibold text-gray-900"
+          >
             Email
           </label>
           <input
@@ -77,35 +80,41 @@ const ContactForm = () => {
             name="email"
             type="email"
             required
-            className="w-full rounded-2xl border border-gray-500 bg-gray-200 px-4 py-3 text-sm text-gray-800 placeholder:text-gray-800 outline-none transition focus:border-gray-300 focus:bg-white/20"
-            placeholder="you@example.com"
+            className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 outline-none transition-all focus:border-black focus:ring-2 focus:ring-black focus:ring-offset-0"
+            placeholder="Email Address"
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="subject" className="text-sm font-medium text-gray-800">
+        <label
+          htmlFor="subject"
+          className="text-sm font-semibold text-gray-900"
+        >
           Subject
         </label>
         <input
           id="subject"
           name="subject"
           type="text"
-          className="w-full rounded-2xl border border-gray-500 bg-gray-200 px-4 py-3 text-sm text-gray-800 placeholder:text-gray-800 outline-none transition focus:border-gray-300 focus:bg-white/20"
-          placeholder="How can we help?"
+          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 outline-none transition-all focus:border-black focus:ring-2 focus:ring-black focus:ring-offset-0"
+          placeholder="Subject"
         />
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="message" className="text-sm font-medium text-gray-800">
+        <label
+          htmlFor="message"
+          className="text-sm font-semibold text-gray-900"
+        >
           Message
         </label>
         <textarea
           id="message"
           name="message"
           rows={5}
-          className="w-full rounded-2xl border border-gray-500 bg-gray-200 px-4 py-3 text-sm text-gray-800 placeholder:text-gray-800 outline-none transition focus:border-gray-00 focus:bg-gray-200"
-          placeholder="Tell us more about your bike, service request, or question."
+          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 outline-none transition-all resize-none focus:border-black focus:ring-2 focus:ring-black focus:ring-offset-0"
+          placeholder="Message"
         />
       </div>
 
@@ -117,22 +126,22 @@ const ContactForm = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex items-center justify-center rounded-full bg-gray-500 px-6 py-3 text-sm font-semibold text-gray-800 shadow-lg transition hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex items-center justify-center rounded-lg bg-black px-8 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-black"
         >
           {isSubmitting ? "Sending..." : "Submit"}
         </button>
       </div>
 
       {formSent && (
-        <div className="flex items-center gap-3 rounded-2xl border border-gray-400/40 bg-gray-500/10 px-4 py-3 text-sm text-gray-800">
-          <CheckIcon fontSize="small" />
+        <div className="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+          <CheckIcon fontSize="small" className="text-green-600" />
           <span>Email sent! We&apos;ll reply as soon as we can.</span>
         </div>
       )}
 
       {formNotSent && (
-        <div className="flex items-center gap-3 rounded-2xl border border-rose-400/40 bg-rose-500/10 px-4 py-3 text-sm text-gray-800">
-          <ErrorOutlineIcon fontSize="small" />
+        <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          <ErrorOutlineIcon fontSize="small" className="text-red-600" />
           <span>
             Something went wrong. Please try again or email us directly at{" "}
             northshorebikeshop@gmail.com.

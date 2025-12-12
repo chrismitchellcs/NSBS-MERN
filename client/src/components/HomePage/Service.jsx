@@ -24,6 +24,7 @@ const Service = () => {
         width={"100%"}
         height={"56.45vw"}
         src="IMG_1090.jpg"
+        loading="lazy"
       ></Box>
       <Box
         pt={1}

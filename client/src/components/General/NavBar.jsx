@@ -26,11 +26,11 @@ const NavButton = styled(Button)({
   color: "black",
   maxHeight: "40px",
   margin: "10px",
-  fontSize: "14px",
+  fontSize: "15px",
   textTransform: "none",
-  fontFamily: "Open Sans, sans-serif",
+  fontFamily: "Inter, sans-serif",
   letterSpacing: 0,
-  fontWeight: "600",
+  fontWeight: "450",
   "&:hover": {
     textDecoration: "underline",
     textDecorationThickness: "2px",
@@ -61,10 +61,12 @@ const NavBar = ({ background, position, displayLogo }) => {
     navigate(`/${page}`);
   };
   var shadow = "none";
+  var borderBottom = "none";
   if (background === "white") {
-    shadow = "true";
+    borderBottom = "1px solid #e0e0e0";
+  } else {
+    borderBottom = "none";
   }
-
   const { isAuthenticated } = useAuth();
 
   return (
@@ -73,6 +75,7 @@ const NavBar = ({ background, position, displayLogo }) => {
       style={{
         background: background,
         boxShadow: shadow,
+        borderBottom: borderBottom,
       }}
     >
       <StyledToolbar>
