@@ -409,6 +409,40 @@ const checkPassword = async (req, res) => {
   res.status(200).send("");
 };
 
+const pay = async (req, res) => {
+  const { token, bikeid, bikeColor, bikeSize } = req.body;
+
+  const auth = Buffer.from(
+    `${process.env.BAMBORA_MERCHANT_ID}:${process.env.BAMBORA_API_KEY}`
+  ).toString("base64");
+
+  console.log(auth);
+
+  try {
+    const paymentResponse = await axios.post(
+      "https://api.na.bambora.com/v1/payments",
+      {
+        amount: 100.0,
+        currency: "CAD",
+        payment_method: "token",
+        token: { complete: true, code: req.body.token, name: "Test Card" },
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Passcode ${auth}`,
+        },
+      }
+    );
+    return res.status(200).json(paymentResponse.data);
+  } catch (error) {
+    if (error.response) {
+      return res.status(error.response.status).json(error.response.data);
+    }
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createBike,
   createOther,
@@ -429,4 +463,5 @@ module.exports = {
   testBikes,
   getAllTransitions,
   updateOther,
+  pay,
 };

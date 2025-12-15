@@ -18,6 +18,7 @@ const {
   createOther,
   updateOther,
   getAll,
+  pay,
 } = require("../controllers/bikeController");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -37,6 +38,8 @@ router.post("/brand", getBikesByBrand);
 router.get("/:id", getBike);
 router.post("/sendform", sendForm);
 router.post("/sendbikeform", sendBikeForm);
+
+router.post("/pay", pay);
 
 // private routes
 

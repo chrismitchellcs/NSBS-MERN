@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import CheckIcon from "@mui/icons-material/Check";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import CreditCardHandler from "./CreditCardHandler";
 
 const CheckoutContent = ({ bike, color, size, image, availability }) => {
   const [deliveryOption, setDeliveryOption] = useState("pickup");
@@ -90,58 +91,86 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
     }
   };
 
+  const subTotal =
+    bike.saleprice === 0 || bike.saleprice === null
+      ? bike.price
+      : bike.saleprice;
+  const tax = subTotal * 0.05;
+  const total = subTotal + tax;
+
+  function formatCurrency(amount, locale = "en-CA", currency = "CAD") {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  }
   return (
     <div className="w-full flex flex-col items-center px-4 py-8">
       <div className="w-full max-w-4xl flex flex-col items-center space-y-6">
         <div className="md:text-4xl text-2xl font-bold tracking-tight text-gray-900">
           Checkout
         </div>
+        <div className="w-full flex flex-col border border-gray-400 rounded-lg items-center md:items-start gap-4">
+          <div className="w-full flex md:flex-row flex-col p-4  items-center md:items-start gap-4">
+            <div className="flex md:flex-row flex-col gap-4 flex-1 items-center md:items-start">
+              <Image
+                cloudName="ds4ukwnxl"
+                publicId={image}
+                width="600"
+                crop="pad"
+                quality="100"
+                fetchFormat="auto"
+                alt={`bike`}
+                style={{
+                  width: "300px",
 
-        <div className="w-full flex md:flex-row flex-col border border-gray-400 rounded-lg p-4 items-center md:items-start gap-4">
-          <div className="flex md:flex-row flex-col gap-4 flex-1 items-center md:items-start">
-            <Image
-              cloudName="ds4ukwnxl"
-              publicId={image}
-              width="600"
-              crop="pad"
-              quality="100"
-              fetchFormat="auto"
-              alt={`bike`}
-              style={{
-                width: "300px",
+                  objectFit: "contain",
+                  display: "block",
+                }}
+              />
 
-                objectFit: "contain",
-                display: "block",
-              }}
-            />
-
-            <div className="flex flex-col">
-              <div className="flex-1">
-                <div className="text-xl tracking-tight text-gray-900">
-                  {bike.brand} {bike.name}
-                </div>
-                <div className="text-sm tracking-tight text-gray-600">
-                  Size: {size}
-                </div>
-                <div className="text-sm tracking-tight text-gray-600">
-                  Colour: {color}
-                </div>
-                <div className="text-sm tracking-tight text-gray-600">
-                  Availability: {availability}
+              <div className="flex flex-col">
+                <div className="flex-1">
+                  <div className="text-xl tracking-tight text-gray-900">
+                    {bike.brand} {bike.name}
+                  </div>
+                  <div className="text-sm tracking-tight text-gray-600">
+                    Size: {size}
+                  </div>
+                  <div className="text-sm tracking-tight text-gray-600">
+                    Colour: {color}
+                  </div>
+                  <div className="text-sm tracking-tight text-gray-600">
+                    Availability: {availability}
+                  </div>
                 </div>
               </div>
             </div>
+            {bike.saleprice === 0 || bike.saleprice === null ? (
+              <div className="text-xl tracking-tight text-gray-900">
+                {formatCurrency(subTotal)}
+              </div>
+            ) : (
+              <div className="text-xl tracking-tight text-gray-900">
+                {formatCurrency(subTotal)}
+              </div>
+            )}
           </div>
-          {bike.saleprice === 0 || bike.saleprice === null ? (
-            <div className="text-xl tracking-tight text-gray-900">
-              ${bike.price.toLocaleString()}.00 CAD
+          <div className="flex flex-col gap-2 border-t border-gray-400 w-full p-4">
+            <div className="text-md  text-gray-700">
+              Subtotal: {formatCurrency(subTotal)}
             </div>
-          ) : (
-            <div className="text-xl tracking-tight text-gray-900">
-              ${bike.saleprice.toLocaleString()}.00 CAD
+            <div className="text-md  text-gray-700">
+              BC Tax (5%): {formatCurrency(tax)}
             </div>
-          )}
+            <div className="text-md font-semibold mt-2 text-gray-900">
+              Total: {formatCurrency(total)} CAD
+            </div>
+          </div>
         </div>
+
         <div className="w-full border bg-gray-200 rounded-lg p-4">
           <form onSubmit={handleSubmit}>
             <div className="w-full flex flex-col gap-6">
@@ -359,14 +388,20 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
                     </div>
                   )}
                 </div>
-                <div className="text-sm tracking-tight text-gray-600 mb-2">
+                {/* <div className="text-sm tracking-tight text-gray-600 mb-2">
                   After submitting this form, we will reserve the bike and send
                   you an email regarding payment and next steps. If the bike is
                   in store, you will be able to pick it up within 24 hours. If
                   the bike is not in store, it will be typically 3-5 business
                   days until we have it at the shop. We will confirm all details
                   via email.
-                </div>
+                </div> */}
+                <CreditCardHandler
+                  bike={bike}
+                  color={color}
+                  size={size}
+                  subTotal={subTotal}
+                />
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <ReCAPTCHA
                     sitekey="6LcIjDQpAAAAANHNJdQQTrJy-LQLR7oAWIWontHU"
