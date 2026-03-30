@@ -59,4 +59,81 @@ const getSignature = async (req, res) => {
   });
 };
 
-module.exports = { uploadImage, getImages, getSignature };
+/**
+ * Parse public_id (with optional folder path) from a Cloudinary delivery URL.
+ * Skips transformation segments (contain commas), version prefix, file extension.
+ */
+function publicIdFromCloudinaryUrl(url) {
+  if (!url || typeof url !== "string") return null;
+  if (!/cloudinary\.com/i.test(url)) return null;
+  const marker = "/upload/";
+  const idx = url.indexOf(marker);
+  if (idx === -1) return null;
+  let rest = url.slice(idx + marker.length).split("?")[0];
+  while (rest.length > 0) {
+    const slash = rest.indexOf("/");
+    const seg = slash === -1 ? rest : rest.slice(0, slash);
+    if (seg.includes(",")) {
+      rest = rest.slice(seg.length + 1);
+    } else {
+      break;
+    }
+  }
+  rest = rest.replace(/^v\d+\//, "");
+  rest = rest.replace(/\.(jpe?g|png|gif|webp|avif|bmp)$/i, "");
+  try {
+    return decodeURIComponent(rest);
+  } catch {
+    return rest;
+  }
+}
+
+const destroyUpload = async (req, res) => {
+  try {
+    let publicId =
+      typeof req.body?.public_id === "string"
+        ? req.body.public_id.trim()
+        : "";
+    const secureUrl =
+      typeof req.body?.secure_url === "string"
+        ? req.body.secure_url.trim()
+        : "";
+
+    if (!publicId && secureUrl) {
+      publicId = publicIdFromCloudinaryUrl(secureUrl) || "";
+    }
+
+    if (!publicId) {
+      return res
+        .status(400)
+        .json({ error: "public_id or Cloudinary secure_url required" });
+    }
+
+    const nameCfg = cloudinary.config().cloud_name;
+    if (
+      secureUrl &&
+      nameCfg &&
+      !secureUrl.includes(`res.cloudinary.com/${nameCfg}/`)
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Image URL does not belong to this Cloudinary account" });
+    }
+
+    const result = await cloudinary.uploader.destroy(publicId, {
+      invalidate: true,
+    });
+
+    res.json({ result, public_id: publicId });
+  } catch (err) {
+    console.error("Cloudinary destroy:", err);
+    res.status(500).json({ error: err.message || "Destroy failed" });
+  }
+};
+
+module.exports = {
+  uploadImage,
+  getImages,
+  getSignature,
+  destroyUpload,
+};

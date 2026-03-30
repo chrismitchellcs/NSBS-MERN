@@ -9,6 +9,7 @@ const {
   sendBikeForm,
   getBikesByType,
   getBikesByBrand,
+  getHomePreviewBikes,
   testBikes,
   addTransitions,
   getTransitions,
@@ -17,6 +18,7 @@ const {
   getAllTransitions,
   createOther,
   updateOther,
+  deleteOther,
   getAll,
   pay,
 } = require("../controllers/bikeController");
@@ -28,6 +30,7 @@ const router = express.Router();
 router.get("/test", testBikes);
 
 router.get("/", getBikes);
+router.get("/home-preview", getHomePreviewBikes);
 router.get("/all", getAll);
 
 router.get("/transition", getTransitions);
@@ -46,6 +49,7 @@ router.post("/pay", pay);
 router.post("/", authMiddleware, createBike);
 router.post("/transition", authMiddleware, addTransitions);
 router.post("/other", authMiddleware, createOther);
+router.delete("/other/:id", authMiddleware, deleteOther);
 
 router.delete("/:id", authMiddleware, deleteBike);
 router.patch("/:id", authMiddleware, updateBike);

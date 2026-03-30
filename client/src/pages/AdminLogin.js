@@ -4,7 +4,7 @@ import NavBar from "components/General/NavBar";
 const AdminLogin = () => {
   return (
     <div>
-      <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
+      <NavBar position="sticky" displayLogo={1} />
       <PasswordForm></PasswordForm>
     </div>
   );

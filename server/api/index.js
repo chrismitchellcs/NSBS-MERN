@@ -9,6 +9,8 @@ const cors = require("cors");
 const bikeRoutes = require("./routes/bikes");
 const authRoutes = require("./routes/auth");
 const imageRoutes = require("./routes/images");
+const headerHeroRoutes = require("./routes/headerHero");
+const serviceListingsRoutes = require("./routes/serviceListings");
 
 const app = express();
 
@@ -79,6 +81,8 @@ app.use(
 app.use("/api/bikes", bikeRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/images", imageRoutes);
+app.use("/api/header-hero", headerHeroRoutes);
+app.use("/api/service-listings", serviceListingsRoutes);
 
 // MongoDB Connection (cached)
 let connectionPromise;

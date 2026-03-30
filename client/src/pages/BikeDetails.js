@@ -2,10 +2,13 @@ import NavBar from "components/General/NavBar";
 import Closer from "components/General/Closer";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { Box } from "@mui/material";
 import SEO from "components/General/SEO";
-import BikeLandingPageUpdated from "components/Shop/BikeLandingPageUpdated";
+
+const BikeLandingPageUpdated = lazy(() =>
+  import("components/Shop/BikeLandingPageUpdated")
+);
 
 const BikeDetails = () => {
   const { bikeid, brand } = useParams();
@@ -25,8 +28,7 @@ const BikeDetails = () => {
     fetchBikes();
   }, [bikeid]);
 
-  // Generate SEO data from bike info
-  const getSEOData = () => {
+  const seoData = useMemo(() => {
     if (!bike) {
       return {
         title: "Bike Details | North Shore Bike Shop",
@@ -41,7 +43,6 @@ const BikeDetails = () => {
     const price = bike.saleprice || bike.price;
     const priceText = price ? ` | $${price.toLocaleString()}` : "";
 
-    // Parse first image if available
     let imageUrl = "/logowhitehq.png";
     try {
       if (bike.images) {
@@ -62,10 +63,14 @@ const BikeDetails = () => {
           bike.material || ""
         } frame. View details and specifications.`;
 
+    const canadaKeywords =
+      bike.brand?.toLowerCase() === "transition"
+        ? "Transition Canada, Transition bikes Canada, "
+        : "";
     return {
       title: `${bikeName}${year}${priceText} | North Shore Bike Shop`,
       description: description,
-      keywords: `${bikeName}, ${bike.brand} bikes, ${
+      keywords: `${canadaKeywords}${bikeName}, ${bike.brand} bikes, ${
         bike.type || "mountain bike"
       }, ${
         bike.material || ""
@@ -73,9 +78,7 @@ const BikeDetails = () => {
       url: `https://www.northshorebikeshop.net/shop/${bike.brand}/${bikeid}`,
       image: imageUrl,
     };
-  };
-
-  const seoData = getSEOData();
+  }, [bike, brand, bikeid]);
 
   return (
     <div
@@ -92,13 +95,29 @@ const BikeDetails = () => {
         }}
       >
         <SEO {...seoData} />
-        <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
+        <NavBar position="sticky" displayLogo={1} />
         <Box>
           {bike ? (
-            <BikeLandingPageUpdated bike={bike}></BikeLandingPageUpdated>
-          ) : (
-            ""
-          )}
+            <Suspense
+              fallback={
+                <Box
+                  sx={{
+                    minHeight: 360,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "text.secondary",
+                  }}
+                  role="status"
+                  aria-live="polite"
+                >
+                  Loading bike…
+                </Box>
+              }
+            >
+              <BikeLandingPageUpdated bike={bike} />
+            </Suspense>
+          ) : null}
         </Box>
       </div>
 

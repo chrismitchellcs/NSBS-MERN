@@ -1,4 +1,4 @@
-import { Box, Checkbox, FormControlLabel, FormGroup } from "@mui/material";
+import { Box, Checkbox, FormControlLabel } from "@mui/material";
 
 const AddSizes = ({ sizes, setSizes }) => {
   const allSizes = [
@@ -25,46 +25,58 @@ const AddSizes = ({ sizes, setSizes }) => {
     "5",
   ];
 
-  const removeSize = (s, size) => {
-    const index = s.indexOf(size);
-    if (index > -1) {
-      s.splice(index, 1);
-    }
-    setSizes(s);
-  };
-
-  const addSize = (s, size) => {
-    s.push(size);
-    setSizes(s);
-  };
-
-  const handleClick = (e) => {
-    const size = e.target.value;
-    const checked = e.target.checked;
-
-    if (checked) {
-      var s = sizes;
-      addSize(s, size);
-    } else {
-      const s = sizes;
-      removeSize(s, size);
-    }
-  };
-
   return (
-    <Box>
-      <FormGroup aria-label="position" row onClick={handleClick}>
-        {allSizes.map((size) => {
-          return (
-            <FormControlLabel
-              value={size}
-              control={<Checkbox />}
-              label={size}
-              labelPlacement="top"
-            />
-          );
-        })}
-      </FormGroup>
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(4.25rem, 1fr))",
+        gap: 0.5,
+        width: "100%",
+      }}
+    >
+      {allSizes.map((size) => {
+        const checked = sizes.includes(size);
+        return (
+          <FormControlLabel
+            key={size}
+            sx={{
+              m: 0,
+              px: 0.25,
+              py: 0.25,
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              border: "1px solid",
+              borderColor: checked ? "primary.main" : "divider",
+              borderRadius: 0.75,
+              bgcolor: checked ? "action.selected" : "background.paper",
+              minHeight: 44,
+              "& .MuiFormControlLabel-label": {
+                fontSize: "0.7rem",
+                lineHeight: 1.1,
+                maxWidth: "100%",
+              },
+            }}
+            labelPlacement="top"
+            control={
+              <Checkbox
+                size="small"
+                checked={checked}
+                value={size}
+                onChange={(_, isChecked) => {
+                  if (isChecked) {
+                    if (!sizes.includes(size)) setSizes([...sizes, size]);
+                  } else {
+                    setSizes(sizes.filter((s) => s !== size));
+                  }
+                }}
+                sx={{ p: 0, mt: 0.25 }}
+              />
+            }
+            label={size}
+          />
+        );
+      })}
     </Box>
   );
 };

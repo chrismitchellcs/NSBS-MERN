@@ -6,12 +6,19 @@ import {
   FormControlLabel,
   Radio,
   Snackbar,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
 import { useMemo, useState } from "react";
 
 const EditAvailability = ({ bike }) => {
-  const [models, setModels] = useState(JSON.parse(bike.models));
+  const [models, setModels] = useState(() => {
+    try {
+      return JSON.parse(bike.models || "[]");
+    } catch {
+      return [];
+    }
+  });
 
   const modelMatrix = useMemo(() => {
     const matrix = {};
@@ -39,15 +46,13 @@ const EditAvailability = ({ bike }) => {
       const newModels = models.map((model) => {
         if (model.size === size && model.color === colour) {
           return { ...model, availability: status };
-        } else {
-          return model;
         }
+        return model;
       });
       setModels(newModels);
       setEdit(false);
 
-      let newBike = bike;
-      newBike.models = JSON.stringify(newModels);
+      const newBike = { ...bike, models: JSON.stringify(newModels) };
 
       await axios
         .patch(
@@ -57,10 +62,10 @@ const EditAvailability = ({ bike }) => {
           },
           { withCredentials: true }
         )
-        .then((res) => {
+        .then(() => {
           setOpen(true);
         })
-        .catch((error) => {
+        .catch(() => {
           setModels(oldModels);
           alert("Something went wrong, availability not updated");
         });
@@ -68,83 +73,83 @@ const EditAvailability = ({ bike }) => {
 
     if (edit) {
       return (
-        <Stack>
-          <RadioGroup
-            onChange={handleBrandChange}
-            aria-labelledby="demo-radio-buttons-group-label"
-            defaultValue="none"
-            name="radio-buttons-group"
-            value={status}
-          >
-            <FormControlLabel
-              value="In Store"
-              control={<Radio />}
-              label="In Store"
-            />
+        <Stack spacing={1}>
+          <RadioGroup value={status} onChange={handleBrandChange} name={`avail-${colour}-${size}`}>
+            <FormControlLabel value="In Store" control={<Radio size="small" />} label="In Store" />
             <FormControlLabel
               value="Available to Order"
-              control={<Radio />}
+              control={<Radio size="small" />}
               label="Available to Order"
             />
-            <FormControlLabel
-              value="Out of Stock"
-              control={<Radio />}
-              label="Out of Stock"
-            />
+            <FormControlLabel value="Out of Stock" control={<Radio size="small" />} label="Out of Stock" />
           </RadioGroup>
-          <Button variant="contained" onClick={handleEdit}>
+          <Button variant="contained" size="small" onClick={handleEdit}>
             Save
           </Button>
         </Stack>
       );
-    } else {
-      return (
-        <Stack direction={"row"} alignItems={"center"}>
-          <Box>{availability}</Box>
-          <Button onClick={() => setEdit(!edit)}>Edit</Button>
-        </Stack>
-      );
     }
+    return (
+      <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap" useFlexGap>
+        <Typography variant="body2" component="span">
+          {availability}
+        </Typography>
+        <Button size="small" variant="outlined" onClick={() => setEdit(!edit)}>
+          Edit
+        </Button>
+      </Stack>
+    );
   };
 
   const [open, setOpen] = useState(false);
 
   const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
+    if (reason === "clickaway") return;
     setOpen(false);
   };
 
   return (
-    <Stack direction={"row"}>
-      {Object.entries(modelMatrix).map(([key, value]) => (
-        <Stack>
-          <Box color={"white"} bgcolor={"black"} p={1} m={1}>
-            {key}
+    <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1.5} sx={{ width: "100%" }}>
+      {Object.entries(modelMatrix).map(([colorKey, bySize]) => (
+        <Stack key={colorKey} spacing={1} sx={{ minWidth: 0 }}>
+          <Box
+            sx={{
+              color: "common.white",
+              bgcolor: "common.black",
+              px: 1,
+              py: 0.75,
+              borderRadius: 1,
+              fontSize: "0.8rem",
+              fontWeight: 600,
+            }}
+          >
+            {colorKey}
           </Box>
-          {Object.entries(value).map(([key2, value2]) => (
-            <Box>
-              <Stack spacing={1} m={1} bgcolor={"white"} p={1}>
-                <Box>{key2}</Box>
-                <Box>{value2.partNumber}</Box>
-                <Availability
-                  availability={value2.availability}
-                  colour={key}
-                  size={key2}
-                ></Availability>
+          {Object.entries(bySize).map(([sizeKey, value2]) => (
+            <Box
+              key={`${colorKey}-${sizeKey}`}
+              sx={{
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: 1,
+                p: 1,
+                bgcolor: "background.paper",
+              }}
+            >
+              <Stack spacing={0.75}>
+                <Typography variant="body2" fontWeight={600}>
+                  {sizeKey}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {value2.partNumber}
+                </Typography>
+                <Availability availability={value2.availability} colour={colorKey} size={sizeKey} />
               </Stack>
             </Box>
           ))}
         </Stack>
       ))}
-      <Snackbar
-        open={open}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        message="Availability Updated"
-      />
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} message="Availability updated" />
     </Stack>
   );
 };

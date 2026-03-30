@@ -3,16 +3,16 @@
 @tailwind utilities;
 
 .react-multiple-carousel__arrow {
-  background-color: black;
-
-  opacity: 0.8 !important;
+  background-color: #243d33 !important;
+  opacity: 0.92 !important;
   visibility: visible !important;
 }
 
 .react-multiple-carousel__arrow::before {
-  color: white; /* or white, depending on your background */
+  color: white;
 }
 
 .react-multiple-carousel__arrow:hover {
+  background-color: #2f4d40 !important;
   opacity: 1 !important;
 }

@@ -1,7 +1,18 @@
-import { Box, Button, Link, Snackbar, Stack, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { useEffect, useState } from "react";
+import {
+  Alert,
+  Box,
+  Button,
+  Link,
+  Paper,
+  Snackbar,
+  Stack,
+  Typography,
+  styled,
+} from "@mui/material";
+import { NAV_BAR_BG } from "components/General/NavBar";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import EditTransitions from "./EditTransitions";
 
 const VisuallyHiddenInput = styled("input")({
@@ -182,50 +193,48 @@ const UploadTransitions = () => {
   const [open, setOpen] = useState(false);
 
   const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(true);
+    if (reason === "clickaway") return;
+    setOpen(false);
   };
 
   return (
-    <Stack alignItems={"center"} spacing={1}>
-      <Snackbar
-        open={open}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        message="Bikes Updated"
-      />
-      <Box fontWeight={"600"} fontSize={"20px"}>
-        Upload Transition Stock
-      </Box>
-      <Box fontWeight={"350"} fontSize={"14px"}>
-        To get the file: Click{" "}
-        <Link
-          rel="noopener noreferrer"
-          href="https://www.b2b.transitionbikes.com/Account.cfm"
-          target="_blank"
-        >
-          Here
-        </Link>
-        , login, click on "Stock List", then click on "Download Excel"
-      </Box>
+    <Stack spacing={3} alignItems="stretch">
+      <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success" variant="filled" sx={{ width: "100%" }}>
+          Bikes updated from stock file.
+        </Alert>
+      </Snackbar>
 
-      <Box>
-        <Button
-          component="label"
-          role={undefined}
-          variant="contained"
-          tabIndex={-1}
-          startIcon={<CloudUploadIcon />}
-        >
-          Upload file
-          <VisuallyHiddenInput type="file" onChange={uploadBikes} />
-        </Button>
-      </Box>
+      <Paper elevation={0} sx={{ p: { xs: 2, sm: 3 }, borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
+        <Stack spacing={2}>
+          <Typography variant="h6" fontWeight={700} sx={{ color: NAV_BAR_BG }}>
+            Upload Transition stock file
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 720 }}>
+            Export HTML from the B2B stock list and upload it here. It creates/updates Transition models and availability.
+            To get the file: click{" "}
+            <Link rel="noopener noreferrer" href="https://www.b2b.transitionbikes.com/Account.cfm" target="_blank">
+              Transition B2B
+            </Link>
+            , sign in, open <strong>Stock List</strong>, then download as Excel/HTML as you currently do.
+          </Typography>
+          <Box>
+            <Button
+              component="label"
+              role={undefined}
+              variant="contained"
+              tabIndex={-1}
+              startIcon={<CloudUploadIcon />}
+              sx={{ bgcolor: NAV_BAR_BG }}
+            >
+              Choose stock file
+              <VisuallyHiddenInput type="file" onChange={uploadBikes} />
+            </Button>
+          </Box>
+        </Stack>
+      </Paper>
 
-      <EditTransitions bikes={bikes} setBikes={setBikes}></EditTransitions>
+      <EditTransitions bikes={bikes} setBikes={setBikes} />
     </Stack>
   );
 };

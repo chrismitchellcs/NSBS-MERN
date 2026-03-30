@@ -6,10 +6,14 @@ import {
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
 import { faInstagram } from "@fortawesome/free-brands-svg-icons";
+import { NAV_BAR_BG } from "components/General/NavBar";
 
 const Closer = () => {
   return (
-    <footer className="bg-[#3c5d4e] text-white w-full py-8 md:py-12">
+    <footer
+      className="text-white w-full py-8 md:py-12"
+      style={{ backgroundColor: NAV_BAR_BG }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-0 md:justify-between ">
           <div className="flex flex-col items-center">

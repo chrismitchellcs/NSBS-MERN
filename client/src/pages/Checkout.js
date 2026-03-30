@@ -31,7 +31,7 @@ const Checkout = () => {
   return (
     <div className="w-full flex flex-col min-h-screen">
       <div className="flex-1">
-        <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
+        <NavBar position="sticky" displayLogo={1} />
         {bike ? (
           <CheckoutContent
             bike={bike}

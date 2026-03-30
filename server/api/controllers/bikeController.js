@@ -4,6 +4,9 @@ const Other = require("../models/Other");
 const AllBikes = require("../models/AllBikes");
 const mongoose = require("mongoose");
 const { sendEmail, sendBikeEmail } = require("../utils/email");
+const {
+  destroyCloudinaryImagesFromBikeColors,
+} = require("../utils/cloudinaryBikeCleanup");
 const axios = require("axios");
 
 // get all bikes
@@ -13,6 +16,19 @@ const getBikes = async (req, res) => {
     name: 1,
   });
   res.status(200).json(bikes);
+};
+
+/** Lighter payload for the home page carousels (no descriptions, sizes, etc.). */
+const getHomePreviewBikes = async (req, res) => {
+  try {
+    const bikes = await AllBikes.find({ public: true })
+      .select("brand name colors price saleprice type")
+      .sort({ brand: -1, name: 1 })
+      .lean();
+    res.status(200).json(bikes);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 const getOthers = async (req, res) => {
@@ -288,6 +304,26 @@ const updateOther = async (req, res) => {
   res.status(200).json(bike);
 };
 
+/** OTHER catalog bikes only — deletes Mongo doc and Cloudinary assets from colors/images JSON. */
+const deleteOther = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ error: "Invalid ID" });
+  }
+  try {
+    const doc = await AllBikes.findById(id).lean();
+    if (!doc || doc.database !== "OTHER") {
+      return res.status(404).json({ error: "No such bike" });
+    }
+    await destroyCloudinaryImagesFromBikeColors(doc.colors, doc.images);
+    await AllBikes.findByIdAndDelete(id);
+    res.status(200).json({ message: "Deleted", id });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message || "Delete failed" });
+  }
+};
+
 // delete a bike
 const deleteBike = async (req, res) => {
   const { id } = req.params;
@@ -460,8 +496,10 @@ module.exports = {
   checkPassword,
   getBikesByType,
   getBikesByBrand,
+  getHomePreviewBikes,
   testBikes,
   getAllTransitions,
   updateOther,
+  deleteOther,
   pay,
 };

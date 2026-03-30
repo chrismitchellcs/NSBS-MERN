@@ -185,7 +185,6 @@ NSBS-MERN
 │  │  │  │  ├─ Closer.jsx
 │  │  │  │  ├─ FadeInSection.jsx
 │  │  │  │  ├─ NavBar.jsx
-│  │  │  │  ├─ NavBarShop.jsx
 │  │  │  │  ├─ ScrollToTop.jsx
 │  │  │  │  └─ styles.css
 │  │  │  ├─ HomePage

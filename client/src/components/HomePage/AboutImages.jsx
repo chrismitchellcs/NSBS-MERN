@@ -1,100 +1,195 @@
-import { useNavigate } from "react-router-dom";
+import { Box, Button, Fade, Stack, Typography } from "@mui/material";
+import { NAV_BAR_BG } from "components/General/NavBar";
+import { useEffect, useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 
 const cards = [
   {
-    title: "Shop Mountain Bikes",
-    description: "Premium bikes from Transition, Norco, & Ibis",
-    buttonText: "Shop Bikes",
-    image: "LIT01445 copy-min.jpg",
-
+    title: "Shop mountain bikes",
+    description: "Premium bikes from Transition, Norco, and Ibis.",
+    buttonText: "Shop bikes",
+    image: "xtr.jpg",
     link: "/shop",
   },
   {
-    title: "Expert Bike Service",
-    description: "Fast turnaround, expert mechanics",
-    buttonText: "Service Info",
+    title: "Expert bike service",
+    description: "Fast turnaround and mechanics who ride.",
+    buttonText: "Service info",
     image: "IMG_1090-min.jpg",
     link: "/service",
   },
   {
-    title: "Visit Our Shop",
-    description: "Located in North Vancouver, BC",
-    buttonText: "Contact Us",
-    image: "mattriding-min.jpeg",
+    title: "Visit our shop",
+    description: "North Vancouver, BC — right on the Shore.",
+    buttonText: "Contact us",
+    image: "bottlerocket.jpg",
     link: "/contact",
   },
 ];
 
 const AboutImages = () => {
-  const navigate = useNavigate();
+  const [show, setShow] = useState(false);
 
-  const Card = ({ card }) => {
-    return (
-      <button
-        className="flex-1 aspect-[4/3] overflow-hidden relative rounded-lg shadow-lg transition-all duration-300 hover:translate-y-[-4px] hover:shadow-xl border-2 border-transparent hover:border-white/30"
-        style={{
-          isolation: "isolate", // Creates new stacking context for better performance
-          contain: "layout style paint", // Tells browser to optimize this element
-        }}
-      >
-        {/* Image - base layer with GPU acceleration */}
-        <img
-          src={card.image}
-          alt={card.description}
-          className="w-full h-full object-cover object-center"
-          style={{
-            transform: "translateZ(0)", // Force GPU layer
-            willChange: "transform", // Optimize for transforms
-            backfaceVisibility: "hidden", // Prevent flickering
-          }}
-          loading="eager"
-          decoding="async"
-        />
-
-        {/* Gradient overlay - optimized */}
-        <div
-          className="absolute inset-0 bg-gradient-to-t from-black/100 via-black/40 to-transparent z-10"
-          style={{
-            transform: "translateZ(0)", // GPU layer
-            willChange: "opacity", // Optimize for opacity changes
-          }}
-        />
-
-        {/* Content overlay - optimized */}
-        <div
-          className="absolute inset-0 flex flex-col justify-end items-center text-center px-6 pb-8 z-20 pointer-events-none"
-          style={{
-            transform: "translateZ(0)", // GPU layer
-          }}
-        >
-          <h3 className="text-white xs:text-xl sm:text-xl md:text-2xl font-[400] mb-2 drop-shadow-lg pointer-events-none tracking-tight">
-            {card.title}
-          </h3>
-          <p className="text-white text-sm md:text-base mb-4 opacity-90 drop-shadow-md pointer-events-none tracking-tight">
-            {card.description}
-          </p>
-          <div className="pointer-events-auto">
-            <button
-              className="text-black text-sm font-medium bg-white bg-opacity-80 px-4 py-2 rounded-md hover:bg-opacity-100 transition-all duration-200"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(card.link);
-              }}
-            >
-              {card.buttonText}
-            </button>
-          </div>
-        </div>
-      </button>
-    );
-  };
+  useEffect(() => {
+    setShow(true);
+  }, []);
 
   return (
-    <div className="flex flex-col lg:flex-row justify-center items-center gap-5 px-5 py-5 bg-white">
-      {cards.map((card) => (
-        <Card key={card.title} card={card} />
-      ))}
-    </div>
+    <Box
+      component="section"
+      aria-label="Shop highlights"
+      sx={{
+        bgcolor: "#f6f7f6",
+        py: { xs: 2, sm: 2.5, md: 3 },
+        px: { xs: 1.5, sm: 2, md: 2.5 },
+      }}
+    >
+      <Stack
+        direction={{ xs: "column", lg: "row" }}
+        spacing={{ xs: 1.5, md: 2 }}
+        sx={{
+          maxWidth: "100%",
+          mx: 0,
+          alignItems: "stretch",
+        }}
+      >
+        {cards.map((card, i) => (
+          <Fade key={card.title} in={show} timeout={500 + i * 160}>
+            <Box
+              sx={{
+                flex: 1,
+                minWidth: 0,
+                position: "relative",
+                borderRadius: "12px",
+                overflow: "hidden",
+                aspectRatio: { xs: "16/10", lg: "4/3" },
+                minHeight: {
+                  xs: 320,
+                  sm: 380,
+                  md: 400,
+                  lg: "min(52vw, 560px)",
+                },
+                boxShadow: "0 14px 44px rgba(0,0,0,0.12)",
+                "&:hover .about-card-img": {
+                  transform: "scale(1.08)",
+                },
+                "@media (prefers-reduced-motion: reduce)": {
+                  "&:hover .about-card-img": { transform: "scale(1)" },
+                  "& .about-card-img": { transition: "none" },
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  position: "absolute",
+                  inset: 0,
+                  overflow: "hidden",
+                  zIndex: 0,
+                }}
+              >
+                <Box
+                  component="img"
+                  className="about-card-img"
+                  src={card.image}
+                  alt={card.title}
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center",
+                    display: "block",
+                    transform: "scale(1)",
+                    transformOrigin: "center center",
+                    transition:
+                      "transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                  }}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </Box>
+              <Box
+                sx={{
+                  position: "absolute",
+                  inset: 0,
+                  zIndex: 1,
+                  pointerEvents: "none",
+                  bgcolor: "rgba(0,0,0,0.32)",
+                }}
+              />
+              <Stack
+                spacing={{ xs: 1.1, md: 1.25 }}
+                sx={{
+                  position: "absolute",
+                  left: 0,
+                  right: { xs: 0, md: "auto" },
+                  bottom: 0,
+                  zIndex: 2,
+                  maxWidth: { md: "92%" },
+                  p: { xs: 2.25, sm: 2.5, md: 3 },
+                  textAlign: { xs: "center", md: "left" },
+                  alignItems: { xs: "center", md: "flex-start" },
+                }}
+              >
+                <Typography
+                  component="h2"
+                  sx={{
+                    m: 0,
+                    fontWeight: 800,
+                    lineHeight: 1.05,
+                    letterSpacing: { xs: "-0.02em", md: "-0.03em" },
+                    color: "#fff",
+                    fontSize: {
+                      xs: "1.65rem",
+                      sm: "1.85rem",
+                      md: "clamp(1.6rem, 2.2vw, 2.05rem)",
+                    },
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {card.title}
+                </Typography>
+                <Typography
+                  sx={{
+                    m: 0,
+                    color: "rgba(255,255,255,0.92)",
+                    fontWeight: 400,
+                    fontSize: { xs: "1.02rem", md: "1.08rem" },
+                    lineHeight: 1.5,
+                    maxWidth: 400,
+                  }}
+                >
+                  {card.description}
+                </Typography>
+                <Button
+                  component={RouterLink}
+                  to={card.link}
+                  variant="contained"
+                  disableElevation
+                  sx={{
+                    mt: { xs: 0.35, md: 0.5 },
+                    px: 3,
+                    py: 1.25,
+                    borderRadius: "10px",
+                    textTransform: "uppercase",
+                    fontWeight: 700,
+                    fontSize: "0.8rem",
+                    letterSpacing: "0.06em",
+                    bgcolor: "#fff",
+                    color: "#1a1a1a",
+                    "&:hover": {
+                      bgcolor: NAV_BAR_BG,
+                      color: "#fff",
+                    },
+                  }}
+                >
+                  {card.buttonText}
+                </Button>
+              </Stack>
+            </Box>
+          </Fade>
+        ))}
+      </Stack>
+    </Box>
   );
 };
 

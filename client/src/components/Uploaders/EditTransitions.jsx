@@ -1,557 +1,433 @@
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import {
   Box,
   Button,
+  Card,
+  CardContent,
+  Divider,
   FormControlLabel,
   FormLabel,
+  Paper,
   Radio,
   RadioGroup,
   Stack,
   Switch,
   TextField,
+  Typography,
 } from "@mui/material";
+import { AdminBikeColorImageBlock } from "components/AdminActions/AdminBikeColorImageBlock";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { NAV_BAR_BG } from "components/General/NavBar";
 
-const EditTransitions = ({ bikes, setBikes }) => {
-  const fetchBikes = async () => {
-    await axios
-      .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/alltransition`, {})
-      .then((res) => {
-        setBikes(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+const apiBase = process.env.REACT_APP_VERCEL_DOMAIN;
 
-  const BikeBox = ({ bike }) => {
-    const modelMatrix = {};
-    const models = JSON.parse(bike.models);
-
-    const [inStoreBikes, setInStoreBikes] = useState(JSON.parse(bike.inStock));
-
-    let colors = [];
-    if (bike.colors !== undefined) {
-      colors = JSON.parse(bike.colors);
+function TransitionBikeEditor({ bike, onRefresh }) {
+  const models = useMemo(() => {
+    try {
+      return JSON.parse(bike.models || "[]");
+    } catch {
+      return [];
     }
+  }, [bike.models]);
 
-    const [isPublic, setIsPublic] = useState(bike.public);
-    const handleChange = async (event) => {
-      let newBike = bike;
-      newBike.public = event.target.checked;
-      setIsPublic(event.target.checked);
-      await axios
-        .patch(
-          `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition/${newBike._id}`,
-          {
-            newBike,
-          },
-          { withCredentials: true }
-        )
-        .then((res) => {})
-        .catch((error) => {
-          alert("bike not added");
-        });
-    };
+  const colors = useMemo(() => {
+    try {
+      return JSON.parse(bike.colors || "{}");
+    } catch {
+      return {};
+    }
+  }, [bike.colors]);
 
+  const modelMatrix = useMemo(() => {
+    const m = {};
     models.forEach((model) => {
-      if (!modelMatrix[model.color]) {
-        modelMatrix[model.color] = {};
-      }
-      modelMatrix[model.color][model.size] = {
+      if (!m[model.color]) m[model.color] = {};
+      m[model.color][model.size] = {
         partNumber: model.partNumber,
         availability: model.availability,
       };
     });
+    return m;
+  }, [models]);
 
-    const [edit, setEdit] = useState(false);
-    const editInfo = (event) => {
-      setEdit(!edit);
+  const [inStoreBikes, setInStoreBikes] = useState(() => {
+    try {
+      return JSON.parse(bike.inStock || "[]");
+    } catch {
+      return [];
+    }
+  });
+
+  const [isPublic, setIsPublic] = useState(bike.public);
+  const [edit, setEdit] = useState(false);
+  const [editType, setEditType] = useState(bike.type);
+  const [newBikeColor, setNewBikeColor] = useState("");
+  const [newBikeSize, setNewBikeSize] = useState("");
+
+  useEffect(() => {
+    try {
+      setInStoreBikes(JSON.parse(bike.inStock || "[]"));
+    } catch {
+      setInStoreBikes([]);
+    }
+    setIsPublic(bike.public);
+    setEditType(bike.type);
+  }, [bike._id, bike.inStock, bike.public, bike.type]);
+
+  const handlePublicChange = async (event) => {
+    const checked = event.target.checked;
+    setIsPublic(checked);
+    const newBike = { ...bike, public: checked };
+    try {
+      await axios.patch(
+        `${apiBase}/api/bikes/transition/${bike._id}`,
+        { newBike },
+        { withCredentials: true }
+      );
+    } catch {
+      alert("Could not update visibility.");
+      setIsPublic(!checked);
+    }
+  };
+
+  const addInStore = async (size, partNumber, color) => {
+    const stockItem = {
+      size,
+      partNumber,
+      color,
+      availability: "In Store",
     };
+    const oldStock = JSON.parse(bike.inStock || "[]");
+    if (oldStock.some((item) => item.partNumber === partNumber)) return;
+    const newBike = {
+      ...bike,
+      inStock: JSON.stringify([...oldStock, stockItem]),
+    };
+    try {
+      await axios.patch(
+        `${apiBase}/api/bikes/transition/${bike._id}`,
+        { newBike },
+        { withCredentials: true }
+      );
+      setInStoreBikes(JSON.parse(newBike.inStock));
+    } catch {
+      alert("Could not update in-store list.");
+    }
+  };
 
-    const EditMenu = () => {
-      const [type, setType] = useState(bike.type);
+  const removeFromStore = async (partNumber) => {
+    const newInStoreBikes = inStoreBikes.filter((item) => item.partNumber !== partNumber);
+    const newBike = { ...bike, inStock: JSON.stringify(newInStoreBikes) };
+    try {
+      await axios.patch(
+        `${apiBase}/api/bikes/transition/${bike._id}`,
+        { newBike },
+        { withCredentials: true }
+      );
+      setInStoreBikes(newInStoreBikes);
+    } catch {
+      alert("Could not update in-store list.");
+    }
+  };
 
-      const handleTypeChange = (e) => {
-        const type = e.target.value;
-        setType(type);
-      };
+  const addOtherBikeToStore = async () => {
+    const stockItem = {
+      size: newBikeSize,
+      partNumber: Date.now(),
+      color: newBikeColor,
+      availability: "In Store",
+    };
+    const oldStock = JSON.parse(bike.inStock || "[]");
+    const newBike = { ...bike, inStock: JSON.stringify([...oldStock, stockItem]) };
+    try {
+      await axios.patch(
+        `${apiBase}/api/bikes/transition/${bike._id}`,
+        { newBike },
+        { withCredentials: true }
+      );
+      setInStoreBikes(JSON.parse(newBike.inStock));
+      setNewBikeColor("");
+      setNewBikeSize("");
+    } catch {
+      alert("Could not add in-store bike.");
+    }
+  };
 
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-        const description = e.target.description.value;
-        const link = e.target.link.value;
-        let newBike = bike;
-        newBike.type = type;
-        newBike.description = description;
-        newBike.link = link;
+  const handleEditDetailsSubmit = async (e) => {
+    e.preventDefault();
+    const description = e.target.description.value;
+    const link = e.target.link.value;
+    const newBike = { ...bike, type: editType, description, link };
+    try {
+      await axios.patch(
+        `${apiBase}/api/bikes/transition/${newBike._id}`,
+        { newBike },
+        { withCredentials: true }
+      );
+      onRefresh();
+      setEdit(false);
+    } catch {
+      alert("Could not save details.");
+    }
+  };
 
-        await axios
-          .patch(
-            `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition/${newBike._id}`,
-            {
-              newBike,
-            },
-            { withCredentials: true }
-          )
-          .then((res) => {
-            fetchBikes();
-            setEdit(false);
-          })
-          .catch((error) => {
-            alert("bike not added");
-          });
-        setEdit(false);
-      };
-
-      return (
-        <form onSubmit={handleSubmit}>
-          <Stack spacing={1} m={1}>
-            <Box>
-              <FormLabel id="demo-radio-buttons-group-label">Type</FormLabel>
-              <RadioGroup
-                onChange={handleTypeChange}
-                aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue="none"
-                name="radio-buttons-group"
-                value={type}
-              >
-                <FormControlLabel value="DH" control={<Radio />} label="DH" />
-                <FormControlLabel
-                  value="Enduro / All Mountain"
-                  control={<Radio />}
-                  label="Enduro / All Mountain"
-                />
-                <FormControlLabel
-                  value="Trail"
-                  control={<Radio />}
-                  label="Trail"
-                />
-                <FormControlLabel value="XC" control={<Radio />} label="XC" />
-                <FormControlLabel
-                  value="Dirt Jumper"
-                  control={<Radio />}
-                  label="Dirt Jumper"
-                />
-                <FormControlLabel
-                  value="Recreational"
-                  control={<Radio />}
-                  label="Recreational"
-                />
-                <FormControlLabel
-                  value="Kids"
-                  control={<Radio />}
-                  label="Kids"
-                />
-                <FormControlLabel
-                  value="E-Bike"
-                  control={<Radio />}
-                  label="E-Bike"
-                />
-              </RadioGroup>
-            </Box>
-            <Box> </Box>
+  const editForm = (
+      <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, maxWidth: 420 }}>
+        <form onSubmit={handleEditDetailsSubmit}>
+          <Stack spacing={2}>
+            <FormLabel id="bike-type-label">Type</FormLabel>
+            <RadioGroup
+              aria-labelledby="bike-type-label"
+              name="bike-type"
+              value={editType}
+              onChange={(e) => setEditType(e.target.value)}
+            >
+              <FormControlLabel value="DH" control={<Radio size="small" />} label="DH" />
+              <FormControlLabel
+                value="Enduro / All Mountain"
+                control={<Radio size="small" />}
+                label="Enduro / All Mountain"
+              />
+              <FormControlLabel value="Trail" control={<Radio size="small" />} label="Trail" />
+              <FormControlLabel value="XC" control={<Radio size="small" />} label="XC" />
+              <FormControlLabel
+                value="Dirt Jumper"
+                control={<Radio size="small" />}
+                label="Dirt Jumper"
+              />
+              <FormControlLabel
+                value="Recreational"
+                control={<Radio size="small" />}
+                label="Recreational"
+              />
+              <FormControlLabel value="Kids" control={<Radio size="small" />} label="Kids" />
+              <FormControlLabel value="E-Bike" control={<Radio size="small" />} label="E-Bike" />
+            </RadioGroup>
             <TextField
               id="description"
+              name="description"
               label="Description"
-              variant="outlined"
               defaultValue={bike.description}
               multiline
+              minRows={3}
+              fullWidth
             />
-
-            <TextField
-              id="link"
-              label="Link"
-              variant="outlined"
-              defaultValue={bike.link}
-            />
-            <Button type="submit" variant="contained" color="success">
-              Save
+            <TextField id="link" name="link" label="Link" defaultValue={bike.link} fullWidth />
+            <Button type="submit" variant="contained" sx={{ bgcolor: NAV_BAR_BG }}>
+              Save details
+            </Button>
+            <Button type="button" variant="text" onClick={() => setEdit(false)}>
+              Cancel
             </Button>
           </Stack>
         </form>
-      );
-    };
+      </Paper>
+    );
 
-    const CurrentImage = ({ color }) => {
-      if (colors[color])
-        return (
-          <Box component={"img"} src={colors[color]} width={"200px"}></Box>
-        );
-      else {
-        return <Box>No Photo Uploaded</Box>;
-      }
-    };
+  return (
+    <Card variant="outlined" sx={{ borderRadius: 2, overflow: "visible" }}>
+      <CardContent sx={{ "&:last-child": { pb: 2 } }}>
+        <Stack
+          direction={{ xs: "column", lg: "row" }}
+          spacing={3}
+          alignItems={{ xs: "stretch", lg: "flex-start" }}
+          justifyContent="space-between"
+        >
+          <Stack spacing={2} flex={{ xs: 1, lg: 2 }} minWidth={0}>
+            <Box>
+              <Typography variant="h6" fontWeight={800} sx={{ color: NAV_BAR_BG }}>
+                {bike.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Year 20{bike.year} · ${bike.price}
+                {bike.saleprice != null ? ` · Sale $${bike.saleprice}` : ""}
+              </Typography>
+            </Box>
 
-    const ImageUpload = ({ color }) => {
-      const [selectedFile, setSelectedFile] = useState(null);
-      const [previewUrl, setPreviewUrl] = useState("");
-      const [uploading, setUploading] = useState(false);
-
-      const updatePhoto = async (url) => {
-        let newColors = colors;
-        newColors[color] = url;
-
-        let newBike = bike;
-        newBike.colors = JSON.stringify(newColors);
-
-        await axios
-          .patch(
-            `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition/${newBike._id}`,
-            {
-              newBike,
-            },
-            { withCredentials: true }
-          )
-          .then((res) => {
-            fetchBikes();
-          })
-          .catch((error) => {
-            alert("bike not added");
-          });
-      };
-
-      const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file && file.type.startsWith("image/")) {
-          setSelectedFile(file);
-          setPreviewUrl(URL.createObjectURL(file));
-        }
-      };
-
-      const handleUpload = async () => {
-        if (!selectedFile) {
-          alert("Please select an image first!");
-          return;
-        }
-
-        let fileName = bike.fullName + " " + color;
-        fileName = fileName.replace(/ /g, "-");
-
-        setUploading(true);
-
-        const sigRes = await axios.get(
-          `${process.env.REACT_APP_VERCEL_DOMAIN}/api/images/get-signature`,
-          { params: { public_id: fileName }, withCredentials: true }
-        );
-        const sigData = await sigRes.data;
-
-        const formData = new FormData();
-        formData.append("file", selectedFile);
-        formData.append("api_key", sigData.apiKey);
-        formData.append("timestamp", sigData.timestamp);
-        formData.append("signature", sigData.signature);
-        formData.append("folder", sigData.folder);
-        formData.append("public_id", fileName);
-
-        try {
-          const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${sigData.cloudName}/image/upload`;
-          const uploadRes = await axios.post(cloudinaryUrl, formData, {
-            withCredentials: false,
-          });
-          const uploadedData = await uploadRes.data;
-          await updatePhoto(uploadedData.secure_url);
-          setUploading(false);
-        } catch (error) {
-          alert("Not uploaded, try again");
-        }
-      };
-
-      return (
-        <Stack>
-          <div>
-            <input type="file" accept="image/*" onChange={handleFileChange} />
-            {previewUrl && (
-              <div>
-                <img
-                  src={previewUrl}
-                  alt="Preview"
-                  style={{ maxWidth: "300px", marginTop: "10px" }}
-                />
-              </div>
-            )}
-            <button onClick={handleUpload} disabled={uploading}>
-              {uploading ? "Uploading..." : "Upload to Cloudinary"}
-            </button>
-          </div>
-        </Stack>
-      );
-    };
-
-    const addInStore = async (size, partNumber, color) => {
-      const stockItem = {
-        size: size,
-        partNumber: partNumber,
-        color: color,
-        availability: "In Store",
-      };
-      const oldStock = JSON.parse(bike.inStock);
-
-      const isAlreadyAdded = oldStock.some(
-        (item) => item.partNumber === partNumber
-      );
-
-      if (!isAlreadyAdded) {
-        let newBike = bike;
-        oldStock.push(stockItem);
-
-        newBike.inStock = JSON.stringify(oldStock);
-
-        await axios
-          .patch(
-            `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition/${newBike._id}`,
-            {
-              newBike,
-            },
-            { withCredentials: true }
-          )
-          .then((res) => {
-            setInStoreBikes(oldStock);
-          })
-          .catch((error) => {
-            alert("bike not added");
-          });
-      }
-    };
-
-    const removeFromStore = async (partNumber) => {
-      const newInStoreBikes = inStoreBikes.filter(
-        (item) => item.partNumber !== partNumber
-      );
-      let newBike = bike;
-      newBike.inStock = JSON.stringify(newInStoreBikes);
-      await axios
-        .patch(
-          `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition/${newBike._id}`,
-          {
-            newBike,
-          },
-          { withCredentials: true }
-        )
-        .then((res) => {
-          setInStoreBikes(newInStoreBikes);
-        })
-        .catch((error) => {
-          alert("bike not added");
-        });
-    };
-
-    const [newBikeColor, setNewBikeColor] = useState("");
-    const [newBikeSize, setNewBikeSize] = useState("");
-
-    const addOtherBikeToStore = async () => {
-      const stockItem = {
-        size: newBikeSize,
-        partNumber: Date.now(),
-        color: newBikeColor,
-        availability: "In Store",
-      };
-      const oldStock = JSON.parse(bike.inStock);
-
-      // const isAlreadyAdded = oldStock.some(
-      //   (item) => item.partNumber === stockItem.partNumber
-      // );
-
-      let newBike = bike;
-      oldStock.push(stockItem);
-
-      newBike.inStock = JSON.stringify(oldStock);
-
-      await axios
-        .patch(
-          `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition/${newBike._id}`,
-          {
-            newBike,
-          },
-          { withCredentials: true }
-        )
-        .then((res) => {
-          setInStoreBikes(oldStock);
-          setNewBikeColor("");
-          setNewBikeSize("");
-        })
-        .catch((error) => {
-          alert("bike not added");
-        });
-    };
-
-    return (
-      <Stack
-        borderBottom={1}
-        p={0.5}
-        direction={"row"}
-        spacing={2}
-        bgcolor={"#EEEEEE"}
-        alignItems={"center"}
-        justifyContent={"space-around"}
-        width={"100vw"}
-      >
-        <Stack p={2}>
-          <Box fontWeight={"500"} fontSize={"20px"}>
-            {bike.name}
-          </Box>
-          <Box>Year: 20{bike.year}</Box>
-          <Box>Price: ${bike.price}</Box>
-          <Box>Sale Price: ${bike.saleprice}</Box>
-          <Box mt={1} fontWeight={"600"}>
-            Availability:
-          </Box>
-          <Stack direction={"row"} fontSize={"13px"}>
-            {Object.entries(modelMatrix).map(([key, value]) => (
-              <Stack>
-                <Box color={"white"} bgcolor={"black"} p={0.5} m={0.5}>
-                  {key}
-                </Box>
-                {Object.entries(value).map(([key2, value2]) => (
-                  <Box>
-                    <Stack spacing={0.5} m={0.5} bgcolor={"white"} p={0.5}>
-                      <Box>{key2}</Box>
-                      <Box>{value2.partNumber}</Box>
-                      <Box>{value2.availability}</Box>
-                      <Box>
-                        <Button
-                          onClick={() =>
-                            addInStore(key2, value2.partNumber, key)
-                          }
-                          variant="contained"
-                          color="success"
-                          sx={{
-                            fontSize: "12px",
-                            p: 0.5,
-                            m: 0,
-                            textTransform: "none",
-                          }}
-                        >
-                          In Store
-                        </Button>
-                      </Box>
+            <Box>
+              <Typography variant="subtitle2" fontWeight={700} gutterBottom>
+                Availability
+              </Typography>
+              <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1}>
+                {Object.entries(modelMatrix).map(([colorKey, bySize]) => (
+                  <Paper key={colorKey} variant="outlined" sx={{ p: 1, borderRadius: 1 }}>
+                    <Typography variant="caption" fontWeight={700} display="block" gutterBottom>
+                      {colorKey}
+                    </Typography>
+                    <Stack spacing={0.5}>
+                      {Object.entries(bySize).map(([sizeKey, meta]) => (
+                        <Paper key={`${colorKey}-${sizeKey}`} sx={{ p: 0.75, bgcolor: "grey.50" }}>
+                          <Typography variant="caption" display="block">
+                            {sizeKey} · {meta.partNumber}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary" display="block">
+                            {meta.availability}
+                          </Typography>
+                          <Button
+                            size="small"
+                            variant="contained"
+                            onClick={() => addInStore(sizeKey, meta.partNumber, colorKey)}
+                            sx={{ mt: 0.5, fontSize: 11, py: 0, textTransform: "none", bgcolor: NAV_BAR_BG }}
+                          >
+                            In store
+                          </Button>
+                        </Paper>
+                      ))}
                     </Stack>
-                  </Box>
+                  </Paper>
                 ))}
               </Stack>
-            ))}
-          </Stack>
-          <Box mt={1} fontWeight={"600"}>
-            Add Other Bike:
-          </Box>
-          <Box mt={1} mb={1} fontWeight={"400"} width={"400px"}>
-            Use this if the bike we want to display is not shown above. Please
-            ensure the name of the colour and size is correct.
-          </Box>
-          <Stack bgcolor={"white"} p={1} spacing={1}>
-            <TextField
-              id="outlined-controlled"
-              label="Color"
-              value={newBikeColor}
-              onChange={(event) => {
-                setNewBikeColor(event.target.value);
-              }}
-            />
-            <TextField
-              id="outlined-controlled"
-              label="Size"
-              value={newBikeSize}
-              onChange={(event) => {
-                setNewBikeSize(event.target.value);
-              }}
-            />
-            <Box>
-              <Button
-                onClick={() => addOtherBikeToStore()}
-                variant="contained"
-                color="success"
-              >
-                Add Bike
-              </Button>
             </Box>
-          </Stack>
-          <Box mt={1} fontWeight={"600"}>
-            In Store Bikes:
-          </Box>
-          <Stack direction={"row"}>
-            {inStoreBikes.map((bike) => {
-              return (
-                <Stack
-                  fontSize={"13px"}
-                  spacing={0.5}
-                  m={0.5}
-                  bgcolor={"white"}
-                  p={0.5}
-                >
-                  <Box>{bike.color}</Box>
-                  <Box>{bike.size}</Box>
-                  <Box>{bike.partNumber}</Box>
-                  <Box>
+
+            <Divider />
+
+            <Box>
+              <Typography variant="subtitle2" fontWeight={700} gutterBottom>
+                Add other in-store (manual)
+              </Typography>
+              <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1, maxWidth: 480 }}>
+                Use when a build is not on the stock grid. Match color and size names exactly.
+              </Typography>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems={{ sm: "center" }}>
+                <TextField
+                  size="small"
+                  label="Color"
+                  value={newBikeColor}
+                  onChange={(e) => setNewBikeColor(e.target.value)}
+                />
+                <TextField
+                  size="small"
+                  label="Size"
+                  value={newBikeSize}
+                  onChange={(e) => setNewBikeSize(e.target.value)}
+                />
+                <Button variant="contained" onClick={addOtherBikeToStore} sx={{ bgcolor: NAV_BAR_BG }}>
+                  Add
+                </Button>
+              </Stack>
+            </Box>
+
+            <Box>
+              <Typography variant="subtitle2" fontWeight={700} gutterBottom>
+                In store
+              </Typography>
+              <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1}>
+                {inStoreBikes.map((row) => (
+                  <Paper key={String(row.partNumber)} variant="outlined" sx={{ p: 1, minWidth: 120 }}>
+                    <Typography variant="caption" display="block">
+                      {row.color} / {row.size}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" display="block">
+                      {row.partNumber}
+                    </Typography>
                     <Button
-                      onClick={() => removeFromStore(bike.partNumber)}
-                      variant="contained"
+                      size="small"
                       color="error"
-                      sx={{
-                        fontSize: "12px",
-                        p: 0.5,
-                        m: 0,
-                        textTransform: "none",
-                      }}
+                      variant="outlined"
+                      sx={{ mt: 0.5, fontSize: 11, textTransform: "none" }}
+                      onClick={() => removeFromStore(row.partNumber)}
                     >
                       Remove
                     </Button>
-                  </Box>
-                </Stack>
-              );
-            })}
-          </Stack>
-        </Stack>
-        {edit ? (
-          <EditMenu></EditMenu>
-        ) : (
-          <Stack spacing={1}>
-            <Button onClick={editInfo} variant="contained" color="success">
-              Edit
-            </Button>
-            <Box>Type: {bike.type}</Box>
-
-            <Box>Description: {bike.description}</Box>
-            <Box>Link: {bike.link}</Box>
-          </Stack>
-        )}
-
-        <Stack>
-          {" "}
-          {Object.entries(colors).map(([key, value]) => {
-            return (
-              <Stack>
-                <Box fontSize={"20px"} fontWeight={"600"}>
-                  {key}
-                </Box>
-                <CurrentImage color={key}></CurrentImage>
-                <ImageUpload color={key}></ImageUpload>
+                  </Paper>
+                ))}
               </Stack>
-            );
-          })}
+            </Box>
+          </Stack>
+
+          <Stack spacing={2} flex={{ xs: 1, lg: 1.1 }} minWidth={0} alignItems={{ xs: "stretch", lg: "flex-start" }}>
+            <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap" useFlexGap>
+              {!edit ? (
+                <Button
+                  variant="outlined"
+                  startIcon={<EditOutlinedIcon />}
+                  onClick={() => {
+                    setEditType(bike.type);
+                    setEdit(true);
+                  }}
+                  sx={{ borderColor: NAV_BAR_BG, color: NAV_BAR_BG }}
+                >
+                  Edit details
+                </Button>
+              ) : null}
+              <Stack direction="row" alignItems="center" spacing={0.5}>
+                <Typography variant="body2">{isPublic ? "Public" : "Private"}</Typography>
+                <Switch checked={isPublic} onChange={handlePublicChange} color="success" />
+              </Stack>
+            </Stack>
+            {edit ? (
+              editForm
+            ) : (
+              <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, width: "100%" }}>
+                <Typography variant="body2">
+                  <strong>Type:</strong> {bike.type || "—"}
+                </Typography>
+                <Typography variant="body2" sx={{ mt: 1 }}>
+                  <strong>Description:</strong> {bike.description || "—"}
+                </Typography>
+                <Typography variant="body2" sx={{ mt: 1, wordBreak: "break-all" }}>
+                  <strong>Link:</strong> {bike.link || "—"}
+                </Typography>
+              </Paper>
+            )}
+          </Stack>
+
+          <Stack spacing={1.5} flex={{ xs: 1, lg: 1.2 }} minWidth={0} width="100%">
+            <Typography variant="subtitle2" fontWeight={700}>
+              Photos by color
+            </Typography>
+            <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1.5}>
+              {Object.keys(colors).length === 0 ? (
+                <Typography variant="body2" color="text.secondary">
+                  No color keys yet — upload stock or add colors first.
+                </Typography>
+              ) : (
+                Object.entries(colors).map(([colorName, url]) => (
+                  <AdminBikeColorImageBlock
+                    key={colorName}
+                    bike={bike}
+                    colorName={colorName}
+                    imageUrl={url}
+                    onRefresh={onRefresh}
+                    bikeRoute="transition"
+                  />
+                ))
+              )}
+            </Stack>
+          </Stack>
         </Stack>
-        <Stack m={5}>
-          <Box>{!isPublic && <Box>Private</Box>}</Box>
-          <Box>{isPublic && <Box>Public</Box>}</Box>
-          <Switch
-            checked={isPublic}
-            onChange={handleChange}
-            inputProps={{ "aria-label": "controlled" }}
-          />
-        </Stack>
-      </Stack>
-    );
+      </CardContent>
+    </Card>
+  );
+};
+
+const EditTransitions = ({ bikes, setBikes }) => {
+  const fetchBikes = async () => {
+    try {
+      const res = await axios.get(`${apiBase}/api/bikes/alltransition`, {
+        withCredentials: true,
+      });
+      setBikes(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
+  if (!bikes?.length) {
+    return (
+      <Typography color="text.secondary" sx={{ py: 4, textAlign: "center" }}>
+        No Transition bikes loaded yet. Upload a stock file above or check the API.
+      </Typography>
+    );
+  }
+
   return (
-    <Box>
-      {bikes && (
-        <Stack direction="column" spacing={0}>
-          {bikes.map((bike) => {
-            return <BikeBox bike={bike}></BikeBox>;
-          })}
-        </Stack>
-      )}
-    </Box>
+    <Stack spacing={2} sx={{ width: "100%", maxWidth: 1280, mx: "auto", px: { xs: 1, sm: 2 }, py: 2 }}>
+      {bikes.map((b) => (
+        <TransitionBikeEditor key={b._id} bike={b} onRefresh={fetchBikes} />
+      ))}
+    </Stack>
   );
 };
 

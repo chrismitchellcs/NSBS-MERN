@@ -1,26 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-CA">
   <head>
     <meta charset="utf-8" />
 
     <!-- Primary Meta Tags -->
-    <title>North Shore Bike Shop | Mountain Bike Experts</title>
+    <title>North Shore Bike Shop | Transition Canada | Mountain Bike Experts</title>
     <meta
       name="title"
-      content="North Shore Bike Shop | Premium Mountain Bikes & Expert Service"
+      content="Transition Canada | North Shore Bike Shop - Premier Transition Bikes Dealer"
     />
     <meta
       name="description"
-      content="North Shore Bike Shop offers premium mountain bikes from Transition, Norco, and Ibis. Expert bike information, products, and service in North Vancouver, BC"
+      content="One of the largest Transition Bikes dealers in Canada. North Shore Bike Shop offers Transition, Norco & Ibis mountain bikes and expert service in North Vancouver, BC."
     />
     <meta
       name="keywords"
-      content="mountain bikes, bike shop, bike service, Transition bikes, Norco bikes, Ibis bikes, bike repair, bike tune-up, BC bike shop, North Vancouver, BC, North Shore Bike Shop, e bikes"
+      content="Transition Canada, Transition bikes Canada, Transition bikes, mountain bikes, bike shop, bike service, Norco bikes, Ibis bikes, bike repair, bike tune-up, BC bike shop, North Vancouver, BC, North Shore Bike Shop, e bikes"
     />
     <meta name="author" content="North Shore Bike Shop" />
     <meta name="robots" content="index, follow" />
     <meta name="language" content="English" />
     <meta name="revisit-after" content="7 days" />
+    <meta name="geo.region" content="CA-BC" />
+    <meta name="geo.placename" content="North Vancouver" />
 
     <!-- Viewport & Mobile Optimization -->
     <meta
@@ -46,17 +48,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://www.northshorebikeshop.net" />
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
 
     <!-- Open Graph / Facebook (Fallback - will be overridden by React Helmet) -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.northshorebikeshop.net" />
+    <meta property="og:locale" content="en_CA" />
     <meta
       property="og:title"
-      content="North Shore Bike Shop | Premium Mountain Bikes & Expert Service"
+      content="Transition Canada | North Shore Bike Shop - Premier Transition Bikes Dealer"
     />
     <meta
       property="og:description"
-      content="North Shore Bike Shop offers premium mountain bikes from Transition, Norco, and Ibis. Expert bike information, products, and service in North Vancouver, BC"
+      content="One of the largest Transition Bikes dealers in Canada. Premium Transition, Norco & Ibis mountain bikes and expert service in North Vancouver, BC."
     />
     <meta
       property="og:image"
@@ -68,11 +72,11 @@
     <meta name="twitter:url" content="https://www.northshorebikeshop.net" />
     <meta
       name="twitter:title"
-      content="North Shore Bike Shop | Premium Mountain Bikes & Expert Service"
+      content="Transition Canada | North Shore Bike Shop - Premier Transition Bikes Dealer"
     />
     <meta
       name="twitter:description"
-      content="North Shore Bike Shop offers premium mountain bikes from Transition, Norco, and Ibis. Expert bike information, products, and service in North Vancouver, BC"
+      content="One of the largest Transition Bikes dealers in Canada. Premium Transition, Norco & Ibis mountain bikes in North Vancouver, BC."
     />
     <meta
       name="twitter:image"
@@ -89,7 +93,7 @@
     /> -->
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap"
     />
 
     <style>
@@ -103,12 +107,24 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Organization",
+        "@type": "LocalBusiness",
+        "@id": "https://www.northshorebikeshop.net/#organization",
         "name": "North Shore Bike Shop",
+        "description": "One of the largest Transition Bikes dealers in Canada. Premium Transition, Norco, and Ibis mountain bikes and expert bike service in North Vancouver, BC.",
         "url": "https://www.northshorebikeshop.net",
         "logo": "https://www.northshorebikeshop.net/logosquare.png",
         "image": "https://www.northshorebikeshop.net/logosquare.png",
-        "sameAs": ["https://www.instagram.com/north_shore_bike_shop/"]
+        "sameAs": ["https://www.instagram.com/north_shore_bike_shop/"],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "North Vancouver",
+          "addressRegion": "BC",
+          "addressCountry": "CA"
+        },
+        "areaServed": {
+          "@type": "Country",
+          "name": "Canada"
+        }
       }
     </script>
   </head>

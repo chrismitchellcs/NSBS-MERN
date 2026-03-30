@@ -1,4 +1,6 @@
-import { Box, ImageList, ImageListItem } from "@mui/material";
+import { Box, ImageList, ImageListItem, Stack, Typography } from "@mui/material";
+
+const BRAND_GREEN = "#243d33";
 
 const logoNames = [
   "sram.jpg",
@@ -23,59 +25,125 @@ const logoNames = [
 
 const Parts = () => {
   return (
-    <Box textAlign={"center"} pb={2}>
+    <Box
+      component="section"
+      aria-label="Parts and accessories"
+      sx={{ bgcolor: "#fff" }}
+    >
       <Box
-        component={"img"}
+        component="img"
         src="bikes-min.jpg"
-        width={"100%"}
-        height={"56vw"}
-      ></Box>
-      <Box
-        pt={1}
+        alt="Bikes and parts at North Shore Bike Shop"
         sx={{
-          fontSize: "26px",
-          fontWeight: "600",
-          color: "black",
-          m: 2,
+          width: "100%",
+          display: "block",
+          height: {
+            xs: "min(62vw, 440px)",
+            sm: "min(56vw, 500px)",
+            md: "min(48vw, 560px)",
+          },
+          minHeight: { xs: 280, sm: 300, md: 340 },
+          objectFit: "cover",
+          objectPosition: "center",
+        }}
+        loading="lazy"
+        decoding="async"
+      />
+      <Box
+        sx={{
+          maxWidth: 1680,
+          mx: "auto",
+          px: { xs: 1.5, sm: 2, md: 2.5 },
+          pt: { xs: 2.5, md: 3 },
+          pb: { xs: 2, md: 2.5 },
         }}
       >
-        Parts & Accessories
-      </Box>
-      <Box
-        sx={{
-          fontSize: { xs: "16px", sm: "18px" },
-          fontWeight: "400",
-          color: "black",
-          width: "60%",
-          m: 2,
-          ml: "20%",
-          lineHeight: "1.5",
-        }}
-        textAlign={"center"}
-      >
-        At North Shore Bike Shop, we pride ourselves on being well stocked with
-        all the parts you may need. Whether you're looking for affordable
-        options to get your bike up and running or the latest cutting-edge
-        technology, NSBS has you covered.
-      </Box>
-      <Box
-        justifyContent={"center"}
-        m={5}
-        sx={{ display: { xs: "none", sm: "none", md: "block" } }}
-      >
-        <ImageList sx={{ width: "60%", ml: "20%" }} cols={6} gap={40}>
-          {logoNames.map((item) => (
-            <ImageListItem key={item}>
-              <img
-                src={`logos2/${item}`}
-                alt={item}
-                loading="lazy"
-                width={"100px"}
-                style={{ filter: "grayscale(100%)" }}
-              />
-            </ImageListItem>
-          ))}
-        </ImageList>
+        <Stack
+          spacing={1.5}
+          alignItems="center"
+          sx={{ mb: { xs: 1.5, md: 2 } }}
+        >
+          <Typography
+            component="h2"
+            sx={{
+              m: 0,
+              fontWeight: 800,
+              textTransform: "uppercase",
+              letterSpacing: { xs: "0.06em", sm: "0.08em" },
+              fontSize: { xs: "1.3rem", sm: "1.45rem", md: "1.6rem" },
+              color: BRAND_GREEN,
+              lineHeight: 1.15,
+              textAlign: "center",
+            }}
+          >
+            Parts &amp; accessories
+          </Typography>
+        </Stack>
+        <Typography
+          sx={{
+            m: 0,
+            mb: { xs: 2.5, md: 3 },
+            maxWidth: 720,
+            mx: "auto",
+            textAlign: "center",
+            fontSize: { xs: "1rem", md: "1.0625rem" },
+            lineHeight: 1.65,
+            color: "rgba(0,0,0,0.78)",
+            fontWeight: 400,
+          }}
+        >
+          At North Shore Bike Shop, we pride ourselves on being well stocked with
+          all the parts you may need. Whether you&apos;re looking for affordable
+          options to get your bike up and running or the latest cutting-edge
+          technology, NSBS has you covered.
+        </Typography>
+
+        <Box sx={{ display: { xs: "none", md: "block" } }}>
+          <ImageList
+            cols={6}
+            gap={28}
+            sx={{
+              width: "100%",
+              maxWidth: 1100,
+              mx: "auto",
+              mb: 0,
+            }}
+          >
+            {logoNames.map((item) => (
+              <ImageListItem
+                key={item}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  "& img": {
+                    filter: "grayscale(1)",
+                    opacity: 0.88,
+                    transition: "filter 0.25s ease, opacity 0.25s ease",
+                  },
+                  "&:hover img": {
+                    filter: "grayscale(0)",
+                    opacity: 1,
+                  },
+                }}
+              >
+                <Box
+                  component="img"
+                  src={`logos2/${item}`}
+                  alt=""
+                  loading="lazy"
+                  sx={{
+                    width: "100%",
+                    height: { md: 88, lg: 96 },
+                    maxHeight: 96,
+                    objectFit: "contain",
+                    display: "block",
+                  }}
+                />
+              </ImageListItem>
+            ))}
+          </ImageList>
+        </Box>
       </Box>
     </Box>
   );

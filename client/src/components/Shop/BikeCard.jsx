@@ -1,20 +1,9 @@
 import { Image } from "cloudinary-react";
+import { memo } from "react";
 import { useNavigate } from "react-router-dom";
+import { extractPublicId } from "utils/bikeDisplay";
 
-function extractPublicId(cloudinaryUrl) {
-  try {
-    const parts = cloudinaryUrl.split("/upload/");
-    if (parts.length < 2) return null;
-
-    // Remove version string if it exists (e.g., v1748840541/)
-    const path = parts[1].replace(/^v\d+\//, "");
-    return decodeURIComponent(path); // handle special characters like é
-  } catch {
-    return null;
-  }
-}
-
-export default function BikeCard({ bike }) {
+function BikeCard({ bike, embedInCarousel = false }) {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -27,15 +16,20 @@ export default function BikeCard({ bike }) {
 
   return (
     <button
+      type="button"
       onClick={handleClick}
-      className="relative flex flex-shrink-0 flex-col border border-gray-300 overflow-hidden rounded-lg border-1  bg-white transition-all duration-300 hover:-translate-y-1 hover:border-gray-500 hover:shadow-sm m-4 "
+      className={
+        embedInCarousel
+          ? "relative flex w-full max-w-[400px] flex-shrink-0 flex-col overflow-hidden rounded-lg border border-gray-300 border-1 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-gray-500 hover:shadow-sm my-1"
+          : "relative m-4 flex flex-shrink-0 flex-col overflow-hidden rounded-lg border border-gray-300 border-1 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-gray-500 hover:shadow-sm"
+      }
     >
       <Image
         cloudName="ds4ukwnxl"
         publicId={extractPublicId(firstImage)}
-        width="540"
+        width="420"
         crop="pad"
-        quality="100"
+        quality="auto"
         fetchFormat="auto"
         alt={bike.name}
         style={{
@@ -71,3 +65,5 @@ export default function BikeCard({ bike }) {
     </button>
   );
 }
+
+export default memo(BikeCard);

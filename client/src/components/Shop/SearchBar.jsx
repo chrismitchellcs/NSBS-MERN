@@ -81,7 +81,7 @@ const SearchBar = ({
         id="outlined-basic"
         label="Search"
         variant="outlined"
-        sx={{ mt: 5, ml: 2, mr: 2 }}
+        sx={{ mt: 0, ml: 2, mr: 2, mb: 1 }}
         onChange={onChange}
       />
     </Box>

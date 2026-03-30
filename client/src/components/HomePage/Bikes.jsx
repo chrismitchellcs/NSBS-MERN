@@ -1,12 +1,16 @@
-import { Box, Stack } from "@mui/material";
-
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { Box, Button, Stack, Typography } from "@mui/material";
+import BikeCard from "components/Shop/BikeCard";
+import { useMemo } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import BikeCard from "components/Shop/BikeCard";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import "../../index.css";
-import { useNavigate } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+
+/** Matches NavBar / site green */
+const BRAND_GREEN = "#243d33";
+
+/** Matches horizontal padding on each carousel slide (theme spacing) */
+const SLIDE_GUTTER = 1;
 
 const responsive = {
   desktop: {
@@ -32,60 +36,150 @@ const responsive = {
 };
 
 const Bikes = ({ brand, bikes }) => {
-  const navigate = useNavigate();
+  const list = useMemo(
+    () =>
+      (bikes ?? [])
+        .filter(
+          (b) =>
+            b.brand?.toLowerCase() === (brand ?? "").toLowerCase(),
+        )
+        .slice(0, 20),
+    [bikes, brand],
+  );
+
+  const isSingle = list.length === 1;
 
   return (
-    <Box textAlign={"center"} bgcolor={"white"} p={3} pt={6}>
+    <Box
+      component="section"
+      aria-label={`${brand ?? "Featured"} bikes`}
+      sx={{
+        bgcolor: "#fff",
+        pt: { xs: 3, md: 4 },
+        pb: { xs: 1.5, md: 2 },
+        px: { xs: 1.5, sm: 2, md: 2.5 },
+      }}
+    >
       <Stack
-        direction={"row"}
-        alignItems={"center"}
-        justifyContent={{ xs: "center", sm: "flex-start" }}
-        spacing={3}
-        pl={3}
+        direction={{ xs: "column", sm: "row" }}
+        alignItems="center"
+        justifyContent={{
+          xs: "center",
+          sm: isSingle ? "center" : "space-between",
+        }}
+        spacing={2}
+        sx={{
+          maxWidth: 1680,
+          mx: "auto",
+          mb: { xs: 2, md: 2.25 },
+          pl: { xs: 0, sm: isSingle ? 0 : SLIDE_GUTTER },
+        }}
       >
-        <div className="xs:text-xl sm:text-2xl font-medium">
-          Shop {brand} Bikes
-        </div>
-        <button
-          onClick={() => navigate(`/shop`, { state: { brand: brand } })}
-          className="xs:text-xl sm:text-2xl text-gray-500 hover:text-gray-700 flex flex-row items-center "
+        <Typography
+          component="h2"
+          sx={{
+            m: 0,
+            fontWeight: 800,
+            textTransform: "uppercase",
+            letterSpacing: { xs: "0.06em", sm: "0.08em" },
+            fontSize: { xs: "1.3rem", sm: "1.45rem", md: "1.6rem" },
+            color: BRAND_GREEN,
+            lineHeight: 1.15,
+            textAlign: {
+              xs: "center",
+              sm: isSingle ? "center" : "left",
+            },
+            width: { xs: "100%", sm: isSingle ? "auto" : "auto" },
+          }}
         >
-          <div className="font-medium">See All</div>
-          <div className="">
-            <FontAwesomeIcon icon={faArrowRight} />
-          </div>
-        </button>
+          Shop {brand} bikes
+        </Typography>
+        <Button
+          component={RouterLink}
+          to="/shop"
+          state={{ brand }}
+          endIcon={
+            <ArrowForwardIcon sx={{ fontSize: 20 }} aria-hidden />
+          }
+          sx={{
+            flexShrink: 0,
+            textTransform: "none",
+            fontWeight: 600,
+            fontSize: "0.95rem",
+            letterSpacing: "0.02em",
+            color: BRAND_GREEN,
+            px: 2.25,
+            py: 1,
+            borderRadius: "999px",
+            border: "1px solid rgba(36, 61, 51, 0.35)",
+            "&:hover": {
+              bgcolor: "rgba(36, 61, 51, 0.07)",
+              borderColor: BRAND_GREEN,
+            },
+          }}
+        >
+          See all
+        </Button>
       </Stack>
-      <Box height={"350px"}>
-        {bikes && (
-          <Carousel
-            swipeable={true}
-            draggable={false}
-            showDots={false}
-            responsive={responsive}
-            ssr={false}
-            infinite={true}
-            autoPlay={false}
-            autoPlaySpeed={5000}
-            keyBoardControl={false}
-            customTransition="transform 500ms ease-in-out"
-            transitionDuration={0}
-            containerClass="carousel-container"
-            dotListClass="custom-dot-list-style"
-            itemClass="carousel-item-padding-40-px"
+
+      <Box sx={{ maxWidth: 1680, mx: "auto" }}>
+        {list.length > 0 ? (
+          isSingle ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                width: "100%",
+                px: SLIDE_GUTTER,
+              }}
+            >
+              <BikeCard bike={list[0]} embedInCarousel />
+            </Box>
+          ) : (
+            <Carousel
+              swipeable
+              draggable={false}
+              showDots={false}
+              responsive={responsive}
+              ssr={false}
+              infinite
+              autoPlay={false}
+              autoPlaySpeed={5000}
+              keyBoardControl={false}
+              customTransition="transform 500ms ease-in-out"
+              transitionDuration={500}
+              containerClass="carousel-container"
+              itemClass="carousel-item-padding-40-px"
+            >
+              {list.map((bike) => (
+                <Box
+                  key={bike._id}
+                  sx={{
+                    display: "flex",
+                    justifyContent: { xs: "center", sm: "flex-start" },
+                    width: "100%",
+                    px: SLIDE_GUTTER,
+                  }}
+                >
+                  <BikeCard bike={bike} embedInCarousel />
+                </Box>
+              ))}
+            </Carousel>
+          )
+        ) : (
+          <Typography
+            sx={{
+              textAlign: "center",
+              py: 5,
+              color: "text.secondary",
+              fontSize: "1rem",
+              maxWidth: 480,
+              mx: "auto",
+            }}
           >
-            {bikes.slice(0, 20).map((bike) => {
-              if (bike.brand.toLowerCase() === brand.toLowerCase()) {
-                return (
-                  <Box sx={{ display: "inline-block" }}>
-                    <BikeCard bike={bike}></BikeCard>
-                  </Box>
-                );
-              } else {
-                return null;
-              }
-            })}
-          </Carousel>
+            No {brand} bikes in the gallery right now — visit the shop or check
+            back soon.
+          </Typography>
         )}
       </Box>
     </Box>

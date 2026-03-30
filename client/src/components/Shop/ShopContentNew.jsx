@@ -3,7 +3,8 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import Toolbar from "@mui/material/Toolbar";
-import NavBarShop from "components/General/NavBarShop";
+import Closer from "components/General/Closer";
+import NavBar from "components/General/NavBar";
 import BikeGrid from "./BikeGrid";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
@@ -136,6 +137,9 @@ export default function ShopContentNew(props) {
     setMobileOpen(!mobileOpen);
   };
 
+  /** When nav hides on scroll, relax top offsets so content/filter bar don’t leave a dead strip. */
+  const [navHidden, setNavHidden] = useState(false);
+
   const FilterButton = styled(Button)({
     color: "white",
     maxHeight: "40px",
@@ -155,50 +159,90 @@ export default function ShopContentNew(props) {
     },
   });
 
-  const drawerContent = (
+  /** Fixed offset under fixed nav — must not change when nav animates or scroll feedback loops / flicker. */
+  const drawerTopSpacerSx = {
+    flexShrink: 0,
+    height: { xs: theme.spacing(9), sm: theme.spacing(12) },
+    overflow: "hidden",
+  };
+
+  const filtersBody = (
+    <Box sx={{ px: { xs: 1, sm: 2 }, pt: 1, pb: 2 }}>
+      <SearchBar
+        allBikes={allBikes}
+        setBikes={setBikes}
+        setCheckedBrands={setCheckedBrands}
+        setCheckedTypes={setCheckedTypes}
+        price={price}
+        setPrice={setPrice}
+      />
+
+      <FilterList
+        allBikes={allBikes}
+        setBikes={setBikes}
+        bikeTypes={bikeTypes}
+        bikeBrands={bikeBrands}
+        checkedBrands={checkedBrands}
+        setCheckedBrands={setCheckedBrands}
+        checkedTypes={checkedTypes}
+        setCheckedTypes={setCheckedTypes}
+        price={price}
+        setPrice={setPrice}
+      />
+
+      <Box
+        m={2}
+        fontWeight={500}
+        fontSize={"14px"}
+        color="#495057"
+        lineHeight={1.5}
+      >
+        We do our best to keep our inventory updated but it isn't always
+        correct. Feel free to contact us with any inquiries.
+      </Box>
+    </Box>
+  );
+
+  /** Mobile overlay drawer: spacer still clears the fixed nav inside the sheet. */
+  const drawerContentMobile = (
     <>
-      <Toolbar />
-      <Box sx={{ overflow: "auto", height: "100%", px: { xs: 1, sm: 2 } }}>
-        <SearchBar
-          allBikes={allBikes}
-          setBikes={setBikes}
-          setCheckedBrands={setCheckedBrands}
-          setCheckedTypes={setCheckedTypes}
-          price={price}
-          setPrice={setPrice}
-        />
-
-        <FilterList
-          allBikes={allBikes}
-          setBikes={setBikes}
-          bikeTypes={bikeTypes}
-          bikeBrands={bikeBrands}
-          checkedBrands={checkedBrands}
-          setCheckedBrands={setCheckedBrands}
-          checkedTypes={checkedTypes}
-          setCheckedTypes={setCheckedTypes}
-          price={price}
-          setPrice={setPrice}
-        />
-
-        <Box
-          m={2}
-          fontWeight={500}
-          fontSize={"14px"}
-          color="#495057"
-          lineHeight={1.5}
-        >
-          We do our best to keep our inventory updated but it isn't always
-          correct. Feel free to contact us with any inquiries.
-        </Box>
+      <Box sx={drawerTopSpacerSx} aria-hidden />
+      <Box sx={{ overflow: "auto", flex: "1 1 auto", minHeight: 0 }}>
+        {filtersBody}
       </Box>
     </>
   );
 
+  const desktopStickyTop = navHidden ? theme.spacing(2) : theme.spacing(12);
+  const mainTopMargin = navHidden
+    ? { xs: isMobile ? 10 : 2, sm: 2 }
+    : { xs: isMobile ? 18 : 12, sm: 12 };
+  const mobileFiltersAppBarTop = navHidden ? theme.spacing(1) : 76;
+
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <NavBarShop />
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+      }}
+    >
+      {/* flex 1 1 auto (not flex:1) so this row grows with grid height; footer stays in document flow */}
+      <Box
+        sx={{
+          display: "flex",
+          flex: "1 1 auto",
+          width: "100%",
+          minWidth: 0,
+        }}
+      >
+        <CssBaseline />
+        <NavBar
+          position="fixed"
+          displayLogo
+          aboveDrawer
+          onBarsHiddenChange={setNavHidden}
+        />
 
       {/* Mobile Filter Button */}
       {isMobile && (
@@ -206,7 +250,7 @@ export default function ShopContentNew(props) {
           position="fixed"
           elevation={0}
           sx={{
-            top: "76px",
+            top: mobileFiltersAppBarTop,
             bgcolor: "transparent",
             zIndex: (theme) => theme.zIndex.drawer + 1,
           }}
@@ -224,22 +268,36 @@ export default function ShopContentNew(props) {
         </AppBar>
       )}
 
-      {/* Desktop Permanent Drawer */}
+      {/* Desktop: outer column stretches to full row height so the divider runs top–bottom */}
       {!isMobile && (
-        <Drawer
-          variant="permanent"
+        <Box
           sx={{
             width: drawerWidth,
             flexShrink: 0,
-            [`& .MuiDrawer-paper`]: {
-              width: drawerWidth,
-              boxSizing: "border-box",
-              borderRight: "1px solid #e0e0e0",
-            },
+            alignSelf: "stretch",
+            display: "flex",
+            flexDirection: "column",
+            boxSizing: "border-box",
+            borderRight: "1px solid #e0e0e0",
+            bgcolor: "#fff",
           }}
         >
-          {drawerContent}
-        </Drawer>
+          <Box
+            component="aside"
+            aria-label="Filters and search"
+            sx={{
+              position: "sticky",
+              alignSelf: "flex-start",
+              width: "100%",
+              top: desktopStickyTop,
+              maxHeight: `calc(100vh - ${desktopStickyTop} - ${theme.spacing(2)})`,
+              overflowY: "auto",
+              zIndex: 0,
+            }}
+          >
+            {filtersBody}
+          </Box>
+        </Box>
       )}
 
       {/* Mobile Temporary Drawer */}
@@ -282,7 +340,7 @@ export default function ShopContentNew(props) {
             </IconButton>
           </Box>
 
-          {drawerContent}
+          {drawerContentMobile}
         </Drawer>
       )}
 
@@ -291,14 +349,10 @@ export default function ShopContentNew(props) {
         component="main"
         sx={{
           flexGrow: 1,
-          mt: { xs: isMobile ? 18 : 12, sm: 12 },
+          mt: mainTopMargin,
           ml: { xs: 0, sm: 0, lg: 0 },
           px: { xs: 2, sm: 3, lg: 4 },
           maxWidth: "100%",
-          transition: theme.transitions.create("margin", {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-          }),
         }}
       >
         <Box sx={{ maxWidth: "100%", overflow: "hidden" }}>
@@ -316,6 +370,8 @@ export default function ShopContentNew(props) {
           )}
         </Box>
       </Box>
+      </Box>
+      <Closer />
     </Box>
   );
 }

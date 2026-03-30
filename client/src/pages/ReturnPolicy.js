@@ -24,7 +24,7 @@ const ReturnPolicy = () => {
           keywords="bike shop return policy, bike shop refund policy, return policy"
           url="https://www.northshorebikeshop.net/return-policy"
         />
-        <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
+        <NavBar position="sticky" displayLogo={1} />
 
         <Box m={5}>
           <Box mb={2} sx={{ fontSize: "30px", fontWeight: "600" }}>

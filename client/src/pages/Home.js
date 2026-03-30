@@ -26,7 +26,7 @@ const Home = () => {
   useEffect(() => {
     const fetchBikes = async () => {
       const response = await axios.get(
-        `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/`
+        `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/home-preview`,
       );
       setBikes(response.data);
     };
@@ -38,16 +38,12 @@ const Home = () => {
   return (
     <div>
       <SEO
-        title="North Shore Bike Shop | Premium Mountain Bikes & Expert Service"
-        description="North Shore Bike Shop - Your premier destination for Transition, Norco, and Ibis mountain bikes. Expert bike service, repairs, and tune-ups in British Columbia."
-        keywords="mountain bikes BC, bike shop Vancouver, Transition bikes, Norco bikes, Ibis bikes, bike service, bike repair, North Vancouver bike shop"
+        title="North Shore Bike Shop | Transition Canada | Premium Mountain Bikes & Service"
+        description="One of the largest Transition Bikes dealers in Canada. North Shore Bike Shop - Transition, Norco & Ibis mountain bikes. Expert service, repairs & tune-ups in North Vancouver, BC."
+        keywords="Transition Canada, Transition bikes Canada, mountain bikes BC, bike shop Vancouver, Transition bikes, Norco bikes, Ibis bikes, bike service, bike repair, North Vancouver bike shop"
         url="https://www.northshorebikeshop.net"
       />
-      <NavBar
-        background="transparent"
-        position={"absolute"}
-        displayLogo={true}
-      ></NavBar>
+      <NavBar background="transparent" position="fixed" displayLogo />
       <HeaderImage></HeaderImage>
 
       {/* <AboutUs></AboutUs> */}

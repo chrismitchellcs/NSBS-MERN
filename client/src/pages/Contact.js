@@ -12,7 +12,7 @@ const Contact = () => {
         keywords="bike shop contact, North Vancouver bike shop, bike shop hours, bike shop location, contact bike shop"
         url="https://www.northshorebikeshop.net/contact"
       />
-      <NavBar background="white" position={"sticky"} displayLogo={1}></NavBar>
+      <NavBar position="sticky" displayLogo={1} />
       <ContactPage></ContactPage>
       <Closer></Closer>
     </div>
