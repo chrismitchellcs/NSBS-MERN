@@ -1,2 +1,6 @@
 *.env
 server/scripts/.phpPosCleanup.checkpoint.json
+
+# Supplier stock / pricing files
+*.xls
+*.xlsx
