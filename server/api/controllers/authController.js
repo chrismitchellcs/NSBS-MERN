@@ -1,35 +1,101 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const LoginAttempt = require("../models/LoginAttempt");
 
-// Employee Login
+const MAX_FAILED_LOGINS = 10;
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+
+let dummyHashPromise;
+/** Compared against when the username doesn't exist, so response time doesn't reveal it. */
+function getDummyHash() {
+  if (!dummyHashPromise) dummyHashPromise = bcrypt.hash("not-a-real-password", 10);
+  return dummyHashPromise;
+}
+
+function loginAttemptKey(req) {
+  return `ip:${req.ip || "unknown"}`;
+}
+
+async function recordFailedLogin(key, now) {
+  const bumped = await LoginAttempt.findOneAndUpdate(
+    { key, expiresAt: { $gt: now } },
+    { $inc: { count: 1 } },
+    { new: true }
+  );
+  if (!bumped) {
+    await LoginAttempt.findOneAndUpdate(
+      { key },
+      { $set: { count: 1, expiresAt: new Date(now.getTime() + LOGIN_WINDOW_MS) } },
+      { upsert: true }
+    );
+  }
+}
+
 exports.login = async (req, res) => {
-  const { username, password } = req.body;
-
-  const user = await User.findOne({ username });
-  console.log(user);
-  console.log(password);
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    console.log("incorrect password");
-    return res.status(401).json({ message: "Invalid credentials" });
+  const { username, password } = req.body || {};
+  if (
+    typeof username !== "string" ||
+    typeof password !== "string" ||
+    !username.trim() ||
+    !password ||
+    username.length > 200 ||
+    password.length > 500
+  ) {
+    return res.status(400).json({ message: "Enter your username and password." });
   }
 
-  // req.session.user = user.username;
-  req.session.user = { id: user._id, username: user.username };
-  console.log("✅ Session after login:", req.session);
-  res.json({ message: "Login successful" });
+  try {
+    const key = loginAttemptKey(req);
+    const now = new Date();
+    const attempt = await LoginAttempt.findOne({ key }).lean();
+    if (attempt && attempt.expiresAt > now && attempt.count >= MAX_FAILED_LOGINS) {
+      const retryAfterSec = Math.ceil((attempt.expiresAt - now) / 1000);
+      res.set("Retry-After", String(retryAfterSec));
+      return res.status(429).json({
+        message: `Too many failed attempts. Try again in ${Math.ceil(retryAfterSec / 60)} minute(s).`,
+      });
+    }
+
+    const user = await User.findOne({ username: username.trim() });
+    let valid = false;
+    if (user) {
+      valid = await bcrypt.compare(password, user.password);
+    } else {
+      await bcrypt.compare(password, await getDummyHash());
+    }
+    if (!valid) {
+      await recordFailedLogin(key, now);
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    await LoginAttempt.deleteOne({ key });
+
+    // New session ID on login so a session cookie set before login can't be reused.
+    req.session.regenerate((regenErr) => {
+      if (regenErr) {
+        console.error("[login] session regenerate failed:", regenErr);
+        return res.status(500).json({ message: "Login failed. Try again." });
+      }
+      req.session.user = { id: user._id, username: user.username };
+      req.session.save((saveErr) => {
+        if (saveErr) {
+          console.error("[login] session save failed:", saveErr);
+          return res.status(500).json({ message: "Login failed. Try again." });
+        }
+        res.json({ message: "Login successful" });
+      });
+    });
+  } catch (err) {
+    console.error("[login]", err);
+    res.status(500).json({ message: "Login failed. Try again." });
+  }
 };
 
-// Check if user is authenticated
 exports.checkAuth = (req, res) => {
-  // console.log(req.session.user);
-  if (req.session.user) {
-    console.log("authenticated");
-    return res.json({ authenticated: true });
-  }
-  res.status(401).json({ authenticated: false });
+  // 200 either way: a logged-out visitor isn't an error (keeps shopper consoles clean).
+  res.json({ authenticated: Boolean(req.session && req.session.user) });
 };
 
-// Logout
 exports.logout = (req, res) => {
   req.session.destroy(() => res.json({ message: "Logged out" }));
 };

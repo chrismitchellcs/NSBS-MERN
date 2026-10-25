@@ -4,6 +4,7 @@ import { AuthProvider } from "components/AuthProvider";
 import { HelmetProvider } from "react-helmet-async";
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { NORCO_CATALOG_ENABLED } from "config/features";
 
 const Service = lazy(() => import("pages/Service"));
 const Contact = lazy(() => import("pages/Contact"));
@@ -23,6 +24,7 @@ const AdminServiceListingsPage = lazy(
   () => import("pages/AdminServiceListings"),
 );
 const Checkout = lazy(() => import("pages/Checkout"));
+const NotFound = lazy(() => import("pages/NotFound"));
 
 const routeFallback = (
   <div
@@ -71,10 +73,12 @@ const App = () => {
                     path="/admin-addbikes-transition"
                     element={<AdminAddBikesTransition />}
                   />
-                  <Route
-                    path="/admin-addbikes-norco"
-                    element={<AdminAddBikesNorco />}
-                  />
+                  {NORCO_CATALOG_ENABLED ? (
+                    <Route
+                      path="/admin-addbikes-norco"
+                      element={<AdminAddBikesNorco />}
+                    />
+                  ) : null}
                   <Route
                     path="/admin-addbikes-new"
                     element={<AdminAddBikesNew />}
@@ -87,6 +91,7 @@ const App = () => {
                     path="/admin-service-listings"
                     element={<AdminServiceListingsPage />}
                   />
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
             </div>

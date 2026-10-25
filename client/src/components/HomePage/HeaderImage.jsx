@@ -10,7 +10,7 @@ const CAROUSEL_MS = 7000;
 const FALLBACK_SLIDES = [
   {
     _id: "fallback-local",
-    imageUrl: "/sighttq2.jpg",
+    imageUrl: "/sighttq2-2400.jpg",
     imageAlt: "Mountain biking on the North Shore",
     headline: "NORTH SHORE BIKE SHOP",
     body: "Premium mountain bikes, expert service, and a crew that rides what they sell. Right here on the North Shore since 2007.",
@@ -20,15 +20,45 @@ const FALLBACK_SLIDES = [
   },
 ];
 
+const HERO_CACHE_KEY = "nsbs-hero-slides";
+
+function readCachedSlides() {
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(HERO_CACHE_KEY) || "null");
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedSlides(slides) {
+  try {
+    if (slides) window.localStorage.setItem(HERO_CACHE_KEY, JSON.stringify(slides));
+    else window.localStorage.removeItem(HERO_CACHE_KEY);
+  } catch {
+    /* storage full or blocked — the hero still works without the cache */
+  }
+}
+
 const HeaderImage = () => {
-  /** `null` until the public API responds — avoids flashing fallback copy then swapping to CMS slides. */
-  const [slides, setSlides] = useState(null);
+  /**
+   * Last slides from the browser cache so repeat visits paint the hero immediately; `null` for
+   * first-time visitors until the public API responds (avoids flashing fallback copy).
+   */
+  const [slides, setSlides] = useState(readCachedSlides);
   const [index, setIndex] = useState(0);
   /** Opacity transitions are off for the first paint so crossfades don’t look like duplicate text. */
   const [slideTransitionOn, setSlideTransitionOn] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+    const enableTransitions = () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (!cancelled) setSlideTransitionOn(true);
+        });
+      });
+    };
     const url = `${process.env.REACT_APP_VERCEL_DOMAIN}/api/header-hero/public`;
     axios
       .get(url)
@@ -36,27 +66,20 @@ const HeaderImage = () => {
         if (cancelled) return;
         const data = res.data;
         if (Array.isArray(data) && data.length > 0) {
-          setSlides(data);
+          writeCachedSlides(data);
+          setSlides((prev) =>
+            prev && JSON.stringify(prev) === JSON.stringify(data) ? prev : data
+          );
         } else {
+          writeCachedSlides(null);
           setSlides(FALLBACK_SLIDES);
         }
-        setIndex(0);
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            if (!cancelled) setSlideTransitionOn(true);
-          });
-        });
+        enableTransitions();
       })
       .catch(() => {
-        if (!cancelled) {
-          setSlides(FALLBACK_SLIDES);
-          setIndex(0);
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              if (!cancelled) setSlideTransitionOn(true);
-            });
-          });
-        }
+        if (cancelled) return;
+        setSlides((prev) => prev || FALLBACK_SLIDES);
+        enableTransitions();
       });
     return () => {
       cancelled = true;
@@ -167,7 +190,7 @@ const HeaderImage = () => {
               zIndex: 10,
               justifyContent: "flex-end",
               px: { xs: 3, sm: 4, md: 6, lg: 8 },
-              pb: { xs: 5, md: 7 },
+              pb: { xs: slides.length > 1 ? 9 : 5, md: 7 },
               pt: { xs: 10, md: 0 },
               maxWidth: { md: "min(760px, 64vw)" },
               textAlign: { xs: "center", md: "left" },
@@ -181,7 +204,7 @@ const HeaderImage = () => {
                 m: 0,
                 fontWeight: 800,
                 lineHeight: 0.95,
-                letterSpacing: { xs: "-0.02em", md: "-0.03em" },
+                letterSpacing: { xs: "0.01em", md: "0.015em" },
                 color: "#fff",
                 fontSize: {
                   xs: "2.35rem",
@@ -239,7 +262,7 @@ const HeaderImage = () => {
       {slides.length > 1 && (
         <Stack
           direction="row"
-          spacing={1}
+          spacing={0.25}
           sx={{
             position: "absolute",
             left: 0,
@@ -256,18 +279,34 @@ const HeaderImage = () => {
               component="button"
               type="button"
               aria-label={`Show slide ${i + 1} of ${slides.length}`}
+              aria-current={i === index ? "true" : undefined}
               onClick={() => setIndex(i)}
               sx={{
-                width: 10,
-                height: 10,
+                // 24px tap target around a 10px dot.
+                width: 24,
+                height: 24,
                 p: 0,
                 border: "none",
                 borderRadius: "50%",
                 cursor: "pointer",
-                bgcolor: i === index ? "#fff" : "rgba(255,255,255,0.35)",
-                transition: "background-color 0.2s",
-                "&:hover": {
+                bgcolor: "transparent",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                "&::before": {
+                  content: '""',
+                  width: 10,
+                  height: 10,
+                  borderRadius: "50%",
+                  bgcolor: i === index ? "#fff" : "rgba(255,255,255,0.35)",
+                  transition: "background-color 0.2s",
+                },
+                "&:hover::before": {
                   bgcolor: i === index ? "#fff" : "rgba(255,255,255,0.55)",
+                },
+                "&:focus-visible": {
+                  outline: "2px solid #fff",
+                  outlineOffset: 1,
                 },
               }}
             />

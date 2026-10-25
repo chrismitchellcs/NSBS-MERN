@@ -42,6 +42,8 @@ const allBikesSchema = new Schema(
     },
     price: { type: Number, required: false },
     saleprice: { type: Number, required: false },
+    /** Shop cost (one per model for Transition/Norco/OTHER; PHP POS uses this for every variant line). */
+    costPrice: { type: Number, required: false },
     images: { type: String, required: false },
     description: { type: String, required: false },
     link: { type: String, required: false },
@@ -49,10 +51,17 @@ const allBikesSchema = new Schema(
     models: { type: String, required: false },
     fullName: { type: String, required: true, unique: true },
     public: { type: Boolean, required: true },
+    archived: { type: Boolean, required: false, default: false },
     inStock: { type: String, required: false },
     database: { type: String, required: false },
+    /** Public product page views (incremented on GET /:id when public and not archived). */
+    viewCount: { type: Number, required: false, default: 0 },
   },
   { timestamps: false }
 );
 
-module.exports = mongoose.model("AllBikes", allBikesSchema);
+// Same DB as ATLAS_URI; optional override for collection name (default: Mongoose plural, usually "allbikes").
+const bikesCollection = process.env.BIKES_COLLECTION_NAME;
+module.exports = bikesCollection
+  ? mongoose.model("AllBikes", allBikesSchema, bikesCollection)
+  : mongoose.model("AllBikes", allBikesSchema);

@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
+import AdminHeroFraming from "./AdminHeroFraming";
 
 const api = `${process.env.REACT_APP_VERCEL_DOMAIN}/api/header-hero`;
 
@@ -266,7 +267,7 @@ const AdminHeaderHero = () => {
         </Table>
       )}
 
-      <Dialog open={dialogOpen} onClose={() => !saving && setDialogOpen(false)} fullWidth maxWidth="sm">
+      <Dialog open={dialogOpen} onClose={() => !saving && setDialogOpen(false)} fullWidth maxWidth="md">
         <DialogTitle>{editingId ? "Edit slide" : "New slide"}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
@@ -295,15 +296,15 @@ const AdminHeaderHero = () => {
             </Typography>
             {(form.imageUrl?.trim() ||
               (selectedFile && previewUrl.startsWith("blob:"))) && (
-              <Box
-                component="img"
+              <AdminHeroFraming
                 src={
                   selectedFile && previewUrl.startsWith("blob:")
                     ? previewUrl
                     : form.imageUrl.trim()
                 }
-                alt=""
-                sx={{ maxWidth: "100%", maxHeight: 200, objectFit: "cover", borderRadius: 1 }}
+                value={form.objectPosition}
+                onChange={(objectPosition) => setForm((f) => ({ ...f, objectPosition }))}
+                headline={form.headline}
               />
             )}
             <TextField
@@ -342,16 +343,6 @@ const AdminHeaderHero = () => {
               fullWidth
               size="small"
               helperText="e.g. /shop or /service"
-            />
-            <TextField
-              label="Object position (CSS)"
-              value={form.objectPosition}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, objectPosition: e.target.value }))
-              }
-              fullWidth
-              size="small"
-              helperText="e.g. center bottom"
             />
             <TextField
               label="Sort order"

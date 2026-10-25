@@ -8,7 +8,7 @@ const cards = [
     title: "Shop mountain bikes",
     description: "Premium bikes from Transition, Norco, and Ibis.",
     buttonText: "Shop bikes",
-    image: "xtr.jpg",
+    image: "xtr-1600.jpg",
     link: "/shop",
   },
   {
@@ -20,9 +20,9 @@ const cards = [
   },
   {
     title: "Visit our shop",
-    description: "North Vancouver, BC — right on the Shore.",
+    description: "North Vancouver, BC, right on the Shore.",
     buttonText: "Contact us",
-    image: "bottlerocket.jpg",
+    image: "bottlerocket-1600.jpg",
     link: "/contact",
   },
 ];
@@ -136,7 +136,7 @@ const AboutImages = () => {
                     m: 0,
                     fontWeight: 800,
                     lineHeight: 1.05,
-                    letterSpacing: { xs: "-0.02em", md: "-0.03em" },
+                    letterSpacing: { xs: "0.01em", md: "0.015em" },
                     color: "#fff",
                     fontSize: {
                       xs: "1.65rem",

@@ -8,17 +8,25 @@ import Service from "components/HomePage/Service";
 import IbisHome from "components/HomePage/IbisHome";
 import NavBar from "components/General/NavBar";
 import SEO from "components/General/SEO";
+import { pageMeta } from "seo/seoData.mjs";
 import AboutImages from "components/HomePage/AboutImages";
+import VisitStrip from "components/HomePage/VisitStrip";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
 function groupBikesByBrand(bikes = []) {
-  return bikes.reduce((acc, bike) => {
+  const acc = bikes.reduce((acc, bike) => {
     const brand = bike.brand;
     if (!acc[brand]) acc[brand] = [];
     acc[brand].push(bike);
     return acc;
   }, {});
+  for (const key of Object.keys(acc)) {
+    acc[key].sort(
+      (a, b) => (Number(b.viewCount) || 0) - (Number(a.viewCount) || 0),
+    );
+  }
+  return acc;
 }
 
 const Home = () => {
@@ -37,14 +45,10 @@ const Home = () => {
 
   return (
     <div>
-      <SEO
-        title="North Shore Bike Shop | Transition Canada | Premium Mountain Bikes & Service"
-        description="One of the largest Transition Bikes dealers in Canada. North Shore Bike Shop - Transition, Norco & Ibis mountain bikes. Expert service, repairs & tune-ups in North Vancouver, BC."
-        keywords="Transition Canada, Transition bikes Canada, mountain bikes BC, bike shop Vancouver, Transition bikes, Norco bikes, Ibis bikes, bike service, bike repair, North Vancouver bike shop"
-        url="https://www.northshorebikeshop.net"
-      />
+      <SEO {...pageMeta("/")} />
       <NavBar background="transparent" position="fixed" displayLogo />
       <HeaderImage></HeaderImage>
+      <VisitStrip />
 
       {/* <AboutUs></AboutUs> */}
       <AboutImages></AboutImages>

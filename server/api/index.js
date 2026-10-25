@@ -112,7 +112,7 @@ module.exports = async (req, res) => {
   }
 };
 
-// Optional: Local Development Support
+// Optional: Local long-lived server
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
   connectionPromise.then(() => {

@@ -6,14 +6,16 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AdminAddBikesNew = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!loading && !isAuthenticated) {
       navigate("/admin-login");
     }
-  }, [isAuthenticated, navigate]);
+  }, [loading, isAuthenticated, navigate]);
+
+  if (loading || !isAuthenticated) return null;
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "#f4f6f4" }}>

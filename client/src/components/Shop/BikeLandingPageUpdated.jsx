@@ -1,7 +1,15 @@
-import { Box, Button, Stack, styled } from "@mui/material";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { Box, Button, Stack, Typography } from "@mui/material";
+import { NAV_BAR_BG } from "components/General/NavBar";
 import { useEffect, useMemo, useState } from "react";
 import { Image } from "cloudinary-react";
 import { useNavigate } from "react-router-dom";
+import {
+  bikeHasVariantPricing,
+  formatCadPrice,
+  hasActiveShopSale,
+  variantPricingFor,
+} from "utils/shopPrice";
 
 const CLOUD_NAME =
   process.env.REACT_APP_CLOUDINARY_CLOUD_NAME || "ds4ukwnxl";
@@ -86,29 +94,56 @@ function parseBikeModelsArray(raw) {
   }
 }
 
-const SeeMoreLink = styled("a")({
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  boxSizing: "border-box",
-  minHeight: "36px",
-  padding: "6px 16px",
-  color: "black",
-  border: "solid",
-  borderWidth: "1px",
-  maxHeight: "40px",
-  fontWeight: "400",
-  fontSize: "14px",
-  fontFamily: "inherit",
-  textDecoration: "none",
-  cursor: "pointer",
-  borderRadius: 1,
-
+/** Matches homepage `Service` / `Parts` pill CTAs */
+const sectionCtaSx = {
+  textTransform: "none",
+  fontWeight: 600,
+  fontSize: "0.95rem",
+  letterSpacing: "0.02em",
+  color: NAV_BAR_BG,
+  px: 2.25,
+  py: 1,
+  borderRadius: "999px",
+  border: "1px solid rgba(36, 61, 51, 0.35)",
   "&:hover": {
-    backgroundColor: "white",
-    color: "black",
+    bgcolor: "rgba(36, 61, 51, 0.07)",
+    borderColor: NAV_BAR_BG,
   },
-});
+};
+
+/** Same grey as homepage AboutImages — About, Why buy, and purchase column */
+const NSBS_PANEL_BG = "#f6f7f6";
+
+const marketingBandSx = {
+  bgcolor: NSBS_PANEL_BG,
+  borderRadius: { xs: "12px", md: "14px" },
+  px: { xs: 2, sm: 2.5, md: 3 },
+  py: { xs: 3, md: 3.5 },
+};
+
+const purchaseColumnDividerSx = {
+  borderLeft: { xs: "none", md: "1px solid rgba(0, 0, 0, 0.08)" },
+};
+
+const purchaseFooterSx = {
+  bgcolor: NSBS_PANEL_BG,
+  borderTop: "1px solid rgba(0, 0, 0, 0.08)",
+};
+
+const whyBuyNsbsItems = [
+  {
+    title: "Lifetime free tune-ups",
+    body: "FREE drivetrain and brake adjustments, wheel truing, and additional maintenance whenever you need it. Original owner only.",
+  },
+  {
+    title: "15% off parts & labour",
+    body: "Save on all parts and labour for your bike. This discount applies to every NSBS customer, on every purchase.",
+  },
+  {
+    title: "Custom bike setup",
+    body: "Professional help with accessories, fitting, and suspension setup tailored to how you ride.",
+  },
+];
 
 function extractPublicId(cloudinaryUrl) {
   try {
@@ -127,67 +162,156 @@ function firstColorImage(images) {
   return vals[0] || "";
 }
 
-/** Shared marketing grid — one source of copy; placement still differs by breakpoint via wrapper classes. */
+function normalizeColorKey(color) {
+  return String(color || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function colorHasImage(images, color) {
+  const want = normalizeColorKey(color);
+  if (!want) return false;
+  const entries = Object.entries(images || {});
+  return entries.some(([k, v]) => {
+    if (normalizeColorKey(k) !== want) return false;
+    return typeof v === "string" && v.trim() !== "";
+  });
+}
+
+/** Homepage-aligned band: `AboutImages` bg + `Service`-style type */
 function WhyBuyNsbsGrid({ className }) {
   return (
-    <div className={className}>
-      <h2 className="text-3xl md:text-2xl font-bold text-center text-gray-900 mb-12">
-        Why Buy From NSBS?
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-        <div className="flex flex-col items-center text-center p-6 rounded-lg bg-gray-100 ">
-          <h3 className="text-xl md:text-xl font-bold text-gray-900 mb-4">
-            Lifetime Free Tune-Ups
-          </h3>
-          <p className="text-gray-700 leading-relaxed max-w-sm">
-            FREE drivetrain and brake adjustments, wheel truing, and additional
-            maintenance whenever you need! Only applies to original owner.
-          </p>
-        </div>
-        <div className="flex flex-col items-center text-center p-6 rounded-lg bg-gray-100 ">
-          <h3 className="text-xl md:text-xl font-bold text-gray-900 mb-4">
-            15% Off All Parts and Labour
-          </h3>
-          <p className="text-gray-700 leading-relaxed max-w-sm">
-            Save on all parts and labor for your bike. This exclusive discount
-            applies to all NSBS customers on every purchase.
-          </p>
-        </div>
-        <div className="flex flex-col items-center text-center p-6 rounded-lg bg-gray-100 ">
-          <h3 className="text-xl md:text-xl font-bold text-gray-900 mb-4">
-            Custom Bike Setup
-          </h3>
-          <p className="text-gray-700 leading-relaxed max-w-sm">
-            Professional assistance with custom accessories, fitting, and
-            suspension setup tailored to your riding style.
-          </p>
-        </div>
-      </div>
-    </div>
+    <Box
+      component="section"
+      aria-label="Why buy from North Shore Bike Shop"
+      className={className}
+      sx={marketingBandSx}
+    >
+      <Typography
+        component="h2"
+        sx={{
+          m: 0,
+          mb: { xs: 2.5, md: 3 },
+          fontWeight: 800,
+          textTransform: "uppercase",
+          letterSpacing: { xs: "0.06em", sm: "0.08em" },
+          fontSize: { xs: "1.25rem", sm: "1.45rem", md: "1.55rem" },
+          color: NAV_BAR_BG,
+          lineHeight: 1.15,
+          textAlign: "center",
+        }}
+      >
+        Why buy from NSBS?
+      </Typography>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" },
+          gap: { xs: 2, md: 2.25 },
+          alignItems: "stretch",
+        }}
+      >
+        {whyBuyNsbsItems.map((item) => (
+          <Box
+            key={item.title}
+            sx={{
+              bgcolor: "#fff",
+              borderRadius: "12px",
+              p: { xs: 2.25, md: 2.75 },
+              boxShadow: "0 8px 32px rgba(0,0,0,0.06)",
+              border: "1px solid rgba(0,0,0,0.06)",
+              transition: "box-shadow 0.25s ease",
+              "@media (hover: hover)": {
+                "&:hover": {
+                  boxShadow: "0 14px 40px rgba(0,0,0,0.09)",
+                },
+              },
+            }}
+          >
+            <Typography
+              component="h3"
+              sx={{
+                m: 0,
+                mb: 1.25,
+                fontWeight: 700,
+                fontSize: { xs: "1.02rem", md: "1.06rem" },
+                color: "#1a1a1a",
+                letterSpacing: "-0.02em",
+                lineHeight: 1.25,
+              }}
+            >
+              {item.title}
+            </Typography>
+            <Typography
+              sx={{
+                m: 0,
+                fontSize: { xs: "0.94rem", md: "0.97rem" },
+                lineHeight: 1.62,
+                color: "rgba(0,0,0,0.74)",
+              }}
+            >
+              {item.body}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+    </Box>
   );
 }
 
 function AboutSection({ bike }) {
+  if (!bike?.description && !bike?.link) return null;
+
   return (
-    <>
-      <div className="text-lg text-gray-900 font-semibold mb-2">About:</div>
-      <div className="text-gray-900 text-lg font-light">{bike.description}</div>
+    <Box component="section" aria-label="About this bike" sx={marketingBandSx}>
+      <Typography
+        component="h2"
+        sx={{
+          m: 0,
+          mb: { xs: 2.5, md: 3 },
+          fontWeight: 800,
+          textTransform: "uppercase",
+          letterSpacing: { xs: "0.06em", sm: "0.08em" },
+          fontSize: { xs: "1.25rem", sm: "1.45rem", md: "1.55rem" },
+          color: NAV_BAR_BG,
+          lineHeight: 1.15,
+          textAlign: "left",
+        }}
+      >
+        About
+      </Typography>
+      {bike.description ? (
+        <Typography
+          sx={{
+            m: 0,
+            mb: bike.link ? 2.5 : 0,
+            fontSize: { xs: "1rem", md: "1.0625rem" },
+            lineHeight: 1.65,
+            color: "rgba(0,0,0,0.78)",
+            fontWeight: 400,
+            textAlign: "left",
+          }}
+        >
+          {bike.description}
+        </Typography>
+      ) : null}
       {bike.link ? (
-        <div className="mt-4">
-          <SeeMoreLink
+        <Stack alignItems="flex-start">
+          <Button
+            component="a"
+            href={bike.link}
             target="_blank"
             rel="noopener noreferrer"
-            href={bike.link}
+            endIcon={<OpenInNewIcon sx={{ fontSize: 18 }} aria-hidden />}
+            sx={{ ...sectionCtaSx, bgcolor: "#fff" }}
           >
-            See More
-          </SeeMoreLink>
-        </div>
+            See more
+          </Button>
+        </Stack>
       ) : null}
-    </>
+    </Box>
   );
 }
 
-const BikeLandingPageUpdated = ({ bike }) => {
+const BikeLandingPageUpdated = ({ bike, navHidden = false }) => {
   const navigate = useNavigate();
   const images = useMemo(() => parseBikeColors(bike?.colors), [bike?.colors]);
   const [currentImage, setCurrentImage] = useState(() =>
@@ -226,13 +350,29 @@ const BikeLandingPageUpdated = ({ bike }) => {
         uniqueModelsMap.set(key, model);
       }
     });
-    const uniqueModels = Array.from(uniqueModelsMap.values());
+    const uniqueModels = Array.from(uniqueModelsMap.values()).filter((m) =>
+      colorHasImage(images, m?.color)
+    );
     return [...uniqueModels].sort((a, b) => {
       const sizeDiff = allSizes.indexOf(a.size) - allSizes.indexOf(b.size);
       if (sizeDiff !== 0) return sizeDiff;
       return a.color.localeCompare(b.color);
     });
-  }, [models, storeModels]);
+  }, [models, storeModels, images]);
+
+  // Listed price is the cheapest variant's; once a variant is picked, show that variant's price.
+  const displayPricing = useMemo(
+    () =>
+      selectedModel
+        ? variantPricingFor(bike, selectedModel.color, selectedModel.size)
+        : { price: bike?.price, saleprice: bike?.saleprice },
+    [bike, selectedModel]
+  );
+  const showFromLabel = useMemo(
+    () => !selectedModel && bikeHasVariantPricing(bike),
+    [bike, selectedModel]
+  );
+  const hasActiveSale = hasActiveShopSale(displayPricing.saleprice);
 
   const mainPublicId = extractPublicId(currentImage);
   const mainAlt = bikeTitle
@@ -241,27 +381,55 @@ const BikeLandingPageUpdated = ({ bike }) => {
 
   return (
     <div className="w-full flex md:flex-row flex-col">
-      <div className="md:w-[55%] lg:w-[65%] w-full mt-6">
+      {/* flex-1: uses all space left of the buy column; hero capped so it doesn’t dwarf the panel on huge screens */}
+      <div className="w-full md:flex-1 md:min-w-0 mt-6 px-4 sm:px-6 lg:px-10 md:pr-6 lg:pr-10">
         {mainPublicId ? (
-          <Image
-            key={`${bike._id}-${mainPublicId}`}
-            cloudName={CLOUD_NAME}
-            publicId={mainPublicId}
-            width="1000"
-            crop="pad"
-            quality="100"
-            fetchFormat="auto"
-            alt={mainAlt}
-            style={{
-              width: "90%",
-              display: "block",
-              margin: "0 auto",
-              objectFit: "contain",
-            }}
-          />
+          <div className="w-full flex justify-center md:justify-start lg:justify-center px-0 sm:px-2">
+            {/*
+              Stable min-height + same grey as panels avoids layout jump when src swaps.
+              key only bike._id so Cloudinary Image updates in place instead of remounting per colour.
+            */}
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: {
+                  xs: "min(100%, 600px)",
+                  sm: "min(100%, 600px)",
+                  md: "min(100%, 720px)",
+                  lg: "min(100%, 800px)",
+                  xl: "min(100%, 880px)",
+                },
+                minHeight: { xs: 260, sm: 300, md: 340, lg: 360 },
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                bgcolor: NSBS_PANEL_BG,
+                borderRadius: "12px",
+                mx: { xs: "auto", md: 0, lg: "auto" },
+              }}
+            >
+              <Image
+                key={bike._id}
+                cloudName={CLOUD_NAME}
+                publicId={mainPublicId}
+                width="1000"
+                crop="pad"
+                quality="100"
+                fetchFormat="auto"
+                alt={mainAlt}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  height: "auto",
+                  maxHeight: "min(72vh, 640px)",
+                  objectFit: "contain",
+                }}
+              />
+            </Box>
+          </div>
         ) : (
           <div
-            className="w-[90%] mx-auto min-h-[200px] flex items-center justify-center bg-gray-100 text-gray-500 text-sm rounded"
+            className="w-full max-w-[min(100%,800px)] md:mx-0 mx-auto min-h-[200px] flex items-center justify-center bg-gray-100 text-gray-500 text-sm rounded"
             role="img"
             aria-label={mainAlt}
           >
@@ -330,45 +498,139 @@ const BikeLandingPageUpdated = ({ bike }) => {
             })}
           </Stack>
         </div>
-        <div className="mx-8 mb-8 md:block hidden">
+        <div className="mx-8 mb-8 mt-8 md:mt-10 md:block hidden">
           <AboutSection bike={bike} />
         </div>
         <WhyBuyNsbsGrid className="mt-16 mb-16 mx-8 md:block hidden" />
       </div>
-      <div
-        className="md:w-[45%] lg:w-[35%] w-full sticky top-[80px] md:h-[calc(100vh-80px)] flex flex-col [scrollbar-width:none]
-                  [&::-webkit-scrollbar]:hidden overflow-hidden justify-center items-center"
+      <Box
+        component="aside"
+        aria-label="Pricing and availability"
+        className={`w-full md:shrink-0 md:w-[min(420px,40vw)] lg:w-[min(460px,36vw)] xl:w-[min(500px,34vw)] sticky md:self-start flex flex-col [scrollbar-width:none] [&::-webkit-scrollbar]:hidden overflow-hidden justify-center items-stretch ${
+          navHidden
+            ? "top-0 md:h-screen"
+            : "top-[80px] md:h-[calc(100vh-80px)]"
+        }`}
+        sx={{
+          bgcolor: NSBS_PANEL_BG,
+          ...purchaseColumnDividerSx,
+        }}
       >
-        <div className="flex-1 overflow-y-auto py-6 md:pr-6 px-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="text-2xl font-semibold text-gray-900 mb-2">
-            {bike.brand} {bike.name}
-          </div>
-          <div className="mb-4">
-            {bike.saleprice === 0 || bike.saleprice === null ? (
-              <div className="flex flex-wrap items-baseline gap-x-2 text-2xl text-gray-900 font-light">
-                <span>${bike.price.toLocaleString()}</span>
-                <span className="text-2xl font-light">CAD</span>
-              </div>
-            ) : (
-              <div className="flex flex-wrap items-baseline gap-x-2">
-                <div className="text-2xl text-gray-900 line-through font-light">
-                  ${bike.price.toLocaleString()}
-                </div>
-                <div className="text-2xl text-gray-900 font-light">
-                  ${bike.saleprice.toLocaleString()}
-                </div>
-                <div className="text-2xl font-light text-gray-900">CAD</div>
-              </div>
-            )}
-          </div>
-          <div className="mb-2">
-            <div className="text-lg text-gray-900 mb-2">
-              Select Size / Colour:
-            </div>
-            <Stack
-              spacing={1}
-              minWidth={{ xs: "320px", sm: "320px", md: "340px", lg: "400px" }}
-            >
+        <Box
+          className="flex-1 overflow-y-auto w-full min-w-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          sx={{
+            py: { xs: 2.5, md: 3 },
+            px: { xs: 2, sm: 2.25 },
+            pl: { md: 2.5 },
+            pr: { md: 3, lg: 3.5 },
+          }}
+        >
+          <Stack spacing={2.25}>
+            <Box>
+              <Typography
+                component="h1"
+                sx={{
+                  m: 0,
+                  fontWeight: 800,
+                  fontSize: { xs: "1.35rem", sm: "1.5rem" },
+                  letterSpacing: "-0.02em",
+                  color: "#1a1a1a",
+                  lineHeight: 1.2,
+                }}
+              >
+                {bike.brand} {bike.name}
+              </Typography>
+            </Box>
+            <Box>
+              {!hasActiveSale ? (
+                <Stack direction="row" alignItems="baseline" flexWrap="wrap" columnGap={1} rowGap={0.5}>
+                  {showFromLabel ? (
+                    <Typography sx={{ m: 0, fontSize: "1.5rem", fontWeight: 300, color: "#1a1a1a" }}>
+                      From
+                    </Typography>
+                  ) : null}
+                  <Typography
+                    component="p"
+                    sx={{
+                      m: 0,
+                      fontSize: "1.5rem",
+                      fontWeight: 300,
+                      color: "#1a1a1a",
+                      fontVariantNumeric: "tabular-nums",
+                    }}
+                  >
+                    ${formatCadPrice(displayPricing.price)}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      m: 0,
+                      fontSize: "1.5rem",
+                      fontWeight: 300,
+                      color: "rgba(0,0,0,0.55)",
+                    }}
+                  >
+                    CAD
+                  </Typography>
+                </Stack>
+              ) : (
+                <Stack direction="row" alignItems="baseline" flexWrap="wrap" columnGap={1} rowGap={0.5}>
+                  {showFromLabel ? (
+                    <Typography sx={{ m: 0, fontSize: "1.5rem", fontWeight: 300, color: "#1a1a1a" }}>
+                      From
+                    </Typography>
+                  ) : null}
+                  <Typography
+                    sx={{
+                      m: 0,
+                      fontSize: "1.5rem",
+                      fontWeight: 300,
+                      color: "rgba(0,0,0,0.45)",
+                      textDecoration: "line-through",
+                      fontVariantNumeric: "tabular-nums",
+                    }}
+                  >
+                    ${formatCadPrice(displayPricing.price)}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      m: 0,
+                      fontSize: "1.5rem",
+                      fontWeight: 300,
+                      color: "#1a1a1a",
+                      fontVariantNumeric: "tabular-nums",
+                    }}
+                  >
+                    ${formatCadPrice(displayPricing.saleprice)}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      m: 0,
+                      fontSize: "1.5rem",
+                      fontWeight: 300,
+                      color: "rgba(0,0,0,0.55)",
+                    }}
+                  >
+                    CAD
+                  </Typography>
+                </Stack>
+              )}
+            </Box>
+            <Box>
+              <Typography
+                component="p"
+                sx={{
+                  m: 0,
+                  mb: 1.5,
+                  color: NAV_BAR_BG,
+                  fontWeight: 700,
+                  fontSize: "0.72rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Select size / colour
+              </Typography>
+            <Stack spacing={1.25} sx={{ width: "100%", maxWidth: "100%" }}>
               {sortedModels.map((model) => {
                 const oos = isOutOfStock(model.availability);
                 const isSelected =
@@ -383,6 +645,7 @@ const BikeLandingPageUpdated = ({ bike }) => {
                 return (
                   <Button
                     key={`${model.color}-${model.size}`}
+                    fullWidth
                     sx={{
                       m: 0,
                       p: 0,
@@ -456,56 +719,131 @@ const BikeLandingPageUpdated = ({ bike }) => {
                 );
               })}
             </Stack>
-          </div>
-        </div>
+            </Box>
+          </Stack>
+        </Box>
 
-        <div className="sticky bottom-0 bg-white border-t border-gray-200 pt-4 pb-6 md:pr-6 w-full px-2">
+        <Box
+          className="sticky bottom-0 w-full shrink-0"
+          sx={{
+            ...purchaseFooterSx,
+            pt: 2,
+            pb: { xs: 3, md: 3 },
+            px: { xs: 2, sm: 2.25 },
+            pl: { md: 2.5 },
+            pr: { md: 3, lg: 3.5 },
+          }}
+        >
           {!selectedModel ? (
-            <button
+            <Button
               type="button"
-              className="w-full bg-gray-300 text-gray-600 py-4 px-6 rounded-lg font-light text-lg cursor-not-allowed"
+              fullWidth
               disabled
+              variant="contained"
+              disableElevation
+              sx={{
+                py: 1.75,
+                borderRadius: "10px",
+                textTransform: "none",
+                fontWeight: 400,
+                fontSize: "1.05rem",
+                bgcolor: "rgba(0,0,0,0.12)",
+                color: "rgba(0,0,0,0.45)",
+                "&.Mui-disabled": {
+                  bgcolor: "rgba(0,0,0,0.12)",
+                  color: "rgba(0,0,0,0.45)",
+                },
+              }}
             >
               Select an option
-            </button>
+            </Button>
           ) : isOutOfStock(selectedModel.availability) ? (
-            <button
+            <Button
               type="button"
-              className="w-full bg-black text-white py-4 px-6 rounded-lg font-light text-lg hover:bg-gray-800 transition-colors duration-200"
-            >
-              Out of Stock - Contact Us
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="w-full bg-black text-white py-4 md:px-6 rounded-lg font-light text-lg hover:bg-gray-800 transition-colors duration-200"
+              fullWidth
+              variant="contained"
+              disableElevation
+              sx={{
+                py: 1.75,
+                borderRadius: "10px",
+                textTransform: "none",
+                fontWeight: 400,
+                fontSize: "1.05rem",
+                bgcolor: "#1a1a1a",
+                color: "#fff",
+                "&:hover": { bgcolor: "#333" },
+              }}
               onClick={() => {
                 const pid = extractPublicId(images[selectedModel.color]);
                 navigate(
-                  `/checkout?bikeid=${bike._id}&color=${
+                  `/checkout?bikeid=${bike._id}&color=${encodeURIComponent(
                     selectedModel.color
-                  }&size=${selectedModel.size}&image=${encodeURIComponent(
+                  )}&size=${encodeURIComponent(
+                    selectedModel.size
+                  )}&image=${encodeURIComponent(
                     pid || ""
-                  )}&availability=${selectedModel.availability}`
+                  )}&availability=${encodeURIComponent(
+                    selectedModel.availability || ""
+                  )}`
+                );
+              }}
+            >
+              Out of Stock - Contact Us
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              fullWidth
+              variant="contained"
+              disableElevation
+              sx={{
+                py: 1.75,
+                borderRadius: "10px",
+                textTransform: "none",
+                fontWeight: 400,
+                fontSize: "1.05rem",
+                bgcolor: "#1a1a1a",
+                color: "#fff",
+                "&:hover": { bgcolor: "#333" },
+              }}
+              onClick={() => {
+                const pid = extractPublicId(images[selectedModel.color]);
+                navigate(
+                  `/checkout?bikeid=${bike._id}&color=${encodeURIComponent(
+                    selectedModel.color
+                  )}&size=${encodeURIComponent(
+                    selectedModel.size
+                  )}&image=${encodeURIComponent(
+                    pid || ""
+                  )}&availability=${encodeURIComponent(
+                    selectedModel.availability || ""
+                  )}`
                 );
               }}
             >
               Buy Now / Contact Us
-            </button>
+            </Button>
           )}
           {selectedModel && (
-            <div className="mt-2 text-sm text-gray-600 text-center">
+            <Typography
+              sx={{
+                mt: 1.5,
+                textAlign: "center",
+                fontSize: "0.875rem",
+                color: "rgba(0,0,0,0.52)",
+              }}
+            >
               {bike.brand} {bike.name} • {selectedModel.color} •{" "}
               {selectedModel.size}
-            </div>
+            </Typography>
           )}
-        </div>
-        <div className="mx-8 md:mb-8 md:hidden block">
+        </Box>
+        <div className="mx-8 mt-8 md:mb-8 md:hidden block">
           <AboutSection bike={bike} />
         </div>
 
         <WhyBuyNsbsGrid className="mt-16 mb-16 mx-8 md:hidden block" />
-      </div>
+      </Box>
     </div>
   );
 };

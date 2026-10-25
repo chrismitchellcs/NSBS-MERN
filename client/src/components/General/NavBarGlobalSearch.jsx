@@ -1,17 +1,16 @@
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import SearchIcon from "@mui/icons-material/Search";
-import {
-  Box,
-  InputAdornment,
-  OutlinedInput,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Box, InputAdornment, OutlinedInput, Paper, Typography } from "@mui/material";
 import { Image } from "cloudinary-react";
 import Fuse from "fuse.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllBikesCached } from "api/getAllBikesCached";
+import { bikePath } from "seo/seoData.mjs";
 import { extractPublicId, getBikeFirstImageUrl } from "utils/bikeDisplay";
+import { bikeHasVariantPricing, formatCadPrice, hasActiveShopSale } from "utils/shopPrice";
+
+const MAX_RESULTS = 8;
 
 function buildSearchString(bike) {
   const parts = [bike.brand, bike.name, bike.type];
@@ -21,12 +20,46 @@ function buildSearchString(bike) {
   return parts.filter(Boolean).join(" ");
 }
 
-export default function NavBarGlobalSearch({ isOverlay = false }) {
+function ResultPrice({ bike }) {
+  const from = bikeHasVariantPricing(bike) ? "From " : "";
+  if (hasActiveShopSale(bike.saleprice)) {
+    return (
+      <Typography component="span" variant="caption" sx={{ color: "text.secondary" }}>
+        {from}
+        <Box component="span" sx={{ textDecoration: "line-through", mr: 0.5 }}>
+          ${formatCadPrice(bike.price)}
+        </Box>
+        <Box component="span" sx={{ color: "error.main", fontWeight: 600 }}>
+          ${formatCadPrice(bike.saleprice)}
+        </Box>
+      </Typography>
+    );
+  }
+  return (
+    <Typography component="span" variant="caption" sx={{ color: "text.secondary" }}>
+      {from}${formatCadPrice(bike.price)}
+    </Typography>
+  );
+}
+
+/**
+ * Bike search with live results. Enter (or "See all results") opens the shop filtered by the
+ * query; arrow keys move through results; Esc closes. `inline` renders results in the page flow
+ * (phone search panel) instead of a floating dropdown.
+ */
+export default function NavBarGlobalSearch({
+  isOverlay = false,
+  inline = false,
+  autoFocus = false,
+  onNavigate,
+}) {
   const navigate = useNavigate();
   const [bikes, setBikes] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const rootRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     getAllBikesCached()
@@ -34,45 +67,68 @@ export default function NavBarGlobalSearch({ isOverlay = false }) {
       .catch(() => setBikes([]));
   }, []);
 
-  const bikesForFuse = useMemo(
+  const fuse = useMemo(
     () =>
-      bikes.map((b) => ({
-        ...b,
-        searchString: buildSearchString(b),
-      })),
+      new Fuse(
+        bikes.map((b) => ({ ...b, searchString: buildSearchString(b) })),
+        { keys: ["searchString"], threshold: 0.32, ignoreLocation: true }
+      ),
     [bikes]
   );
 
-  const fuse = useMemo(
-    () =>
-      new Fuse(bikesForFuse, {
-        keys: ["searchString"],
-        threshold: 0.32,
-        ignoreLocation: true,
-      }),
-    [bikesForFuse]
+  const query = searchValue.trim();
+  const results = useMemo(
+    () => (query ? fuse.search(query).slice(0, MAX_RESULTS).map((r) => r.item) : []),
+    [fuse, query]
   );
-
-  const filteredBikes = useMemo(() => {
-    const q = searchValue.trim();
-    if (!q) return [];
-    return fuse.search(q).slice(0, 10).map((r) => r.item);
-  }, [fuse, searchValue]);
+  /** Bikes plus the trailing "See all results" row. */
+  const optionCount = query ? results.length + 1 : 0;
+  const showResults = (inline || open) && query.length > 0;
 
   useEffect(() => {
+    setActiveIndex(-1);
+  }, [query]);
+
+  useEffect(() => {
+    if (inline) return undefined;
     const onDown = (e) => {
-      if (!rootRef.current?.contains(e.target)) {
-        setOpen(false);
-      }
+      if (!rootRef.current?.contains(e.target)) setOpen(false);
     };
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
-  }, []);
+  }, [inline]);
 
-  const goToBike = (bike) => {
+  const finish = (to) => {
     setSearchValue("");
     setOpen(false);
-    navigate(`/shop/${bike.brand}/${bike._id}`);
+    inputRef.current?.blur();
+    navigate(to);
+    onNavigate?.();
+  };
+  const goToBike = (bike) => finish(bikePath(bike));
+  const goToAllResults = () => {
+    if (query) finish(`/shop?q=${encodeURIComponent(query)}`);
+  };
+
+  const onKeyDown = (e) => {
+    if (e.key === "ArrowDown" && optionCount) {
+      e.preventDefault();
+      setOpen(true);
+      setActiveIndex((i) => (i + 1) % optionCount);
+    } else if (e.key === "ArrowUp" && optionCount) {
+      e.preventDefault();
+      setActiveIndex((i) => (i <= 0 ? optionCount - 1 : i - 1));
+    } else if (e.key === "Escape") {
+      setOpen(false);
+      setActiveIndex(-1);
+      if (!inline) inputRef.current?.blur();
+    }
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (activeIndex >= 0 && activeIndex < results.length) goToBike(results[activeIndex]);
+    else goToAllResults();
   };
 
   const noOutline = {
@@ -105,16 +161,108 @@ export default function NavBarGlobalSearch({ isOverlay = false }) {
         },
       };
 
+  const optionId = (i) => `nav-bike-search-option-${i}`;
+  const rowSx = (i) => ({
+    display: "flex",
+    alignItems: "center",
+    gap: 1.5,
+    width: "100%",
+    p: 1,
+    border: "none",
+    borderBottom: "1px solid",
+    borderColor: "divider",
+    bgcolor: i === activeIndex ? "action.selected" : "background.paper",
+    cursor: "pointer",
+    textAlign: "left",
+    color: "text.primary",
+    "&:last-of-type": { borderBottom: "none" },
+    "&:hover": { bgcolor: i === activeIndex ? "action.selected" : "action.hover" },
+  });
+
+  const resultList = (
+    <Box id="nav-bike-search-results" role="listbox" aria-label="Bike search results">
+      {results.length === 0 ? (
+        <Typography variant="body2" sx={{ p: 1.5, color: "text.secondary" }}>
+          No quick matches. Press Enter to search the shop.
+        </Typography>
+      ) : null}
+      {results.map((bike, i) => {
+        const url = getBikeFirstImageUrl(bike);
+        const publicId = url ? extractPublicId(url) : null;
+        return (
+          <Box
+            key={bike._id}
+            id={optionId(i)}
+            role="option"
+            aria-selected={i === activeIndex}
+            component="button"
+            type="button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => goToBike(bike)}
+            sx={rowSx(i)}
+          >
+            <Box
+              sx={{
+                width: 88,
+                height: 48,
+                flexShrink: 0,
+                borderRadius: 1,
+                overflow: "hidden",
+                bgcolor: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {publicId ? (
+                <Image
+                  cloudName="ds4ukwnxl"
+                  publicId={publicId}
+                  width="176"
+                  height="96"
+                  crop="pad"
+                  quality="auto"
+                  fetchFormat="auto"
+                  alt=""
+                  style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+                />
+              ) : null}
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="body2" sx={{ fontWeight: 500 }} noWrap>
+                {bike.brand} {bike.name}
+              </Typography>
+              <ResultPrice bike={bike} />
+            </Box>
+          </Box>
+        );
+      })}
+      <Box
+        id={optionId(results.length)}
+        role="option"
+        aria-selected={activeIndex === results.length}
+        component="button"
+        type="button"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={goToAllResults}
+        sx={{ ...rowSx(results.length), justifyContent: "space-between", fontWeight: 600 }}
+      >
+        <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>
+          See all results for "{query}"
+        </Typography>
+        <ArrowForwardIcon sx={{ fontSize: 18, color: "text.secondary" }} aria-hidden />
+      </Box>
+    </Box>
+  );
+
   return (
     <Box ref={rootRef} sx={{ position: "relative", width: "100%" }}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-      >
+      <form onSubmit={onSubmit} role="search">
         <OutlinedInput
+          inputRef={inputRef}
           size="small"
           fullWidth
+          autoFocus={autoFocus}
           placeholder="Search bikes…"
           value={searchValue}
           onChange={(e) => {
@@ -122,15 +270,17 @@ export default function NavBarGlobalSearch({ isOverlay = false }) {
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
+          onKeyDown={onKeyDown}
           inputProps={{
             "aria-label": "Search bikes",
-            "aria-expanded": open && filteredBikes.length > 0,
+            role: "combobox",
+            "aria-autocomplete": "list",
+            "aria-expanded": showResults,
             "aria-controls": "nav-bike-search-results",
+            "aria-activedescendant": activeIndex >= 0 ? optionId(activeIndex) : undefined,
+            enterKeyHint: "search",
           }}
-          sx={{
-            fontSize: "0.875rem",
-            ...inputSx,
-          }}
+          sx={{ fontSize: inline ? "1rem" : "0.875rem", ...inputSx }}
           startAdornment={
             <InputAdornment position="start">
               <SearchIcon sx={{ color: "text.secondary", fontSize: 20 }} />
@@ -139,87 +289,30 @@ export default function NavBarGlobalSearch({ isOverlay = false }) {
         />
       </form>
 
-      {open && filteredBikes.length > 0 && (
-        <Paper
-          id="nav-bike-search-results"
-          elevation={8}
-          sx={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            top: "calc(100% + 4px)",
-            zIndex: (t) => t.zIndex.modal,
-            maxHeight: 360,
-            overflow: "auto",
-            border: "1px solid",
-            borderColor: "divider",
-          }}
-        >
-          {filteredBikes.map((bike) => {
-            const url = getBikeFirstImageUrl(bike);
-            const publicId = url ? extractPublicId(url) : null;
-            return (
-              <Box
-                key={bike._id}
-                component="button"
-                type="button"
-                onClick={() => goToBike(bike)}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.5,
-                  width: "100%",
-                  p: 1,
-                  border: "none",
-                  borderBottom: "1px solid",
-                  borderColor: "divider",
-                  bgcolor: "background.paper",
-                  cursor: "pointer",
-                  textAlign: "left",
-                  "&:last-of-type": { borderBottom: "none" },
-                  "&:hover": { bgcolor: "action.hover" },
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 88,
-                    height: 48,
-                    flexShrink: 0,
-                    borderRadius: 1,
-                    overflow: "hidden",
-                    bgcolor: "#fff",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  {publicId ? (
-                    <Image
-                      cloudName="ds4ukwnxl"
-                      publicId={publicId}
-                      width="176"
-                      height="96"
-                      crop="pad"
-                      quality="auto"
-                      fetchFormat="auto"
-                      alt=""
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "contain",
-                        display: "block",
-                      }}
-                    />
-                  ) : null}
-                </Box>
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                  {bike.brand} {bike.name}
-                </Typography>
-              </Box>
-            );
-          })}
-        </Paper>
-      )}
+      {showResults &&
+        (inline ? (
+          <Box sx={{ mt: 1.5, borderRadius: 2, overflow: "hidden", border: "1px solid", borderColor: "divider" }}>
+            {resultList}
+          </Box>
+        ) : (
+          <Paper
+            elevation={8}
+            sx={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              minWidth: 320,
+              top: "calc(100% + 4px)",
+              zIndex: (t) => t.zIndex.modal,
+              maxHeight: 420,
+              overflow: "auto",
+              border: "1px solid",
+              borderColor: "divider",
+            }}
+          >
+            {resultList}
+          </Paper>
+        ))}
     </Box>
   );
 }

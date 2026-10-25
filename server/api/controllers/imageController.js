@@ -37,8 +37,22 @@ const getImages = async (req, res) => {
   res.send(publicIds);
 };
 
+/** Slashes would let a caller sign uploads outside the bike-images2 folder. */
+function isSafeUploadPublicId(value) {
+  if (typeof value !== "string") return false;
+  const id = value.trim();
+  if (!id || id.length > 200) return false;
+  return !/[/\\\u0000-\u001f\u007f]/.test(id);
+}
+
 const getSignature = async (req, res) => {
   const { public_id } = req.query;
+  if (!isSafeUploadPublicId(public_id)) {
+    return res.status(400).json({
+      error:
+        "public_id must be 1-200 characters with no slashes or control characters",
+    });
+  }
   const timestamp = Math.round(new Date().getTime() / 1000);
 
   const signature = cloudinary.utils.api_sign_request(

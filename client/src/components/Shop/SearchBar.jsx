@@ -1,88 +1,49 @@
-import { Box, TextField } from "@mui/material";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import { Box, InputAdornment, TextField } from "@mui/material";
+import { NAV_BAR_BG } from "components/General/NavBar";
 
-const SearchBar = ({
-  allBikes,
-  setBikes,
-  setCheckedBrands,
-  setCheckedTypes,
-  setPrice,
-  price,
-}) => {
-  const onChange = (e) => {
-    setCheckedBrands([]);
-    setCheckedTypes([]);
-
-    var query = e.target.value;
-    query = query.trim();
-    query = query.toLowerCase();
-
-    if (query.length > 0 && allBikes) {
-      var bikes = [];
-
-      // splits all bike names into arrays for each word
-      allBikes.forEach((bike) => {
-        var fullName = "";
-        if (bike.material === "N/A") {
-          fullName = bike.brand + " " + bike.name;
-        } else {
-          fullName = bike.brand + " " + bike.name + " " + bike.material;
-        }
-        fullName = fullName.toLowerCase();
-        const bikeArray = fullName.split(" ");
-        bikes.push([bikeArray, bike._id]);
-      });
-
-      // splits each query word into an array
-      const queryArray = query.split(" ");
-
-      var queriedBikes = [];
-      bikes.forEach((bike) => {
-        var hits = 0;
-        bike[0].forEach((word) => {
-          var hit = false;
-
-          queryArray.forEach((q) => {
-            if (word.startsWith(q)) {
-              hit = true;
-            }
-          });
-          if (hit) {
-            hits++;
-          }
-          console.log(word + hits);
-        });
-        console.log(bike + " has " + hits);
-        if (hits === queryArray.length && bike.length) {
-          console.log(bike);
-
-          queriedBikes.push(bike);
-        }
-      });
-
-      var finalBikes = [];
-      queriedBikes.forEach((queriedBike) => {
-        allBikes.forEach((bike) => {
-          if (bike._id === queriedBike[1]) {
-            finalBikes.push(bike);
-          }
-        });
-      });
-      setPrice([0, 15000]);
-      setBikes(finalBikes);
-    } else {
-      setPrice([0, 15000]);
-      setBikes(allBikes);
-    }
-  };
-
+const SearchBar = ({ value, onChange }) => {
   return (
-    <Box>
+    <Box sx={{ width: "100%" }}>
       <TextField
-        id="outlined-basic"
-        label="Search"
+        id="shop-bike-search"
+        type="search"
+        placeholder="Search by brand, model…"
+        aria-label="Search bikes"
         variant="outlined"
-        sx={{ mt: 0, ml: 2, mr: 2, mb: 1 }}
-        onChange={onChange}
+        size="small"
+        fullWidth
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchRoundedIcon sx={{ color: "text.secondary", fontSize: 22 }} />
+            </InputAdornment>
+          ),
+        }}
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 2,
+            bgcolor: "background.paper",
+            transition: (theme) =>
+              theme.transitions.create(["box-shadow", "border-color"], {
+                duration: theme.transitions.duration.short,
+              }),
+            "&:hover": {
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "rgba(0,0,0,0.14)",
+              },
+            },
+            "&.Mui-focused": {
+              boxShadow: `0 0 0 3px ${NAV_BAR_BG}22`,
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: NAV_BAR_BG,
+                borderWidth: 1,
+              },
+            },
+          },
+        }}
       />
     </Box>
   );

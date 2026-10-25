@@ -1,0 +1,45 @@
+{
+  "rewrites": [
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
+    {
+      "source": "/shop/:brand/:bikeid",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(bot|Bot|BOT|crawler|Crawler|spider|Spider|facebookexternalhit|Facebot|WhatsApp|Slack|Discord|Telegram|Pinterest|LinkedIn|Embedly|Iframely|Google-InspectionTool|Lighthouse|vkShare|Skype|Snapchat).*"
+        }
+      ],
+      "destination": "/api/seo-page?_route=bike&_brand=:brand&_id=:bikeid"
+    },
+    {
+      "source": "/shop/:brand",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(bot|Bot|BOT|crawler|Crawler|spider|Spider|facebookexternalhit|Facebot|WhatsApp|Slack|Discord|Telegram|Pinterest|LinkedIn|Embedly|Iframely|Google-InspectionTool|Lighthouse|vkShare|Skype|Snapchat).*"
+        }
+      ],
+      "destination": "/api/seo-page?_route=brand&_brand=:brand"
+    },
+    {
+      "source": "/:page(shop|service|contact|return-policy)",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(bot|Bot|BOT|crawler|Crawler|spider|Spider|facebookexternalhit|Facebot|WhatsApp|Slack|Discord|Telegram|Pinterest|LinkedIn|Embedly|Iframely|Google-InspectionTool|Lighthouse|vkShare|Skype|Snapchat).*"
+        }
+      ],
+      "destination": "/api/seo-page?_route=:page"
+    },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/static/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    }
+  ]
+}

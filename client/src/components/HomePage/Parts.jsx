@@ -98,15 +98,21 @@ const Parts = () => {
           technology, NSBS has you covered.
         </Typography>
 
-        <Box sx={{ display: { xs: "none", md: "block" } }}>
+        <Box>
           <ImageList
-            cols={6}
-            gap={28}
+            gap={0}
             sx={{
               width: "100%",
               maxWidth: 1100,
               mx: "auto",
               mb: 0,
+              // ImageList sets columns inline from `cols`; override per breakpoint here.
+              gridTemplateColumns: {
+                xs: "repeat(3, 1fr) !important",
+                sm: "repeat(4, 1fr) !important",
+                md: "repeat(6, 1fr) !important",
+              },
+              gap: { xs: "12px 16px !important", md: "28px !important" },
             }}
           >
             {logoNames.map((item) => (
@@ -134,7 +140,7 @@ const Parts = () => {
                   loading="lazy"
                   sx={{
                     width: "100%",
-                    height: { md: 88, lg: 96 },
+                    height: { xs: 56, sm: 68, md: 88, lg: 96 },
                     maxHeight: 96,
                     objectFit: "contain",
                     display: "block",

@@ -1,10 +1,12 @@
 import NavBar from "components/General/NavBar";
 import Closer from "components/General/Closer";
-import { useParams } from "react-router-dom";
+import NotFoundContent from "components/General/NotFoundContent";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { Box } from "@mui/material";
 import SEO from "components/General/SEO";
+import { BIKE_NOT_FOUND_META, SITE_URL, bikePath, bikeSeo } from "seo/seoData.mjs";
 
 const BikeLandingPageUpdated = lazy(() =>
   import("components/Shop/BikeLandingPageUpdated")
@@ -12,73 +14,52 @@ const BikeLandingPageUpdated = lazy(() =>
 
 const BikeDetails = () => {
   const { bikeid, brand } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [bike, setBike] = useState(null);
+  const [notFound, setNotFound] = useState(false);
+  const [navHidden, setNavHidden] = useState(false);
 
   useEffect(() => {
-    const fetchBikes = async () => {
-      await axios
-        .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${bikeid}`, {})
-        .then((res) => {
-          setBike(res.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    let cancelled = false;
+    setNotFound(false);
+    axios
+      .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${bikeid}`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        if (!cancelled) setBike(res.data);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        if (error?.response?.status === 404) setNotFound(true);
+        else console.log(error);
+      });
+    return () => {
+      cancelled = true;
     };
-    fetchBikes();
   }, [bikeid]);
 
+  /** Old links use "/shop/Transition/…"; settle on the lowercase address without a history entry. */
+  useEffect(() => {
+    if (!bike?._id) return;
+    const canonical = bikePath(bike);
+    if (location.pathname !== canonical) {
+      navigate(`${canonical}${location.search}`, { replace: true, state: location.state });
+    }
+  }, [bike, location.pathname, location.search, location.state, navigate]);
+
   const seoData = useMemo(() => {
+    if (notFound) return BIKE_NOT_FOUND_META;
     if (!bike) {
       return {
         title: "Bike Details | North Shore Bike Shop",
-        description:
-          "View bike details and specifications at North Shore Bike Shop.",
-        url: `https://www.northshorebikeshop.net/shop/${brand}/${bikeid}`,
+        description: "View bike details and specifications at North Shore Bike Shop.",
+        url: `${SITE_URL}/shop/${String(brand || "").toLowerCase()}/${bikeid}`,
       };
     }
-
-    const bikeName = `${bike.brand} ${bike.name}`;
-    const year = bike.year ? ` ${bike.year}` : "";
-    const price = bike.saleprice || bike.price;
-    const priceText = price ? ` | $${price.toLocaleString()}` : "";
-
-    let imageUrl = "/logowhitehq.png";
-    try {
-      if (bike.images) {
-        const parsedImages = JSON.parse(bike.images);
-        if (parsedImages && Object.values(parsedImages).length > 0) {
-          imageUrl = Object.values(parsedImages)[0];
-        }
-      }
-    } catch (e) {
-      // Use default image
-    }
-
-    const description = bike.description
-      ? `${bike.description.substring(0, 150)}...`
-      : `${bikeName}${year} - ${
-          bike.type || "mountain bike"
-        } available at North Shore Bike Shop. ${
-          bike.material || ""
-        } frame. View details and specifications.`;
-
-    const canadaKeywords =
-      bike.brand?.toLowerCase() === "transition"
-        ? "Transition Canada, Transition bikes Canada, "
-        : "";
-    return {
-      title: `${bikeName}${year}${priceText} | North Shore Bike Shop`,
-      description: description,
-      keywords: `${canadaKeywords}${bikeName}, ${bike.brand} bikes, ${
-        bike.type || "mountain bike"
-      }, ${
-        bike.material || ""
-      } frame, bike shop Vancouver, North Shore Bike Shop`,
-      url: `https://www.northshorebikeshop.net/shop/${bike.brand}/${bikeid}`,
-      image: imageUrl,
-    };
-  }, [bike, brand, bikeid]);
+    return bikeSeo(bike);
+  }, [bike, notFound, brand, bikeid]);
 
   return (
     <div
@@ -95,9 +76,18 @@ const BikeDetails = () => {
         }}
       >
         <SEO {...seoData} />
-        <NavBar position="sticky" displayLogo={1} />
+        <NavBar
+          position="sticky"
+          displayLogo={1}
+          onBarsHiddenChange={setNavHidden}
+        />
         <Box>
-          {bike ? (
+          {notFound ? (
+            <NotFoundContent
+              title="This bike isn't listed anymore"
+              body="It may have sold out or been replaced by a newer model. Have a look at what we have now, or get in touch and we'll help you find something similar."
+            />
+          ) : bike ? (
             <Suspense
               fallback={
                 <Box
@@ -115,7 +105,7 @@ const BikeDetails = () => {
                 </Box>
               }
             >
-              <BikeLandingPageUpdated bike={bike} />
+              <BikeLandingPageUpdated bike={bike} navHidden={navHidden} />
             </Suspense>
           ) : null}
         </Box>

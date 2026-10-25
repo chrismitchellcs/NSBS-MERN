@@ -1,31 +1,53 @@
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, Container, Stack, Typography } from "@mui/material";
 import { useAuth } from "components/AuthProvider";
 import NavBar, { NAV_BAR_BG } from "components/General/NavBar";
+import UploadNorco from "components/Uploaders/UploadNorco";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AdminAddBikesNorco = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!loading && !isAuthenticated) {
       navigate("/admin-login");
     }
-  }, [isAuthenticated, navigate]);
+  }, [loading, isAuthenticated, navigate]);
+
+  if (loading || !isAuthenticated) return null;
 
   return (
-    <div>
+    <Box sx={{ minHeight: "100vh", bgcolor: "#f4f6f4" }}>
       <NavBar background={NAV_BAR_BG} position="sticky" displayLogo={1} />
-      <Stack justifyContent={"center"} pt={0}>
-        <Box>
-          <Button onClick={() => navigate("/admin-dashboard")}>
-            Back to Dashboard
+      <Container maxWidth="lg" sx={{ py: 3 }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          flexWrap="wrap"
+          gap={2}
+          sx={{ mb: 2 }}
+        >
+          <Typography
+            variant="h5"
+            component="h1"
+            fontWeight={800}
+            sx={{ color: NAV_BAR_BG }}
+          >
+            Norco bikes
+          </Typography>
+          <Button
+            variant="outlined"
+            onClick={() => navigate("/admin-dashboard")}
+            sx={{ borderColor: NAV_BAR_BG, color: NAV_BAR_BG }}
+          >
+            Back to dashboard
           </Button>
-        </Box>
-        {/* <UploadTransitions></UploadTransitions> */}
-      </Stack>
-    </div>
+        </Stack>
+        <UploadNorco />
+      </Container>
+    </Box>
   );
 };
 

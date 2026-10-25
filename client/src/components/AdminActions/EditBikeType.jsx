@@ -80,7 +80,7 @@ const EditBikeType = ({ bike, setBikes }) => {
     <Stack>
       <Stack direction={"row"} alignItems={"center"}>
         <Box>
-          <b>Type: </b>
+          <b>Bike type: </b>
           {bike.type}
         </Box>
         <EditButton onClick={() => setEdit(true)}>Edit</EditButton>
@@ -114,6 +114,7 @@ const EditBikeType = ({ bike, setBikes }) => {
           />
           <FormControlLabel value="Kids" control={<Radio />} label="Kids" />
           <FormControlLabel value="E-Bike" control={<Radio />} label="E-Bike" />
+          <FormControlLabel value="Frameset" control={<Radio />} label="Frameset" />
         </RadioGroup>
       )}
       {edit && <EditButton onClick={handleSubmit}>Save</EditButton>}

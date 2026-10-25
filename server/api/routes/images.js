@@ -9,9 +9,9 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.post("/", uploadImage);
-router.get("/", getImages);
-router.get("/get-signature", getSignature);
+router.post("/", authMiddleware, uploadImage);
+router.get("/", authMiddleware, getImages);
+router.get("/get-signature", authMiddleware, getSignature);
 router.post("/destroy", authMiddleware, destroyUpload);
 
 module.exports = router;

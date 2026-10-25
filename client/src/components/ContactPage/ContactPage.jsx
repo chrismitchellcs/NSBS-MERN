@@ -1,43 +1,39 @@
-import ContactContent from "./ContactContent";
-import MapBox from "./Map";
-import FormDescription from "./FormDescription";
+import { Box, Container, Stack } from "@mui/material";
 import ContactForm from "./ContactForm";
-import HoursTable from "./HoursTable";
+import { ContactActions, ContactHero, ContactHours, ContactMap } from "./ContactSections";
 
 const ContactPage = () => {
   return (
-    <div className="bg-slate-950 text-slate-100">
-      <section className="relative isolate overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <img
-            src="/2-Norco-BC-min.png"
-            alt="Trees background"
-            className="h-full w-full object-cover object-center scale-105"
-          />
-        </div>
-
-        <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="grid gap-6 lg:grid-cols-2">
-            <ContactContent />
-            <HoursTable />
-            <div className="lg:col-span-2">
-              <MapBox />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl" data-background>
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] items-start">
-            <FormDescription />
-            <div className="rounded-3xl border border-gray-500 bg-gray-200 p-6 sm:p-8 shadow-xl">
+    <>
+      <ContactHero />
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 }, px: { xs: 2, sm: 3 } }}>
+        <Stack spacing={{ xs: 3, md: 4 }}>
+          <ContactActions />
+          <Box
+            sx={{
+              display: "grid",
+              gap: { xs: 3, md: 3 },
+              alignItems: "start",
+              gridTemplateColumns: { xs: "1fr", md: "minmax(0, 7fr) minmax(0, 5fr)" },
+              gridTemplateAreas: {
+                xs: '"hours" "form" "map"',
+                md: '"form hours" "form map"',
+              },
+            }}
+          >
+            <Box sx={{ gridArea: "form" }}>
               <ContactForm />
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+            </Box>
+            <Box sx={{ gridArea: "hours" }}>
+              <ContactHours />
+            </Box>
+            <Box sx={{ gridArea: "map" }}>
+              <ContactMap />
+            </Box>
+          </Box>
+        </Stack>
+      </Container>
+    </>
   );
 };
 

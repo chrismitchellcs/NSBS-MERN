@@ -20,8 +20,10 @@ export function getBikeFirstImageUrl(bike) {
   if (!bike?.colors) return null;
   try {
     const images = JSON.parse(bike.colors);
-    const first = Object.values(images)[0];
-    return typeof first === "string" ? first : null;
+    const firstNonEmpty = Object.values(images).find(
+      (v) => typeof v === "string" && v.trim() !== ""
+    );
+    return typeof firstNonEmpty === "string" ? firstNonEmpty : null;
   } catch {
     return null;
   }

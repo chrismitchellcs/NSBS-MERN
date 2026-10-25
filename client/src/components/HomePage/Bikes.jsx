@@ -1,7 +1,9 @@
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
+import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import { Box, Button, IconButton, Stack, Typography, useMediaQuery } from "@mui/material";
 import BikeCard from "components/Shop/BikeCard";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { Link as RouterLink } from "react-router-dom";
@@ -35,7 +37,19 @@ const responsive = {
   },
 };
 
+const arrowSx = {
+  flexShrink: 0,
+  width: { xs: 36, sm: 44 },
+  height: { xs: 36, sm: 44 },
+  color: BRAND_GREEN,
+  bgcolor: "#fff",
+  border: "1px solid rgba(36, 61, 51, 0.25)",
+  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+  "&:hover": { bgcolor: BRAND_GREEN, color: "#fff", borderColor: BRAND_GREEN },
+};
+
 const Bikes = ({ brand, bikes }) => {
+  const carouselRef = useRef(null);
   const list = useMemo(
     () =>
       (bikes ?? [])
@@ -48,6 +62,12 @@ const Bikes = ({ brand, bikes }) => {
   );
 
   const isSingle = list.length === 1;
+
+  const fits4 = useMediaQuery("(min-width:1200px)");
+  const fits3 = useMediaQuery("(min-width:860px)");
+  const fits2 = useMediaQuery("(min-width:599px)");
+  const visibleCount = fits4 ? 4 : fits3 ? 3 : fits2 ? 2 : 1;
+  const showArrows = list.length > visibleCount;
 
   return (
     <Box
@@ -136,35 +156,59 @@ const Bikes = ({ brand, bikes }) => {
               <BikeCard bike={list[0]} embedInCarousel />
             </Box>
           ) : (
-            <Carousel
-              swipeable
-              draggable={false}
-              showDots={false}
-              responsive={responsive}
-              ssr={false}
-              infinite
-              autoPlay={false}
-              autoPlaySpeed={5000}
-              keyBoardControl={false}
-              customTransition="transform 500ms ease-in-out"
-              transitionDuration={500}
-              containerClass="carousel-container"
-              itemClass="carousel-item-padding-40-px"
-            >
-              {list.map((bike) => (
-                <Box
-                  key={bike._id}
-                  sx={{
-                    display: "flex",
-                    justifyContent: { xs: "center", sm: "flex-start" },
-                    width: "100%",
-                    px: SLIDE_GUTTER,
-                  }}
+            <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1, md: 1.5 }}>
+              {showArrows ? (
+                <IconButton
+                  aria-label={`Previous ${brand} bikes`}
+                  onClick={() => carouselRef.current?.previous()}
+                  sx={arrowSx}
                 >
-                  <BikeCard bike={bike} embedInCarousel />
-                </Box>
-              ))}
-            </Carousel>
+                  <ChevronLeftRoundedIcon />
+                </IconButton>
+              ) : null}
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Carousel
+                  ref={carouselRef}
+                  arrows={false}
+                  swipeable
+                  draggable={false}
+                  showDots={false}
+                  responsive={responsive}
+                  ssr={false}
+                  infinite
+                  autoPlay={false}
+                  autoPlaySpeed={5000}
+                  keyBoardControl={false}
+                  customTransition="transform 500ms ease-in-out"
+                  transitionDuration={500}
+                  containerClass="carousel-container"
+                  itemClass="carousel-item-padding-40-px"
+                >
+                  {list.map((bike) => (
+                    <Box
+                      key={bike._id}
+                      sx={{
+                        display: "flex",
+                        justifyContent: { xs: "center", sm: "flex-start" },
+                        width: "100%",
+                        px: SLIDE_GUTTER,
+                      }}
+                    >
+                      <BikeCard bike={bike} embedInCarousel />
+                    </Box>
+                  ))}
+                </Carousel>
+              </Box>
+              {showArrows ? (
+                <IconButton
+                  aria-label={`Next ${brand} bikes`}
+                  onClick={() => carouselRef.current?.next()}
+                  sx={arrowSx}
+                >
+                  <ChevronRightRoundedIcon />
+                </IconButton>
+              ) : null}
+            </Stack>
           )
         ) : (
           <Typography
@@ -177,7 +221,7 @@ const Bikes = ({ brand, bikes }) => {
               mx: "auto",
             }}
           >
-            No {brand} bikes in the gallery right now — visit the shop or check
+            No {brand} bikes in the gallery right now. Visit the shop or check
             back soon.
           </Typography>
         )}

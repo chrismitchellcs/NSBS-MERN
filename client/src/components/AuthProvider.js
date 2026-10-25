@@ -1,63 +1,86 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 
 const AuthContext = createContext(null);
+
+const apiBase = process.env.REACT_APP_VERCEL_DOMAIN;
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  const checkAuthStatus = () => {
-    fetch(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/auth/check-auth`, {
+  const checkAuthStatus = useCallback(() => {
+    fetch(`${apiBase}/api/auth/check-auth`, {
       method: "GET",
       credentials: "include",
     })
-      .then((res) => res.json())
+      .then((res) => res.json().catch(() => ({})))
       .then((data) => {
-        setIsAuthenticated(data.authenticated);
+        setIsAuthenticated(Boolean(data.authenticated));
         setLoading(false);
       })
       .catch(() => {
         setIsAuthenticated(false);
         setLoading(false);
       });
-  };
+  }, []);
 
   const login = async (username, password) => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_VERCEL_DOMAIN}/api/auth/login`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username, password }),
-        }
-      );
+    const response = await fetch(`${apiBase}/api/auth/login`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
 
-      if (response.ok) {
-        setIsAuthenticated(true);
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Login failed");
-      }
-    } catch (err) {
-      setError(err);
-      throw new Error("Login failed");
+    if (response.ok) {
+      setIsAuthenticated(true);
+      return;
     }
+
+    let message = "Invalid credentials";
+    try {
+      const data = await response.json();
+      if (data?.message && typeof data.message === "string") {
+        message = data.message;
+      }
+    } catch {
+      /* ignore */
+    }
+    throw new Error(message);
+  };
+
+  const logout = async () => {
+    try {
+      await fetch(`${apiBase}/api/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch {
+      /* still clear client state if network fails */
+    }
+    setIsAuthenticated(false);
   };
 
   useEffect(() => {
     checkAuthStatus();
-    const interval = setInterval(checkAuthStatus, 300000); // check every 5 minutes
-    return () => clearInterval(interval);
-  }, []);
+  }, [checkAuthStatus]);
 
+  // Only logged-in admins need the session re-checked; shoppers get a single check.
+  useEffect(() => {
+    if (!isAuthenticated) return undefined;
+    const interval = setInterval(checkAuthStatus, 300000);
+    return () => clearInterval(interval);
+  }, [isAuthenticated, checkAuthStatus]);
+
+  // Render right away so public pages don't wait on the auth check; admin pages use `loading`.
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, loading, error }}>
-      {!loading && children}
+    <AuthContext.Provider
+      value={{ isAuthenticated, login, logout, loading, checkAuthStatus }}
+    >
+      {children}
     </AuthContext.Provider>
   );
 };

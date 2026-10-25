@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import Closer from "components/General/Closer";
 import NavBar from "components/General/NavBar";
 import SEO from "components/General/SEO";
+import { pageMeta } from "seo/seoData.mjs";
 
 const ReturnPolicy = () => {
   return (
@@ -18,12 +19,7 @@ const ReturnPolicy = () => {
           flex: 1,
         }}
       >
-        <SEO
-          title="Return Policy | North Shore Bike Shop"
-          description="Return policy for North Shore Bike Shop. Unused parts, accessories, and clothing can be returned within 15 days. Bikes and helmets are final sale."
-          keywords="bike shop return policy, bike shop refund policy, return policy"
-          url="https://www.northshorebikeshop.net/return-policy"
-        />
+        <SEO {...pageMeta("/return-policy")} />
         <NavBar position="sticky" displayLogo={1} />
 
         <Box m={5}>
