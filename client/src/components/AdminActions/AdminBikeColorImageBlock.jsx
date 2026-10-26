@@ -1,10 +1,10 @@
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import PhotoCameraOutlinedIcon from "@mui/icons-material/PhotoCameraOutlined";
 import { Box, Button, IconButton, Paper, Stack, Typography } from "@mui/material";
-import { NAV_BAR_BG } from "components/General/NavBar";
+import { NAV_BAR_BG } from "utils/brandColors";
 import axios from "axios";
 import { useState } from "react";
-import { isCloudinaryUrl } from "utils/bikeDisplay";
+import { bikePhotoPublicId, isCloudinaryUrl } from "utils/bikeDisplay";
 
 const apiBase = process.env.REACT_APP_VERCEL_DOMAIN;
 
@@ -72,8 +72,8 @@ export function AdminBikeColorImageBlock({
       if (isCloudinaryUrl(imageUrl)) {
         await axios.post(`${apiBase}/api/images/destroy`, { secure_url: imageUrl }, { withCredentials: true });
       }
-      const next = { ...parseColors() };
-      delete next[colorName];
+      // Keep the colour with an empty photo so it still has an upload slot.
+      const next = { ...parseColors(), [colorName]: "" };
       await axios.patch(patchUrl, { newBike: { colors: JSON.stringify(next) } }, { withCredentials: true });
       onRefresh();
     } catch (e) {
@@ -98,7 +98,7 @@ export function AdminBikeColorImageBlock({
       alert("Choose an image first.");
       return;
     }
-    const fileName = `${bike.fullName} ${colorName}`.replace(/ /g, "-");
+    const fileName = bikePhotoPublicId(bike.fullName, colorName);
     setUploading(true);
     try {
       const sigRes = await axios.get(`${apiBase}/api/images/get-signature`, {

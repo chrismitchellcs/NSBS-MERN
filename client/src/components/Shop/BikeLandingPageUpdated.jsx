@@ -668,12 +668,13 @@ const BikeLandingPageUpdated = ({ bike, navHidden = false }) => {
                       return (
                         <Button
                           key={color}
-                          onClick={() => chooseColor(color)}
-                          disabled={unavailable}
+                          // Not offered in this size: still previews the photo, but can't be selected.
+                          onClick={() => (unavailable ? setCurrentImage(url) : chooseColor(color))}
                           aria-pressed={selected}
-                          title={unavailable ? `Not available in ${selectedSize}` : undefined}
+                          aria-label={unavailable ? `${color}, not available in ${selectedSize}` : undefined}
                           sx={{
-                            ...optionSx(selected, model && isOutOfStock(model.availability)),
+                            ...optionSx(selected, unavailable || (model && isOutOfStock(model.availability))),
+                            ...(unavailable && { borderStyle: "dashed", "& img": { opacity: 0.55 } }),
                             flexDirection: "column",
                             alignItems: "stretch",
                             p: 0.75,
@@ -705,6 +706,10 @@ const BikeLandingPageUpdated = ({ bike, navHidden = false }) => {
                               }}
                             >
                               {availabilityLabel(model.availability)}
+                            </Box>
+                          ) : unavailable ? (
+                            <Box component="span" sx={{ fontSize: "0.68rem", lineHeight: 1.2, color: "rgba(0,0,0,0.5)" }}>
+                              Not in {selectedSize}
                             </Box>
                           ) : null}
                         </Button>

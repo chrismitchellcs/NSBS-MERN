@@ -28,3 +28,14 @@ export function getBikeFirstImageUrl(bike) {
     return null;
   }
 }
+
+/** Cloudinary file name for a bike photo: no slashes or control characters (the server rejects them), max 200. */
+export function bikePhotoPublicId(...parts) {
+  const printable = Array.from(parts.join(" "))
+    .map((ch) => {
+      const code = ch.charCodeAt(0);
+      return code < 32 || code === 127 ? " " : ch;
+    })
+    .join("");
+  return printable.replace(/[\\/]+/g, "-").trim().replace(/\s+/g, "-").slice(0, 200);
+}

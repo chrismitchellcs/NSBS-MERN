@@ -25,6 +25,7 @@ import axios from "axios";
 import { memo, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { NAV_BAR_BG } from "components/General/NavBar";
 import { OPEN_TRANSITION_BIKE_EVENT } from "utils/transitionAdminChecks";
+import TransitionStockPanel from "./TransitionStockPanel";
 import {
   adminCostListSuffix,
   buildBikeAdminSearchHay,
@@ -275,38 +276,7 @@ function TransitionBikeEditorFn({ bike, onRefresh, openToken = 0 }) {
             </Typography>
           </Stack>
 
-          <Box>
-            <Typography variant="subtitle2" fontWeight={700} gutterBottom>
-              Availability
-            </Typography>
-            <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1}>
-              {Object.entries(modelMatrix).map(([colorKey, bySize]) => (
-                <Paper key={colorKey} variant="outlined" sx={{ p: 1, borderRadius: 1 }}>
-                  <Typography variant="caption" fontWeight={700} display="block" gutterBottom>
-                    {colorKey}
-                  </Typography>
-                  <Stack spacing={0.5}>
-                    {Object.entries(bySize).map(([sizeKey, meta]) => (
-                      <Paper key={`${colorKey}-${sizeKey}`} sx={{ p: 0.75, bgcolor: "grey.50" }}>
-                        <Typography variant="caption" display="block">
-                          {sizeKey} · {meta.partNumber}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary" display="block">
-                          {meta.availability}
-                        </Typography>
-                        {meta.price != null && meta.price !== "" ? (
-                          <Typography variant="caption" color="warning.main" display="block">
-                            Own price ${meta.price}
-                            {Number(meta.saleprice) > 0 ? ` · Sale $${meta.saleprice}` : ""}
-                          </Typography>
-                        ) : null}
-                      </Paper>
-                    ))}
-                  </Stack>
-                </Paper>
-              ))}
-            </Stack>
-          </Box>
+          <TransitionStockPanel bike={bike} modelMatrix={modelMatrix} onRefresh={onRefresh} />
 
           <Collapse in={detailsExpanded} timeout="auto" unmountOnExit>
             <Stack spacing={3} sx={{ pt: 1 }}>

@@ -16,6 +16,7 @@ const {
   getTransitions,
   getAllNorco,
   updateTransition,
+  updateTransitionInStore,
   updateNorco,
   getOthers,
   getAllTransitions,
@@ -56,6 +57,7 @@ router.delete("/other/:id", authMiddleware, deleteOther);
 router.delete("/norco/:id", authMiddleware, deleteNorco);
 
 router.patch("/transition/:id", authMiddleware, updateTransition);
+router.patch("/transition/:id/in-store", authMiddleware, updateTransitionInStore);
 router.patch("/norco/:id", authMiddleware, updateNorco);
 router.patch("/other/:id", authMiddleware, updateOther);
 

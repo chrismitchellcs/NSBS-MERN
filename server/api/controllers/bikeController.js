@@ -861,8 +861,43 @@ const getTransitions = async (req, res) => {
 
 /** Admin edits never change a bike's identity, catalog, or shopper view count. */
 const PROTECTED_BIKE_FIELDS = ["_id", "__v", "database", "viewCount"];
-/** Stock on Transition / Norco bikes comes from vendor uploads; their edit screens never send it. */
+/**
+ * On Transition / Norco bikes, `models` comes from vendor uploads and `inStock` (units on the shop
+ * floor) has its own route below, so the general edit routes never change either.
+ */
 const UPLOAD_OWNED_FIELDS = ["models", "inStock"];
+
+/** Admin: replace a Transition bike's in-store units (the shop's own stock, not the vendor's). */
+const updateTransitionInStore = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ error: "Invalid ID" });
+  }
+  const rows = req.body && req.body.inStock;
+  if (!Array.isArray(rows) || rows.length > 500) {
+    return res.status(400).json({ error: "inStock must be a list" });
+  }
+  const clean = rows
+    .filter((r) => r && typeof r === "object")
+    .map((r) => ({
+      size: formText(r.size, 80),
+      color: formText(r.color, 120),
+      partNumber:
+        typeof r.partNumber === "number" || typeof r.partNumber === "string"
+          ? r.partNumber
+          : Date.now(),
+      availability: "In Store",
+    }))
+    .filter((r) => r.size && r.color);
+
+  const bike = await AllBikes.findOneAndUpdate(
+    { _id: id, database: "TRANSITION" },
+    { $set: { inStock: JSON.stringify(clean) } },
+    { new: true }
+  );
+  if (!bike) return res.status(404).json({ error: "No such bike" });
+  res.status(200).json({ inStock: bike.inStock });
+};
 
 /**
  * Only the fields an admin edit actually sent, minus protected ones, so a stale admin tab can't
@@ -1102,6 +1137,7 @@ const checkPassword = async (req, res) => {
 };
 
 module.exports = {
+  updateTransitionInStore,
   createOther,
   getBikes,
   getOthers,

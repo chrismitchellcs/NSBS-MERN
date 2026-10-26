@@ -15,8 +15,14 @@ async function ensureSeeded() {
     { upsert: true }
   );
   if (!result.upsertedCount) return;
-  if ((await ServiceListing.countDocuments()) === 0) {
-    await ServiceListing.insertMany(defaultServiceListings);
+  try {
+    if ((await ServiceListing.countDocuments()) === 0) {
+      await ServiceListing.insertMany(defaultServiceListings);
+    }
+  } catch (err) {
+    // Seeding failed: drop the flag so the next request tries again instead of staying empty.
+    await flags.deleteOne({ _id: "serviceListingsSeeded" }).catch(() => {});
+    throw err;
   }
 }
 

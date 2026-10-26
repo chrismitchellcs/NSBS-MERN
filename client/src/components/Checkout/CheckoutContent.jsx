@@ -300,7 +300,7 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
                       htmlFor="checkout-phone"
                       className="text-sm font-medium text-gray-800"
                     >
-                      Phone
+                      Phone <span className="font-normal text-gray-500">(optional)</span>
                     </label>
                     <input
                       id="checkout-phone"
@@ -309,7 +309,6 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
                       autoComplete="tel"
                       className={inputClass}
                       placeholder="(555) 555-5555"
-                      required
                     />
                   </div>
                 </div>

@@ -1,4 +1,7 @@
+import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SearchIcon from "@mui/icons-material/Search";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import PhotoCameraOutlinedIcon from "@mui/icons-material/PhotoCameraOutlined";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
@@ -9,6 +12,8 @@ import {
   Button,
   Card,
   CardContent,
+  Chip,
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
@@ -20,6 +25,7 @@ import {
   MenuItem,
   Select,
   IconButton,
+  InputAdornment,
   Paper,
   Radio,
   RadioGroup,
@@ -31,11 +37,13 @@ import {
 } from "@mui/material";
 import { AdminBikeColorImageBlock } from "components/AdminActions/AdminBikeColorImageBlock";
 import AddSizes from "components/AdminActions/AddSizes";
-import { NAV_BAR_BG } from "components/General/NavBar";
+import OtherBikeStockGrid, { STOCK_OPTIONS, stockSummary } from "components/AdminActions/OtherBikeStockGrid";
+import { NAV_BAR_BG } from "utils/brandColors";
+import { transitionBikeIssues, transitionBikesNeedingAttention } from "utils/transitionAdminChecks";
 import { invalidateAllBikesCache } from "api/getAllBikesCached";
 import axios from "axios";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { isCloudinaryUrl } from "utils/bikeDisplay";
+import { bikePhotoPublicId, isCloudinaryUrl } from "utils/bikeDisplay";
 
 const apiBase = process.env.REACT_APP_VERCEL_DOMAIN;
 
@@ -92,7 +100,7 @@ function DraftColorImageBlockInner(props) {
       alert("Enter year, brand, and bike name first (above). Then save the photo to Cloudinary.");
       return;
     }
-    const fileName = `${base} ${colorName}`.replace(/ /g, "-");
+    const fileName = bikePhotoPublicId(base, colorName);
     setUploading(true);
     try {
       const sigRes = await axios.get(`${apiBase}/api/images/get-signature`, {
@@ -288,23 +296,41 @@ function AddColorsForm({ colors, setColors, colorImages, setColorImages, publicI
   );
 }
 
-function OtherBikeEditor({ bike, onRefresh }) {
-  const models = useMemo(() => {
-    try {
-      const arr = JSON.parse(bike.models || "[]");
-      return Array.isArray(arr) ? arr : [];
-    } catch {
-      return [];
-    }
-  }, [bike.models]);
+const BIKE_TYPES = [
+  "DH",
+  "Enduro / All Mountain",
+  "Trail",
+  "XC",
+  "Dirt Jumper",
+  "Recreational",
+  "Kids",
+  "E-Bike",
+  "Frameset",
+];
 
+function parseJson(raw, fallback) {
+  try {
+    const v = JSON.parse(raw || "null");
+    return v ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+/** Small Cloudinary thumbnail for list rows (falls back to the original URL). */
+function thumbUrl(url) {
+  return isCloudinaryUrl(url) ? url.replace("/upload/", "/upload/w_160,h_100,c_pad,b_white,q_auto,f_auto/") : url;
+}
+
+const bikeElementId = (id) => `other-bike-${id}`;
+
+function OtherBikeEditor({ bike, onRefresh, expanded, onToggle }) {
   const colors = useMemo(() => {
-    try {
-      return JSON.parse(bike.colors || "{}");
-    } catch {
-      return {};
-    }
+    const obj = parseJson(bike.colors, {});
+    return obj && typeof obj === "object" && !Array.isArray(obj) ? obj : {};
   }, [bike.colors]);
+  const firstPhoto = Object.values(colors).find((u) => typeof u === "string" && u.trim());
+  const issues = useMemo(() => transitionBikeIssues(bike), [bike]);
 
   const [isPublic, setIsPublic] = useState(bike.public);
   const [isArchived, setIsArchived] = useState(Boolean(bike.archived));
@@ -321,12 +347,23 @@ function OtherBikeEditor({ bike, onRefresh }) {
     setRenameValue(bike.name || "");
   }, [bike._id, bike.archived, bike.public, bike.type, bike.name]);
 
+  const patch = (newBike) =>
+    axios.patch(`${apiBase}/api/bikes/other/${bike._id}`, { newBike }, { withCredentials: true });
+
   const handlePublicChange = async (event) => {
     const checked = event.target.checked;
+    if (
+      checked &&
+      !firstPhoto &&
+      !window.confirm(
+        "This bike has no photos, so it won't appear in the shop until you add one. Make it public anyway?"
+      )
+    ) {
+      return;
+    }
     setIsPublic(checked);
-    const newBike = { public: checked };
     try {
-      await axios.patch(`${apiBase}/api/bikes/other/${bike._id}`, { newBike }, { withCredentials: true });
+      await patch({ public: checked });
       invalidateAllBikesCache();
       onRefresh();
     } catch {
@@ -344,7 +381,7 @@ function OtherBikeEditor({ bike, onRefresh }) {
       setIsPublic(false);
     }
     try {
-      await axios.patch(`${apiBase}/api/bikes/other/${bike._id}`, { newBike }, { withCredentials: true });
+      await patch(newBike);
       invalidateAllBikesCache();
       onRefresh();
     } catch {
@@ -358,7 +395,7 @@ function OtherBikeEditor({ bike, onRefresh }) {
     e.preventDefault();
     const description = e.target.description.value;
     const link = e.target.link.value;
-    const year = e.target.year.value;
+    const year = e.target.year.value.trim();
     const price = e.target.price.value;
     const saleprice = e.target.saleprice.value;
     const costRaw = (e.target.costPrice?.value ?? "").trim();
@@ -368,9 +405,11 @@ function OtherBikeEditor({ bike, onRefresh }) {
       const n = Number(costRaw);
       if (Number.isFinite(n) && n >= 0) costPrice = n;
     }
-    const newBike = { type: editType, description, link, year, price, saleprice, costPrice };
+    // fullName drives Cloudinary file names, so it follows the year like a rename does.
+    const fullName = `${year} ${bike.brand ?? ""} ${bike.name ?? ""}`.replace(/\s+/g, " ").trim();
+    const newBike = { type: editType, description, link, year, price, saleprice, costPrice, fullName };
     try {
-      await axios.patch(`${apiBase}/api/bikes/other/${bike._id}`, { newBike }, { withCredentials: true });
+      await patch(newBike);
       invalidateAllBikesCache();
       onRefresh();
       setEdit(false);
@@ -385,15 +424,9 @@ function OtherBikeEditor({ bike, onRefresh }) {
       alert("Name cannot be empty.");
       return;
     }
-    const brandPart = bike.brand ?? "";
-    const yearPart = bike.year ?? "";
-    const fullName = `${yearPart} ${brandPart} ${next}`.replace(/\s+/g, " ").trim();
+    const fullName = `${bike.year ?? ""} ${bike.brand ?? ""} ${next}`.replace(/\s+/g, " ").trim();
     try {
-      await axios.patch(
-        `${apiBase}/api/bikes/other/${bike._id}`,
-        { newBike: { name: next, fullName } },
-        { withCredentials: true }
-      );
+      await patch({ name: next, fullName });
       invalidateAllBikesCache();
       setRenameOpen(false);
       onRefresh();
@@ -423,255 +456,271 @@ function OtherBikeEditor({ bike, onRefresh }) {
     }
   };
 
+  const hasSale = Number(bike.saleprice) > 0;
+  const summary = stockSummary(bike.models);
+
   const editForm = (
     <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, maxWidth: 440 }}>
       <form onSubmit={handleEditDetailsSubmit}>
         <Stack spacing={2}>
-          <FormLabel id="other-bike-type">Bike type</FormLabel>
-          <RadioGroup
-            aria-labelledby="other-bike-type"
-            name="other-bike-type"
-            value={editType}
-            onChange={(e) => setEditType(e.target.value)}
-          >
-            <FormControlLabel value="DH" control={<Radio size="small" />} label="DH" />
-            <FormControlLabel
-              value="Enduro / All Mountain"
-              control={<Radio size="small" />}
-              label="Enduro / All Mountain"
-            />
-            <FormControlLabel value="Trail" control={<Radio size="small" />} label="Trail" />
-            <FormControlLabel value="XC" control={<Radio size="small" />} label="XC" />
-            <FormControlLabel value="Dirt Jumper" control={<Radio size="small" />} label="Dirt Jumper" />
-            <FormControlLabel value="Recreational" control={<Radio size="small" />} label="Recreational" />
-            <FormControlLabel value="Kids" control={<Radio size="small" />} label="Kids" />
-            <FormControlLabel value="E-Bike" control={<Radio size="small" />} label="E-Bike" />
-            <FormControlLabel value="Frameset" control={<Radio size="small" />} label="Frameset" />
-          </RadioGroup>
-          <TextField id="description" name="description" label="Description" defaultValue={bike.description} multiline minRows={3} fullWidth />
-          <TextField id="link" name="link" label="Link" defaultValue={bike.link} fullWidth />
-          <TextField id="year" name="year" label="Year" defaultValue={bike.year} fullWidth />
-          <TextField id="price" name="price" label="Price" defaultValue={bike.price} fullWidth type="number" />
-          <TextField id="saleprice" name="saleprice" label="Sale price" defaultValue={bike.saleprice ?? ""} fullWidth type="number" />
+          <FormControl size="small" fullWidth>
+            <InputLabel id={`type-${bike._id}`}>Bike type</InputLabel>
+            <Select labelId={`type-${bike._id}`} label="Bike type" value={editType || ""} onChange={(e) => setEditType(e.target.value)}>
+              {BIKE_TYPES.map((t) => (
+                <MenuItem key={t} value={t}>
+                  {t}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField name="description" label="Description" defaultValue={bike.description} multiline minRows={3} fullWidth size="small" />
+          <TextField name="link" label="Link" defaultValue={bike.link} fullWidth size="small" />
+          <TextField name="year" label="Year" defaultValue={bike.year} fullWidth size="small" />
+          <Stack direction="row" spacing={1}>
+            <TextField name="price" label="Price" defaultValue={bike.price} fullWidth size="small" type="number" />
+            <TextField name="saleprice" label="Sale price" defaultValue={bike.saleprice ?? ""} fullWidth size="small" type="number" />
+          </Stack>
           <TextField
-            id="costPrice"
             name="costPrice"
             label="Cost"
             defaultValue={bike.costPrice ?? ""}
             fullWidth
+            size="small"
             type="number"
             inputProps={{ min: 0, step: "any" }}
-            helperText="Leave blank to clear"
+            helperText="Admin only. Leave blank to clear."
           />
-          <Button type="submit" variant="contained" sx={{ bgcolor: NAV_BAR_BG }}>
-            Save details
-          </Button>
-          <Button type="button" variant="text" onClick={() => setEdit(false)}>
-            Cancel
-          </Button>
+          <Stack direction="row" spacing={1}>
+            <Button type="submit" variant="contained" disableElevation sx={{ bgcolor: NAV_BAR_BG }}>
+              Save details
+            </Button>
+            <Button type="button" variant="text" onClick={() => setEdit(false)}>
+              Cancel
+            </Button>
+          </Stack>
         </Stack>
       </form>
     </Paper>
   );
 
   return (
-    <Card variant="outlined" sx={{ borderRadius: 2, overflow: "visible" }}>
-      <CardContent sx={{ "&:last-child": { pb: 2 } }}>
-        <Dialog open={renameOpen} onClose={() => setRenameOpen(false)} fullWidth maxWidth="xs">
-          <DialogTitle>Edit bike name</DialogTitle>
-          <DialogContent>
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Name (without changing brand/year here)"
-              fullWidth
-              value={renameValue}
-              onChange={(e) => setRenameValue(e.target.value)}
-              helperText={`fullName will update to: ${bike.year ?? ""} ${bike.brand ?? ""} ${renameValue.trim() || "…"}`.replace(/\s+/g, " ").trim()}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setRenameOpen(false)}>Cancel</Button>
-            <Button onClick={handleRenameSave} variant="contained" sx={{ bgcolor: NAV_BAR_BG }}>
-              Save name
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        <Stack direction={{ xs: "column", lg: "row" }} spacing={3} alignItems={{ xs: "stretch", lg: "flex-start" }}>
-          <Stack spacing={2} flex={{ xs: 1, lg: 1.3 }} minWidth={0}>
-            <Box>
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                alignItems={{ xs: "flex-start", sm: "center" }}
-                justifyContent="space-between"
-                spacing={1}
-                flexWrap="wrap"
-                useFlexGap
-              >
-                <Box>
-                  <Typography variant="h6" fontWeight={800} sx={{ color: NAV_BAR_BG }}>
-                    {bike.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {bike.brand} · Year {bike.year}
-                  </Typography>
+    <Card id={bikeElementId(bike._id)} variant="outlined" sx={{ borderRadius: 2, overflow: "visible", scrollMarginTop: OTHER_BIKES_LIST_SCROLL_MARGIN }}>
+      <Box
+        component="button"
+        type="button"
+        onClick={onToggle}
+        aria-expanded={expanded}
+        sx={{
+          all: "unset",
+          boxSizing: "border-box",
+          width: "100%",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          gap: 1.5,
+          p: 1.25,
+          borderRadius: 2,
+          "&:hover": { bgcolor: "action.hover" },
+          "&:focus-visible": { outline: `2px solid ${NAV_BAR_BG}`, outlineOffset: -2 },
+        }}
+      >
+        <Box sx={{ width: 80, height: 50, flexShrink: 0, borderRadius: 1, bgcolor: "grey.100", overflow: "hidden", display: "grid", placeItems: "center" }}>
+          {firstPhoto ? (
+            <Box component="img" src={thumbUrl(firstPhoto)} alt="" loading="lazy" sx={{ width: "100%", height: "100%", objectFit: "contain" }} />
+          ) : (
+            <PhotoCameraOutlinedIcon sx={{ color: "text.disabled" }} fontSize="small" />
+          )}
+        </Box>
+        <Box sx={{ minWidth: 0, flex: 1 }}>
+          <Typography fontWeight={700} sx={{ color: NAV_BAR_BG, lineHeight: 1.2 }} noWrap>
+            {bike.name}
+          </Typography>
+          <Typography variant="caption" color="text.secondary" component="div" noWrap>
+            {[bike.brand, bike.year, bike.type].filter(Boolean).join(" · ")}
+            {summary ? ` · ${summary}` : ""}
+          </Typography>
+        </Box>
+        <Stack direction="row" spacing={0.75} alignItems="center" sx={{ flexShrink: 0 }}>
+          {issues.length ? (
+            <Chip size="small" color="warning" variant="outlined" label={`${issues.length} to fix`} />
+          ) : null}
+          <Chip
+            size="small"
+            label={isArchived ? "Archived" : isPublic ? "Public" : "Private"}
+            sx={{
+              fontWeight: 600,
+              bgcolor: isArchived ? "grey.200" : isPublic ? "rgba(22,163,74,0.12)" : "rgba(0,0,0,0.06)",
+              color: isArchived ? "text.secondary" : isPublic ? "#15803d" : "text.primary",
+            }}
+          />
+          <Typography variant="body2" fontWeight={700} sx={{ minWidth: 72, textAlign: "right", display: { xs: "none", sm: "block" } }}>
+            {hasSale ? (
+              <>
+                <Box component="span" sx={{ textDecoration: "line-through", color: "text.secondary", fontWeight: 400, mr: 0.5 }}>
+                  ${bike.price}
                 </Box>
-                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    startIcon={<DriveFileRenameOutlineIcon />}
-                    onClick={() => {
-                      setRenameValue(bike.name || "");
-                      setRenameOpen(true);
-                    }}
-                    sx={{ borderColor: NAV_BAR_BG, color: NAV_BAR_BG }}
-                  >
-                    Edit name
-                  </Button>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    color="error"
-                    startIcon={<DeleteOutlineIcon />}
-                    disabled={deleting}
-                    onClick={handleDeleteBike}
-                  >
-                    {deleting ? "Deleting…" : "Delete bike"}
-                  </Button>
-                </Stack>
-              </Stack>
-            </Box>
+                ${bike.saleprice}
+              </>
+            ) : bike.price ? (
+              `$${bike.price}`
+            ) : (
+              "No price"
+            )}
+          </Typography>
+          <ExpandMoreIcon sx={{ transition: "transform 0.2s", transform: expanded ? "rotate(180deg)" : "none", color: "text.secondary" }} />
+        </Stack>
+      </Box>
 
-            <Stack
-              direction="row"
-              alignItems="center"
-              flexWrap="wrap"
-              useFlexGap
-              spacing={2}
-              sx={{
-                py: 0.5,
-                px: 1,
-                borderRadius: 1,
-                bgcolor: "action.hover",
-              }}
-            >
-              <Stack direction="row" alignItems="center" spacing={0.75}>
-                <Typography variant="body2" fontWeight={600}>
-                  {isPublic ? "Public" : "Private"}
-                </Typography>
-                <Switch checked={isPublic} onChange={handlePublicChange} color="success" size="small" />
-              </Stack>
-              <Stack direction="row" alignItems="center" spacing={0.75}>
-                <Typography variant="body2" fontWeight={600}>
-                  Archived
-                </Typography>
-                <Switch checked={isArchived} onChange={handleArchivedChange} color="warning" size="small" />
-              </Stack>
-              <Typography variant="caption" color="text.secondary" sx={{ flex: "1 1 200px", minWidth: 0 }}>
-                Archived models are hidden from the shop list.
-              </Typography>
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <CardContent sx={{ pt: 1, "&:last-child": { pb: 2 } }}>
+          <Dialog open={renameOpen} onClose={() => setRenameOpen(false)} fullWidth maxWidth="xs">
+            <DialogTitle>Edit bike name</DialogTitle>
+            <DialogContent>
+              <TextField
+                autoFocus
+                margin="dense"
+                label="Name (without brand or year)"
+                fullWidth
+                value={renameValue}
+                onChange={(e) => setRenameValue(e.target.value)}
+                helperText={`Full name: ${bike.year ?? ""} ${bike.brand ?? ""} ${renameValue.trim() || "…"}`.replace(/\s+/g, " ").trim()}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setRenameOpen(false)}>Cancel</Button>
+              <Button onClick={handleRenameSave} variant="contained" sx={{ bgcolor: NAV_BAR_BG }}>
+                Save name
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          {issues.length ? (
+            <Stack direction="row" flexWrap="wrap" useFlexGap spacing={0.75} sx={{ mb: 2 }}>
+              {issues.map((issue) => (
+                <Chip
+                  key={issue.key}
+                  size="small"
+                  label={issue.label}
+                  color={issue.severity === "high" ? "error" : issue.severity === "medium" ? "warning" : "default"}
+                  variant="outlined"
+                />
+              ))}
             </Stack>
+          ) : null}
 
-            <Typography variant="subtitle2" fontWeight={700}>
-              Availability
-            </Typography>
-            <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1}>
-              {models.length === 0 ? (
-                <Typography variant="body2" color="text.secondary">
-                  No SKU variants found.
-                </Typography>
-              ) : (
-                models.map((row, idx) => (
-                  <Paper
-                    key={`${row?.partNumber ?? "na"}-${row?.color ?? "na"}-${row?.size ?? "na"}-${idx}`}
-                    variant="outlined"
-                    sx={{ p: 1, minWidth: 160 }}
-                  >
-                    <Typography variant="caption" display="block">
-                      {row?.color || "—"} / {row?.size || "—"}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" display="block">
-                      {row?.partNumber || "—"}
+          <Stack
+            direction="row"
+            alignItems="center"
+            flexWrap="wrap"
+            useFlexGap
+            spacing={2}
+            sx={{ py: 0.5, px: 1, mb: 2, borderRadius: 1, bgcolor: "action.hover" }}
+          >
+            <Stack direction="row" alignItems="center" spacing={0.75}>
+              <Typography variant="body2" fontWeight={600}>
+                {isPublic ? "Public" : "Private"}
+              </Typography>
+              <Switch checked={isPublic} onChange={handlePublicChange} color="success" size="small" />
+            </Stack>
+            <Stack direction="row" alignItems="center" spacing={0.75}>
+              <Typography variant="body2" fontWeight={600}>
+                Archived
+              </Typography>
+              <Switch checked={isArchived} onChange={handleArchivedChange} color="warning" size="small" />
+            </Stack>
+            <Box sx={{ flex: 1 }} />
+            <Button
+              size="small"
+              startIcon={<DriveFileRenameOutlineIcon />}
+              onClick={() => {
+                setRenameValue(bike.name || "");
+                setRenameOpen(true);
+              }}
+              sx={{ color: NAV_BAR_BG }}
+            >
+              Edit name
+            </Button>
+            <Button size="small" color="error" startIcon={<DeleteOutlineIcon />} disabled={deleting} onClick={handleDeleteBike}>
+              {deleting ? "Deleting…" : "Delete"}
+            </Button>
+          </Stack>
+
+          <Stack direction={{ xs: "column", lg: "row" }} spacing={3} alignItems={{ xs: "stretch", lg: "flex-start" }}>
+            <Stack spacing={2} flex={{ xs: 1, lg: 1.4 }} minWidth={0}>
+              <OtherBikeStockGrid bike={bike} onSaved={onRefresh} />
+              <Box>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
+                  <Typography variant="subtitle2" fontWeight={700}>
+                    Details
+                  </Typography>
+                  {!edit ? (
+                    <Button
+                      size="small"
+                      startIcon={<EditOutlinedIcon />}
+                      onClick={() => {
+                        setEditType(bike.type);
+                        setEdit(true);
+                      }}
+                      sx={{ color: NAV_BAR_BG }}
+                    >
+                      Edit details
+                    </Button>
+                  ) : null}
+                </Stack>
+                {edit ? (
+                  editForm
+                ) : (
+                  <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
+                    <Box sx={{ display: "grid", gridTemplateColumns: "auto 1fr", columnGap: 2, rowGap: 0.75, fontSize: "0.875rem" }}>
+                      <strong>Type</strong>
+                      <span>{bike.type || "—"}</span>
+                      <strong>Year</strong>
+                      <span>{bike.year || "—"}</span>
+                      <strong>Price</strong>
+                      <span>{bike.price ? `$${bike.price}` : "—"}</span>
+                      <strong>Sale</strong>
+                      <span>{hasSale ? `$${bike.saleprice}` : "—"}</span>
+                      <strong>Cost</strong>
+                      <span>{bike.costPrice != null && bike.costPrice !== "" ? `$${bike.costPrice}` : "—"}</span>
+                      <strong>Link</strong>
+                      <Box component="span" sx={{ wordBreak: "break-all" }}>
+                        {bike.link || "—"}
+                      </Box>
+                    </Box>
+                    <Typography variant="body2" sx={{ mt: 1.5, color: bike.description ? "text.primary" : "text.secondary" }}>
+                      {bike.description || "No description yet."}
                     </Typography>
                   </Paper>
-                ))
-              )}
+                )}
+              </Box>
             </Stack>
-          </Stack>
 
-          <Stack spacing={2} flex={{ xs: 1, lg: 1 }} minWidth={0}>
-            <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap" useFlexGap>
-              {!edit ? (
-                <Button
-                  variant="outlined"
-                  startIcon={<EditOutlinedIcon />}
-                  onClick={() => {
-                    setEditType(bike.type);
-                    setEdit(true);
-                  }}
-                  sx={{ borderColor: NAV_BAR_BG, color: NAV_BAR_BG }}
-                >
-                  Edit details
-                </Button>
-              ) : null}
-            </Stack>
-            {edit ? (
-              editForm
-            ) : (
-              <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
-                <Typography variant="body2">
-                  <strong>Type:</strong> {bike.type || "—"}
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  <strong>Year:</strong> {bike.year}
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  <strong>Price:</strong> ${bike.price}
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  <strong>Sale:</strong> {bike.saleprice != null ? `$${bike.saleprice}` : "—"}
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  <strong>Cost:</strong>{" "}
-                  {bike.costPrice != null && bike.costPrice !== "" ? `$${bike.costPrice}` : "—"}
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  <strong>Description:</strong> {bike.description || "—"}
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 1, wordBreak: "break-all" }}>
-                  <strong>Link:</strong> {bike.link || "—"}
-                </Typography>
-              </Paper>
-            )}
-          </Stack>
-
-          <Stack spacing={1.5} flex={{ xs: 1, lg: 1.2 }} minWidth={0} width="100%">
-            <Typography variant="subtitle2" fontWeight={700}>
-              Photos by color
-            </Typography>
-            <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1.5}>
-              {Object.keys(colors).length === 0 ? (
-                <Typography variant="body2" color="text.secondary">
-                  No colors on this bike yet.
-                </Typography>
-              ) : (
-                Object.entries(colors).map(([colorName, url]) => (
-                  <AdminBikeColorImageBlock
-                    key={colorName}
-                    bike={bike}
-                    colorName={colorName}
-                    imageUrl={url}
-                    onRefresh={onRefresh}
-                    bikeRoute="other"
-                  />
-                ))
-              )}
+            <Stack spacing={1.5} flex={{ xs: 1, lg: 1 }} minWidth={0} width="100%">
+              <Typography variant="subtitle2" fontWeight={700}>
+                Photos by colour
+              </Typography>
+              <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1.5}>
+                {Object.keys(colors).length === 0 ? (
+                  <Typography variant="body2" color="text.secondary">
+                    No colours on this bike yet. Add one in the stock grid.
+                  </Typography>
+                ) : (
+                  Object.entries(colors).map(([colorName, url]) => (
+                    <AdminBikeColorImageBlock
+                      key={colorName}
+                      bike={bike}
+                      colorName={colorName}
+                      imageUrl={url}
+                      onRefresh={onRefresh}
+                      bikeRoute="other"
+                    />
+                  ))
+                )}
+              </Stack>
             </Stack>
           </Stack>
-        </Stack>
-      </CardContent>
+        </CardContent>
+      </Collapse>
     </Card>
   );
 }
@@ -682,23 +731,25 @@ const OTHER_BIKE_BRAND_SECTION_IDS = {
   transition: "other-bikes-brand-transition",
   norco: "other-bikes-brand-norco",
   ibis: "other-bikes-brand-ibis",
+  other: "other-bikes-brand-other",
 };
 
-function scrollToOtherBikeBrandSection(elementId) {
+function scrollToElement(elementId) {
   document.getElementById(elementId)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function OtherBikesBrandNav({ transitionCount, norcoCount, ibisCount }) {
+function OtherBikesBrandNav({ counts }) {
   const items = [
-    { id: OTHER_BIKE_BRAND_SECTION_IDS.transition, label: "Transition", count: transitionCount },
-    { id: OTHER_BIKE_BRAND_SECTION_IDS.norco, label: "Norco", count: norcoCount },
-    { id: OTHER_BIKE_BRAND_SECTION_IDS.ibis, label: "Ibis", count: ibisCount },
+    { id: OTHER_BIKE_BRAND_SECTION_IDS.transition, label: "Transition", count: counts.transition },
+    { id: OTHER_BIKE_BRAND_SECTION_IDS.norco, label: "Norco", count: counts.norco },
+    { id: OTHER_BIKE_BRAND_SECTION_IDS.ibis, label: "Ibis", count: counts.ibis },
+    ...(counts.other ? [{ id: OTHER_BIKE_BRAND_SECTION_IDS.other, label: "Other", count: counts.other }] : []),
   ];
 
   return (
     <Box
       component="nav"
-      aria-label="Jump to brand in other bikes list"
+      aria-label="Jump to brand"
       sx={{
         display: "flex",
         flexDirection: { xs: "row", md: "column" },
@@ -711,7 +762,6 @@ function OtherBikesBrandNav({ transitionCount, norcoCount, ibisCount }) {
         width: { xs: "100%", md: 168 },
         flexShrink: 0,
         py: { xs: 1, md: 0 },
-        px: { xs: 0, md: 0 },
         bgcolor: { xs: "rgba(255,255,255,0.92)", md: "transparent" },
         backdropFilter: { xs: "blur(8px)", md: "none" },
         borderBottom: { xs: 1, md: 0 },
@@ -724,7 +774,7 @@ function OtherBikesBrandNav({ transitionCount, norcoCount, ibisCount }) {
           type="button"
           variant="outlined"
           size="small"
-          onClick={() => scrollToOtherBikeBrandSection(id)}
+          onClick={() => scrollToElement(id)}
           sx={{
             borderColor: NAV_BAR_BG,
             color: NAV_BAR_BG,
@@ -744,32 +794,88 @@ function OtherBikesBrandNav({ transitionCount, norcoCount, ibisCount }) {
   );
 }
 
-function OtherBikesBrandSection({ id, title, subtitle, bikes, onRefresh }) {
+function OtherBikesBrandSection({ id, title, bikes, onRefresh, expandedIds, toggle }) {
   return (
-    <Box
-      id={id}
-      sx={{
-        scrollMarginTop: OTHER_BIKES_LIST_SCROLL_MARGIN,
-      }}
-    >
-      <Typography variant="h6" fontWeight={800} sx={{ color: NAV_BAR_BG }}>
-        {title}
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 2, maxWidth: 720 }}>
-        {subtitle}
+    <Box id={id} sx={{ scrollMarginTop: OTHER_BIKES_LIST_SCROLL_MARGIN }}>
+      <Typography variant="h6" fontWeight={800} sx={{ color: NAV_BAR_BG, mb: 1.5 }}>
+        {title}{" "}
+        <Typography component="span" color="text.secondary" fontWeight={500}>
+          ({bikes.length})
+        </Typography>
       </Typography>
       {bikes.length === 0 ? (
         <Typography variant="body2" color="text.secondary" sx={{ fontStyle: "italic" }}>
-          No bikes in this section.
+          No bikes here.
         </Typography>
       ) : (
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           {bikes.map((bike) => (
-            <OtherBikeEditor key={bike._id} bike={bike} onRefresh={onRefresh} />
+            <OtherBikeEditor
+              key={bike._id}
+              bike={bike}
+              onRefresh={onRefresh}
+              expanded={expandedIds.has(bike._id)}
+              onToggle={() => toggle(bike._id)}
+            />
           ))}
         </Stack>
       )}
     </Box>
+  );
+}
+
+/** Bikes with problems (missing photos, no description / type, stock with nothing public…). */
+function OtherBikesNeedAttention({ bikes, onOpen }) {
+  const [showAll, setShowAll] = useState(false);
+  const flagged = useMemo(() => transitionBikesNeedingAttention(bikes), [bikes]);
+  if (!flagged.length) {
+    return (
+      <Alert severity="success" variant="outlined">
+        Nothing needs attention right now.
+      </Alert>
+    );
+  }
+  const visible = showAll ? flagged : flagged.slice(0, 6);
+  return (
+    <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, borderColor: "warning.light", bgcolor: "rgba(237,108,2,0.03)" }}>
+      <Typography variant="subtitle1" fontWeight={800} sx={{ color: NAV_BAR_BG, mb: 1 }}>
+        Needs attention ({flagged.length})
+      </Typography>
+      <Stack spacing={0.75}>
+        {visible.map(({ bike, issues }) => (
+          <Stack key={bike._id} direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "center" }} spacing={1}>
+            <Typography variant="body2" fontWeight={700} sx={{ minWidth: 220 }}>
+              {[bike.brand, bike.name].filter(Boolean).join(" ")}
+              {!bike.public ? (
+                <Typography component="span" variant="caption" color="text.secondary">
+                  {" "}
+                  (private)
+                </Typography>
+              ) : null}
+            </Typography>
+            <Stack direction="row" flexWrap="wrap" useFlexGap spacing={0.5} sx={{ flex: 1 }}>
+              {issues.map((issue) => (
+                <Chip
+                  key={issue.key}
+                  size="small"
+                  label={issue.label}
+                  color={issue.severity === "high" ? "error" : issue.severity === "medium" ? "warning" : "default"}
+                  variant="outlined"
+                />
+              ))}
+            </Stack>
+            <Button size="small" onClick={() => onOpen(bike._id)} sx={{ color: NAV_BAR_BG, flexShrink: 0 }}>
+              Open
+            </Button>
+          </Stack>
+        ))}
+      </Stack>
+      {flagged.length > 6 ? (
+        <Button size="small" onClick={() => setShowAll((v) => !v)} sx={{ mt: 1, color: "text.secondary" }}>
+          {showAll ? "Show fewer" : `Show all ${flagged.length}`}
+        </Button>
+      ) : null}
+    </Paper>
   );
 }
 
@@ -812,6 +918,9 @@ const AddNewBike = () => {
   const [draftBikeName, setDraftBikeName] = useState("");
   /** colour name → Cloudinary URL (empty string = no image yet) */
   const [colorImages, setColorImages] = useState({});
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [search, setSearch] = useState("");
+  const [expandedIds, setExpandedIds] = useState(() => new Set());
 
   const publicIdBaseRef = useRef("");
   publicIdBaseRef.current = `${draftYear} ${brand} ${draftBikeName}`.replace(/\s+/g, " ").trim();
@@ -828,7 +937,7 @@ const AddNewBike = () => {
   const fetchBikes = async () => {
     try {
       const res = await axios.get(`${apiBase}/api/bikes/other`, { withCredentials: true });
-        setBikes(res.data);
+      setBikes(Array.isArray(res.data) ? res.data : []);
     } catch (e) {
       console.error(e);
     }
@@ -838,15 +947,39 @@ const AddNewBike = () => {
     fetchBikes();
   }, []);
 
+  const toggle = useCallback((id) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
   const [listVisibility, setListVisibility] = useState("all");
   const [listSort, setListSort] = useState("name-asc");
 
+  /** From "Needs attention": clear filters so the bike is listed, expand it, and scroll to it. */
+  const openBike = (id) => {
+    setSearch("");
+    setListVisibility("all");
+    setExpandedIds((prev) => new Set(prev).add(id));
+    requestAnimationFrame(() => requestAnimationFrame(() => scrollToElement(bikeElementId(id))));
+  };
+
   const filteredBikes = useMemo(() => {
     let arr = Array.isArray(bikes) ? [...bikes] : [];
-    if (listVisibility === "public") arr = arr.filter((b) => b.public);
-    if (listVisibility === "private") arr = arr.filter((b) => !b.public);
+    if (listVisibility === "public") arr = arr.filter((b) => b.public && !b.archived);
+    if (listVisibility === "private") arr = arr.filter((b) => !b.public && !b.archived);
+    if (listVisibility === "archived") arr = arr.filter((b) => b.archived);
+    const q = search.trim().toLowerCase();
+    if (q) {
+      arr = arr.filter((b) =>
+        [b.brand, b.name, b.fullName, b.type, b.year].filter(Boolean).join(" ").toLowerCase().includes(q)
+      );
+    }
     return arr;
-  }, [bikes, listVisibility]);
+  }, [bikes, listVisibility, search]);
 
   const bikesByBrand = useMemo(() => {
     const { transition, norco, ibis, other } = partitionOtherBikesByBrand(filteredBikes);
@@ -867,7 +1000,8 @@ const AddNewBike = () => {
     const costPrice = event.target.costPrice?.value?.trim() ?? "";
     const description = event.target.description.value;
     const link = event.target.link.value;
-    const fullName = `${year} ${brand} ${name}`.trim();
+    const fullName = `${year} ${brand} ${name}`.replace(/\s+/g, " ").trim();
+    const initialStock = event.target.initialStock?.value || "Out of Stock";
 
     const availabilityArray = [];
     const colorObject = {};
@@ -880,7 +1014,7 @@ const AddNewBike = () => {
           size,
           color,
           partNumber: "N/A",
-          availability: "Out of Stock",
+          availability: initialStock,
         });
       });
     });
@@ -916,128 +1050,147 @@ const AddNewBike = () => {
       setDraftYear("");
       setDraftBikeName("");
       setColorImages({});
+      setShowAddForm(false);
     } catch {
       alert("Bike not added.");
     }
+  };
+
+  const brandCounts = {
+    transition: bikesByBrand.transition.length,
+    norco: bikesByBrand.norco.length,
+    ibis: bikesByBrand.ibis.length,
+    other: bikesByBrand.other.length,
   };
 
   return (
     <Stack spacing={3} sx={{ width: "100%", maxWidth: 1280, mx: "auto", px: { xs: 1, sm: 2 }, py: 2 }}>
       <Snackbar open={open} autoHideDuration={4000} onClose={handleClose} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
         <Alert onClose={handleClose} severity="success" variant="filled">
-          Bike added.
+          Bike added as a private draft. Set its stock and go public when it&apos;s ready.
         </Alert>
       </Snackbar>
 
-      <Paper elevation={0} sx={{ p: { xs: 2, sm: 3 }, borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
-        <Typography variant="h6" fontWeight={700} sx={{ color: NAV_BAR_BG, mb: 2 }}>
-          Add a bike (Norco / Ibis / Transition / other)
-        </Typography>
-      <form
-        onSubmit={handleSubmit}
-        onKeyDown={(e) => {
-            const el = e.target;
-            if (e.key === "Enter" && el instanceof HTMLElement && el.tagName !== "TEXTAREA") {
-            e.preventDefault();
-          }
-        }}
-      >
-          <Stack spacing={2} sx={{ maxWidth: 560 }}>
-            <FormLabel>Brand</FormLabel>
-            <RadioGroup row value={brand} onChange={(e) => setBrand(e.target.value)} name="brand">
-              <FormControlLabel value="Transition" control={<Radio size="small" />} label="Transition" />
-              <FormControlLabel value="Norco" control={<Radio size="small" />} label="Norco" />
-              <FormControlLabel value="Ibis" control={<Radio size="small" />} label="Ibis" />
-              <FormControlLabel value="other" control={<Radio size="small" />} label="Other" />
-        </RadioGroup>
-            <FormLabel>Bike type</FormLabel>
-            <RadioGroup row value={type} onChange={(e) => setType(e.target.value)} name="type">
-              <FormControlLabel value="DH" control={<Radio size="small" />} label="DH" />
-              <FormControlLabel value="Enduro / All Mountain" control={<Radio size="small" />} label="Enduro / AM" />
-              <FormControlLabel value="Trail" control={<Radio size="small" />} label="Trail" />
-              <FormControlLabel value="XC" control={<Radio size="small" />} label="XC" />
-              <FormControlLabel value="Dirt Jumper" control={<Radio size="small" />} label="DJ" />
-              <FormControlLabel value="Recreational" control={<Radio size="small" />} label="Rec" />
-              <FormControlLabel value="Kids" control={<Radio size="small" />} label="Kids" />
-              <FormControlLabel value="E-Bike" control={<Radio size="small" />} label="E-Bike" />
-              <FormControlLabel value="Frameset" control={<Radio size="small" />} label="Frameset" />
-        </RadioGroup>
-            <TextField
-              id="year"
-              name="year"
-              label="Year"
-              required
-              fullWidth
-              size="small"
-              value={draftYear}
-              onChange={(e) => setDraftYear(e.target.value)}
-            />
-            <TextField
-              id="name"
-              name="name"
-              label="Name (without brand)"
-              required
-              fullWidth
-              size="small"
-              value={draftBikeName}
-              onChange={(e) => setDraftBikeName(e.target.value)}
-            />
-            <TextField id="price" name="price" label="Price" required fullWidth size="small" type="number" />
-            <TextField id="saleprice" name="saleprice" label="Sale price (optional)" fullWidth size="small" type="number" />
-            <TextField
-              id="costPrice"
-              name="costPrice"
-              label="Cost (optional)"
-              fullWidth
-              size="small"
-              type="number"
-              inputProps={{ min: 0, step: "any" }}
-            />
-            <TextField id="description" name="description" label="Description" multiline minRows={3} fullWidth size="small" />
-            <TextField id="link" name="link" label="Link" fullWidth size="small" />
-            <FormLabel>Add sizes (smallest → largest)</FormLabel>
-            <AddSizes sizes={sizeArray} setSizes={setSizeArray} />
-            <AddColorsForm
-              colors={colors}
-              setColors={setColors}
-              colorImages={colorImages}
-              setColorImages={setColorImages}
-              publicIdBaseRef={publicIdBaseRef}
-              patchColorUrl={patchColorUrl}
-            />
-            <Button type="submit" variant="contained" sx={{ bgcolor: NAV_BAR_BG, alignSelf: "flex-start" }}>
-              Add bike
+      <OtherBikesNeedAttention bikes={bikes} onOpen={openBike} />
+
+      <Paper elevation={0} sx={{ p: { xs: 2, sm: 2.5 }, borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" gap={2}>
+          <Box>
+            <Typography variant="h6" fontWeight={700} sx={{ color: NAV_BAR_BG }}>
+              Add a bike
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Norco, Ibis, or any bike that isn&apos;t on the Transition stock list.
+            </Typography>
+          </Box>
+          <Button
+            variant={showAddForm ? "text" : "contained"}
+            disableElevation
+            startIcon={showAddForm ? <CloseIcon /> : <AddIcon />}
+            onClick={() => setShowAddForm((v) => !v)}
+            sx={showAddForm ? { color: "text.secondary" } : { bgcolor: NAV_BAR_BG, "&:hover": { bgcolor: "#1e332b" } }}
+          >
+            {showAddForm ? "Close" : "Add a bike"}
           </Button>
         </Stack>
-      </form>
+        <Collapse in={showAddForm} unmountOnExit>
+          <form
+            onSubmit={handleSubmit}
+            onKeyDown={(e) => {
+              const el = e.target;
+              if (e.key === "Enter" && el instanceof HTMLElement && el.tagName !== "TEXTAREA") {
+                e.preventDefault();
+              }
+            }}
+          >
+            <Stack spacing={2} sx={{ maxWidth: 560, mt: 2.5 }}>
+              <FormLabel>Brand</FormLabel>
+              <RadioGroup row value={brand} onChange={(e) => setBrand(e.target.value)} name="brand">
+                <FormControlLabel value="Norco" control={<Radio size="small" />} label="Norco" />
+                <FormControlLabel value="Ibis" control={<Radio size="small" />} label="Ibis" />
+                <FormControlLabel value="Transition" control={<Radio size="small" />} label="Transition" />
+                <FormControlLabel value="other" control={<Radio size="small" />} label="Other" />
+              </RadioGroup>
+              <FormControl size="small" fullWidth required>
+                <InputLabel id="new-bike-type">Bike type</InputLabel>
+                <Select labelId="new-bike-type" label="Bike type" value={type} onChange={(e) => setType(e.target.value)}>
+                  {BIKE_TYPES.map((t) => (
+                    <MenuItem key={t} value={t}>
+                      {t}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Stack direction="row" spacing={1}>
+                <TextField name="year" label="Year" required size="small" value={draftYear} onChange={(e) => setDraftYear(e.target.value)} sx={{ width: 120 }} />
+                <TextField name="name" label="Name (without brand)" required fullWidth size="small" value={draftBikeName} onChange={(e) => setDraftBikeName(e.target.value)} />
+              </Stack>
+              <Stack direction="row" spacing={1}>
+                <TextField name="price" label="Price" required fullWidth size="small" type="number" />
+                <TextField name="saleprice" label="Sale price (optional)" fullWidth size="small" type="number" />
+              </Stack>
+              <TextField name="costPrice" label="Cost (optional, admin only)" fullWidth size="small" type="number" inputProps={{ min: 0, step: "any" }} />
+              <TextField name="description" label="Description" multiline minRows={3} fullWidth size="small" />
+              <TextField name="link" label="Link to the brand's page" fullWidth size="small" />
+              <FormLabel>Sizes (smallest → largest)</FormLabel>
+              <AddSizes sizes={sizeArray} setSizes={setSizeArray} />
+              <AddColorsForm
+                colors={colors}
+                setColors={setColors}
+                colorImages={colorImages}
+                setColorImages={setColorImages}
+                publicIdBaseRef={publicIdBaseRef}
+                patchColorUrl={patchColorUrl}
+              />
+              <FormControl size="small" sx={{ maxWidth: 280 }}>
+                <InputLabel id="new-bike-stock">Starting stock for every size / colour</InputLabel>
+                <Select labelId="new-bike-stock" label="Starting stock for every size / colour" name="initialStock" defaultValue="Available to Order">
+                  {STOCK_OPTIONS.map((o) => (
+                    <MenuItem key={o.value} value={o.value}>
+                      {o.value}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Button type="submit" variant="contained" disableElevation sx={{ bgcolor: NAV_BAR_BG, alignSelf: "flex-start" }}>
+                Add bike
+              </Button>
+            </Stack>
+          </form>
+        </Collapse>
       </Paper>
 
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ color: NAV_BAR_BG, mb: 1.5 }}>
-          Existing “other” bikes
-        </Typography>
-        <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap sx={{ mb: 2, alignItems: "center" }}>
-          <FormControl size="small" sx={{ minWidth: 160 }}>
-            <InputLabel id="other-bikes-visibility">Visibility</InputLabel>
-            <Select
-              labelId="other-bikes-visibility"
-              label="Visibility"
-              value={listVisibility}
-              onChange={(e) => setListVisibility(e.target.value)}
-            >
+        <Stack direction={{ xs: "column", md: "row" }} spacing={2} useFlexGap sx={{ mb: 2, alignItems: { md: "center" } }}>
+          <Typography variant="subtitle1" fontWeight={700} sx={{ color: NAV_BAR_BG, flex: 1 }}>
+            Bikes ({filteredBikes.length})
+          </Typography>
+          <TextField
+            size="small"
+            placeholder="Search by name, brand, type, year"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ minWidth: { md: 280 } }}
+          />
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel id="other-bikes-visibility">Show</InputLabel>
+            <Select labelId="other-bikes-visibility" label="Show" value={listVisibility} onChange={(e) => setListVisibility(e.target.value)}>
               <MenuItem value="all">All</MenuItem>
-              <MenuItem value="public">Public only</MenuItem>
-              <MenuItem value="private">Private only</MenuItem>
+              <MenuItem value="public">Public</MenuItem>
+              <MenuItem value="private">Private drafts</MenuItem>
+              <MenuItem value="archived">Archived</MenuItem>
             </Select>
           </FormControl>
-          <FormControl size="small" sx={{ minWidth: 200 }}>
+          <FormControl size="small" sx={{ minWidth: 160 }}>
             <InputLabel id="other-bikes-sort">Sort</InputLabel>
-            <Select
-              labelId="other-bikes-sort"
-              label="Sort"
-              value={listSort}
-              onChange={(e) => setListSort(e.target.value)}
-            >
+            <Select labelId="other-bikes-sort" label="Sort" value={listSort} onChange={(e) => setListSort(e.target.value)}>
               <MenuItem value="name-asc">Name A–Z</MenuItem>
               <MenuItem value="public-first">Public first</MenuItem>
               <MenuItem value="private-first">Private first</MenuItem>
@@ -1047,7 +1200,7 @@ const AddNewBike = () => {
         {!bikes?.length ? (
           <Typography color="text.secondary">No bikes in this list yet.</Typography>
         ) : filteredBikes.length === 0 ? (
-          <Typography color="text.secondary">No bikes match this filter.</Typography>
+          <Typography color="text.secondary">No bikes match.</Typography>
         ) : (
           <Box
             sx={{
@@ -1058,49 +1211,26 @@ const AddNewBike = () => {
               alignItems: { xs: "stretch", md: "flex-start" },
             }}
           >
-            <OtherBikesBrandNav
-              transitionCount={bikesByBrand.transition.length}
-              norcoCount={bikesByBrand.norco.length}
-              ibisCount={bikesByBrand.ibis.length}
-            />
+            <OtherBikesBrandNav counts={brandCounts} />
             <Stack spacing={4} sx={{ flex: 1, minWidth: 0 }}>
-              <OtherBikesBrandSection
-                id={OTHER_BIKE_BRAND_SECTION_IDS.transition}
-                title="Transition"
-                subtitle="Bikes on this admin list with brand Transition."
-                bikes={bikesByBrand.transition}
-                onRefresh={fetchBikes}
-              />
-              <OtherBikesBrandSection
-                id={OTHER_BIKE_BRAND_SECTION_IDS.norco}
-                title="Norco"
-                subtitle="Bikes on this admin list with brand Norco."
-                bikes={bikesByBrand.norco}
-                onRefresh={fetchBikes}
-              />
-              <OtherBikesBrandSection
-                id={OTHER_BIKE_BRAND_SECTION_IDS.ibis}
-                title="Ibis"
-                subtitle="Bikes on this admin list with brand Ibis."
-                bikes={bikesByBrand.ibis}
-                onRefresh={fetchBikes}
-              />
-              {bikesByBrand.other.length > 0 ? (
-                <Box sx={{ pt: 1 }}>
-                  <Typography variant="h6" fontWeight={800} sx={{ color: NAV_BAR_BG }}>
-                    Other brands
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 2, maxWidth: 720 }}>
-                    Brand set to “other” or anything other than Transition, Norco, or Ibis. Not in the jump
-                    links above.
-                  </Typography>
-                  <Stack spacing={2}>
-                    {bikesByBrand.other.map((bike) => (
-                      <OtherBikeEditor key={bike._id} bike={bike} onRefresh={fetchBikes} />
-                    ))}
-                  </Stack>
-                </Box>
-              ) : null}
+              {[
+                ["norco", "Norco"],
+                ["ibis", "Ibis"],
+                ["transition", "Transition"],
+                ["other", "Other brands"],
+              ]
+                .filter(([key]) => key !== "other" || bikesByBrand.other.length)
+                .map(([key, title]) => (
+                  <OtherBikesBrandSection
+                    key={key}
+                    id={OTHER_BIKE_BRAND_SECTION_IDS[key]}
+                    title={title}
+                    bikes={bikesByBrand[key]}
+                    onRefresh={fetchBikes}
+                    expandedIds={expandedIds}
+                    toggle={toggle}
+                  />
+                ))}
             </Stack>
           </Box>
         )}
