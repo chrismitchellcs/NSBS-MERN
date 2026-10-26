@@ -19,11 +19,18 @@ app.set("trust proxy", 1);
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://nsbs-mern-frontend-f20uiuyrs-chris-projects-04c8e11c.vercel.app",
-  "https://nsbs-mern-frontend-gw2wswtrg-chris-projects-04c8e11c.vercel.app",
-  "https://nsbs-mern-frontend-git-test-branch-chris-projects-04c8e11c.vercel.app",
   "https://www.northshorebikeshop.net",
+  "https://northshorebikeshop.net",
 ];
+
+/**
+ * Any deployment of this project's frontend on Vercel (per-deploy and per-branch preview URLs).
+ * Only this team can create hosts ending in its team slug.
+ */
+const VERCEL_PREVIEW_ORIGIN = /^https:\/\/nsbs-mern-frontend(?:-[a-z0-9-]+)?-chris-projects-04c8e11c\.vercel\.app$/;
+
+const isAllowedOrigin = (origin) =>
+  allowedOrigins.includes(origin) || VERCEL_PREVIEW_ORIGIN.test(origin);
 
 // Request Logger
 app.use((req, res, next) => {
@@ -46,7 +53,7 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 const corsOptions = {
   origin: function (origin, callback) {
     console.log("CORS origin:", origin);
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || isAllowedOrigin(origin)) {
       callback(null, true);
     } else {
       console.log("Blocked CORS for origin:", origin);
