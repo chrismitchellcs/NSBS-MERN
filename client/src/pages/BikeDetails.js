@@ -23,6 +23,7 @@ const BikeDetails = () => {
   useEffect(() => {
     let cancelled = false;
     setNotFound(false);
+    setBike(null);
     axios
       .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/${bikeid}`, {
         withCredentials: true,
@@ -42,12 +43,13 @@ const BikeDetails = () => {
 
   /** Old links use "/shop/Transition/…"; settle on the lowercase address without a history entry. */
   useEffect(() => {
-    if (!bike?._id) return;
+    // Only the bike this URL asked for; a previous bike can still be in state mid-navigation.
+    if (!bike?._id || String(bike._id) !== String(bikeid)) return;
     const canonical = bikePath(bike);
     if (location.pathname !== canonical) {
       navigate(`${canonical}${location.search}`, { replace: true, state: location.state });
     }
-  }, [bike, location.pathname, location.search, location.state, navigate]);
+  }, [bike, bikeid, location.pathname, location.search, location.state, navigate]);
 
   const seoData = useMemo(() => {
     if (notFound) return BIKE_NOT_FOUND_META;

@@ -5,8 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node api/index.js",
-    "dev": "NODE_ENV=development nodemon api/index.js",
-    "generate-sitemap": "node generateSitemap.js"
+    "dev": "NODE_ENV=development nodemon api/index.js"
   },
   "dependencies": {
     "axios": "^1.6.2",

@@ -35,12 +35,18 @@ export function transitionBikeIssues(bike) {
   if (!isLive && sellableRows.length === 0) return [];
 
   const issues = [];
-  const photos = parseJsonObject(bike.colors);
+  // Same colour matching as the bike page: case and spacing don't matter.
+  const colorKey = (c) => String(c || "").trim().toLowerCase().replace(/\s+/g, " ");
+  const photoKeys = new Set(
+    Object.entries(parseJsonObject(bike.colors))
+      .filter(([, url]) => String(url || "").trim())
+      .map(([color]) => colorKey(color))
+  );
   const colorsMissingPhoto = [
     ...new Set(
       sellableRows
         .map((r) => String(r.color).trim())
-        .filter((color) => color && !String(photos[color] || "").trim())
+        .filter((color) => color && !photoKeys.has(colorKey(color)))
     ),
   ];
 

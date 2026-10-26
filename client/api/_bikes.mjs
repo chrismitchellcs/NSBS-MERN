@@ -16,7 +16,7 @@ export async function getPublicBikes() {
   if (cache && Date.now() - cache.at < TTL_MS) return cache.list;
   const res = await fetch(`${API_BASE}/api/bikes/`, {
     headers: { accept: "application/json" },
-    signal: AbortSignal.timeout(8000),
+    signal: AbortSignal.timeout(6000),
   });
   if (!res.ok) throw new Error(`Bikes API responded ${res.status}`);
   const list = await res.json();

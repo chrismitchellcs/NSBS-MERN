@@ -13,7 +13,6 @@ const BikeDetails = lazy(() => import("pages/BikeDetails"));
 const ReturnPolicy = lazy(() => import("pages/ReturnPolicy"));
 const AdminDashboard = lazy(() => import("pages/AdminDashboard"));
 const AdminLogin = lazy(() => import("pages/AdminLogin"));
-const AdminBikes = lazy(() => import("components/AdminActions/AdminBikes"));
 const AdminAddBikesTransition = lazy(
   () => import("pages/AdminAddBikesTransition"),
 );
@@ -66,7 +65,6 @@ const App = () => {
                   <Route path="/bike" element={<Shop />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/return-policy" element={<ReturnPolicy />} />
-                  <Route path="/admin-oldadd" element={<AdminBikes />} />
                   <Route path="/admin-dashboard" element={<AdminDashboard />} />
                   <Route path="/admin-login" element={<AdminLogin />} />
                   <Route

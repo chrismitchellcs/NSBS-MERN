@@ -1,4 +1,3 @@
-const Bike = require("../models/bikeModel");
 const Transition = require("../models/Transition");
 const Other = require("../models/Other");
 const AllBikes = require("../models/AllBikes");
@@ -6,18 +5,43 @@ const mongoose = require("mongoose");
 const {
   sendEmail,
   sendBikeEmail,
-  sendCheckoutPaymentEmail,
-  sendCheckoutPaymentCustomerEmail,
 } = require("../utils/email");
 const {
   destroyCloudinaryImagesFromBikeColors,
 } = require("../utils/cloudinaryBikeCleanup");
 const axios = require("axios");
 const {
-  validateCheckoutStock,
   classifyInquiryFulfillment,
   variantPricingForBike,
 } = require("../services/inventoryAvailability");
+
+/**
+ * Google reCAPTCHA check. The secret goes in the POST body (never the URL) so it can't surface in
+ * logged or returned axios errors.
+ */
+async function verifyRecaptcha(token) {
+  if (typeof token !== "string" || !token || token.length > 4000) return false;
+  try {
+    const { data } = await axios.post(
+      "https://www.google.com/recaptcha/api/siteverify",
+      new URLSearchParams({ secret: process.env.SECRET_KEY || "", response: token }).toString(),
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" }, timeout: 8000 }
+    );
+    return Boolean(data && data.success);
+  } catch (err) {
+    console.error("[recaptcha] verify failed:", err.message);
+    return false;
+  }
+}
+
+/** Optional string field from a form: trimmed, capped, never an object. */
+function formText(value, max = 5000) {
+  if (value == null) return "";
+  if (typeof value !== "string" && typeof value !== "number") return "";
+  return String(value).trim().slice(0, max);
+}
+
+const EMAIL_RE = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
 
 /** Dealer cost and internal POS fields never go to shoppers. */
 const ADMIN_ONLY_BIKE_FIELDS = ["costPrice"];
@@ -110,7 +134,8 @@ const testBikes = async (req, res) => {
 };
 
 const getBikesByBrand = async (req, res) => {
-  const brand = req.body.brand;
+  const brand = req.body && req.body.brand;
+  if (typeof brand !== "string") return res.status(400).json({ error: "brand must be a string" });
 
   try {
     const bikes = await AllBikes.aggregate([
@@ -119,12 +144,12 @@ const getBikesByBrand = async (req, res) => {
     ]);
     res.status(200).json(bikes.map(toPublicBike));
   } catch (error) {
-    res.status(400);
+    res.status(500).json({ error: "Could not load bikes" });
   }
 };
 const getBikesByType = async (req, res) => {
-  const type = req.body.type;
-  console.log(type);
+  const type = req.body && req.body.type;
+  if (typeof type !== "string") return res.status(400).json({ error: "type must be a string" });
   try {
     const bikes = await AllBikes.find({
       type: type,
@@ -138,7 +163,7 @@ const getBikesByType = async (req, res) => {
       .lean();
     res.status(200).json(bikes.map(toPublicBike));
   } catch (error) {
-    res.status(400);
+    res.status(500).json({ error: "Could not load bikes" });
   }
 };
 
@@ -190,46 +215,6 @@ const getBikeViewStats = async (req, res) => {
   }
 };
 
-// create a new bike
-
-const createBike = async (req, res) => {
-  const {
-    brand,
-    name,
-    material,
-    type,
-    sizes,
-    sizesa,
-    sizesis,
-    price,
-    saleprice,
-    images,
-    description,
-    link,
-  } = req.body;
-  console.log(sizes);
-  try {
-    const bike = await Bike.create({
-      brand,
-      name,
-      material,
-      type,
-      sizes,
-      sizesa,
-      sizesis,
-      price,
-      saleprice,
-      images,
-      description,
-      link,
-    });
-    const bikes = await Bike.find({}).sort({ brand: 1, name: 1 });
-    res.status(200).json(bikes);
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ error: error.message });
-  }
-};
 
 const createOther = async (req, res) => {
   const {
@@ -619,14 +604,10 @@ const updateNorco = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "Invalid ID" });
   }
+  const update = bikeUpdateFields(req.body && req.body.newBike, { allowStock: false });
+  if (!update) return res.status(400).json({ error: "Nothing to update" });
 
-  const bike = await AllBikes.findOneAndUpdate(
-    { _id: id, database: "NORCO" },
-    {
-      ...req.body.newBike,
-    },
-    { new: true }
-  );
+  const bike = await AllBikes.findOneAndUpdate({ _id: id, database: "NORCO" }, { $set: update }, { new: true });
   if (!bike) {
     return res.status(404).json({ error: "No such bike" });
   }
@@ -878,6 +859,27 @@ const getTransitions = async (req, res) => {
   res.status(200).json(bikes.map(toPublicBike));
 };
 
+/** Admin edits never change a bike's identity, catalog, or shopper view count. */
+const PROTECTED_BIKE_FIELDS = ["_id", "__v", "database", "viewCount"];
+/** Stock on Transition / Norco bikes comes from vendor uploads; their edit screens never send it. */
+const UPLOAD_OWNED_FIELDS = ["models", "inStock"];
+
+/**
+ * Only the fields an admin edit actually sent, minus protected ones, so a stale admin tab can't
+ * roll back stock from a newer upload or reset view counts.
+ */
+function bikeUpdateFields(newBike, { allowStock }) {
+  if (!newBike || typeof newBike !== "object" || Array.isArray(newBike)) return null;
+  const update = {};
+  Object.entries(newBike).forEach(([key, value]) => {
+    if (key.startsWith("$") || key.includes(".")) return;
+    if (PROTECTED_BIKE_FIELDS.includes(key)) return;
+    if (!allowStock && UPLOAD_OWNED_FIELDS.includes(key)) return;
+    update[key] = value;
+  });
+  return Object.keys(update).length ? update : null;
+}
+
 const getAllTransitions = async (req, res) => {
   const bikes = await AllBikes.find({
     database: "TRANSITION",
@@ -889,17 +891,13 @@ const getAllTransitions = async (req, res) => {
 
 const updateTransition = async (req, res) => {
   const { id } = req.params;
-  console.log(req.body);
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "Invalid ID" });
   }
+  const update = bikeUpdateFields(req.body && req.body.newBike, { allowStock: false });
+  if (!update) return res.status(400).json({ error: "Nothing to update" });
 
-  const bike = await AllBikes.findOneAndUpdate(
-    { _id: id },
-    {
-      ...req.body.newBike,
-    }
-  );
+  const bike = await AllBikes.findOneAndUpdate({ _id: id }, { $set: update }, { new: true });
   if (!bike) {
     return res.status(404).json({ error: "No such bike" });
   }
@@ -909,17 +907,13 @@ const updateTransition = async (req, res) => {
 
 const updateOther = async (req, res) => {
   const { id } = req.params;
-  console.log(req.body);
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "Invalid ID" });
   }
+  const update = bikeUpdateFields(req.body && req.body.newBike, { allowStock: true });
+  if (!update) return res.status(400).json({ error: "Nothing to update" });
 
-  const bike = await AllBikes.findOneAndUpdate(
-    { _id: id },
-    {
-      ...req.body.newBike,
-    }
-  );
+  const bike = await AllBikes.findOneAndUpdate({ _id: id }, { $set: update }, { new: true });
   if (!bike) {
     return res.status(404).json({ error: "No such bike" });
   }
@@ -947,60 +941,27 @@ const deleteOther = async (req, res) => {
   }
 };
 
-// delete a bike
-const deleteBike = async (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "Invalid ID" });
-  }
 
-  const bike = await Bike.findOneAndDelete({ _id: id });
-  if (!bike) {
-    return res.status(404).json({ error: "No such bike" });
-  }
-
-  const bikes = await Bike.find({}).sort({ brand: 1, name: 1 });
-  res.status(200).json(bikes);
-};
-
-// update a bike
-const updateBike = async (req, res) => {
-  const { id } = req.params;
-  console.log(req.body);
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "Invalid ID" });
-  }
-
-  const bike = await Bike.findOneAndUpdate(
-    { _id: id },
-    {
-      ...req.body.newBike,
-    }
-  );
-  if (!bike) {
-    return res.status(404).json({ error: "No such bike" });
-  }
-
-  res.status(200).json(bike);
-};
 
 const sendForm = async (req, res) => {
-  const { token, name, email, subject, message } = req.body;
+  const body = req.body || {};
+  const name = formText(body.name, 200);
+  const email = formText(body.email, 320);
+  const subject = formText(body.subject, 200);
+  const message = formText(body.message, 10000);
+  if (!name || !EMAIL_RE.test(email)) {
+    return res.status(400).json({ message: "Please include your name and a valid email." });
+  }
 
   try {
-    const response = await axios.post(
-      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
-    );
-
-    if (response.data.success) {
-      await sendEmail(name, email, subject, message);
-      res.status(200).send();
-    } else {
-      res.status(500).send("Robot");
+    if (!(await verifyRecaptcha(body.token))) {
+      return res.status(400).json({ message: "reCAPTCHA check failed. Please try again." });
     }
+    await sendEmail(name, email, subject, message);
+    return res.status(200).send();
   } catch (error) {
-    console.error(error);
-    res.status(500).send(error);
+    console.error("[sendForm]", error.message);
+    return res.status(500).json({ message: "We couldn't send your message. Please email us directly." });
   }
 };
 
@@ -1020,12 +981,13 @@ function computeCheckoutChargeCadFromBike(bike, color, size) {
 }
 
 const sendBikeForm = async (req, res) => {
-  const {
-    token,
+  const body = req.body || {};
+  const token = body.token;
+  const bikeprice = body.bikeprice;
+  const [
     bike,
     bikecolor,
     bikesize,
-    bikeprice,
     bikeavailability,
     bikeid,
     name,
@@ -1040,15 +1002,33 @@ const sendBikeForm = async (req, res) => {
     province,
     postalCode,
     message,
-  } = req.body;
+  ] = [
+    "bike",
+    "bikecolor",
+    "bikesize",
+    "bikeavailability",
+    "bikeid",
+    "name",
+    "email",
+    "phone",
+    "deliveryOption",
+    "firstName",
+    "lastName",
+    "address",
+    "apartmentSuite",
+    "city",
+    "province",
+    "postalCode",
+    "message",
+  ].map((key) => formText(body[key], key === "message" ? 10000 : 300));
+
+  if (!name || !EMAIL_RE.test(email) || !bikeid) {
+    return res.status(400).json({ message: "Please include your name and a valid email." });
+  }
 
   try {
-    const response = await axios.post(
-      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
-    );
-
-    if (!response.data.success) {
-      return res.status(500).send("Robot");
+    if (!(await verifyRecaptcha(token))) {
+      return res.status(400).json({ message: "reCAPTCHA check failed. Please try again." });
     }
 
     const classified = await classifyInquiryFulfillment({
@@ -1110,8 +1090,10 @@ const sendBikeForm = async (req, res) => {
       payable: classified.payable,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send(error);
+    console.error("[sendBikeForm]", error.message);
+    return res.status(500).json({
+      message: "We couldn't send your inquiry. Please call or email the shop.",
+    });
   }
 };
 
@@ -1119,255 +1101,12 @@ const checkPassword = async (req, res) => {
   res.status(200).send("");
 };
 
-const validateCheckoutStockRoute = async (req, res) => {
-  try {
-    const { bikeId, bikeid, color, bikecolor, size, bikesize } = req.body;
-    const result = await validateCheckoutStock({
-      bikeId: bikeId ?? bikeid,
-      color: color ?? bikecolor,
-      size: size ?? bikesize,
-    });
-    if (result.ok) {
-      return res.status(200).json({
-        ok: true,
-        source: result.source,
-        payable: result.payable,
-        fulfillment: result.fulfillment,
-      });
-    }
-    return res.status(result.code || 500).json({
-      ok: false,
-      message: result.message,
-      source: result.source,
-    });
-  } catch (e) {
-    console.error(e);
-    return res.status(500).json({ ok: false, message: e.message });
-  }
-};
-
-function normalizePayBilling(body) {
-  const line1 = String(body.billingAddressLine1 || "").trim();
-  const line2 = String(body.billingAddressLine2 || "").trim();
-  const city = String(body.billingCity || "").trim();
-  const province = String(body.billingProvince || "").trim();
-  const postalRaw = String(body.billingPostalCode || "");
-  const postal = postalRaw.replace(/\s+/g, "").toUpperCase();
-  const country = (
-    String(body.billingCountry || "CA").trim().toUpperCase() || "CA"
-  ).slice(0, 2);
-  return { line1, line2, city, province, postal, country };
-}
-
-/** Canadian postal code without space: A1A1A1 */
-function isCanadianPostal(postal) {
-  return /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z]\d[ABCEGHJ-NPRSTV-Z]\d$/i.test(
-    postal
-  );
-}
-
-function trimPayField(v, max) {
-  const s = String(v ?? "").trim();
-  if (!max || s.length <= max) return s;
-  return `${s.slice(0, max - 1)}…`;
-}
-
-/** Contact / delivery / shipping from checkout page (for payment notification email). */
-function isCheckoutCustomerEmailValid(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").trim());
-}
-
-function normalizePayInquiryPayload(body) {
-  return {
-    customerName: trimPayField(body.customerName, 200),
-    customerEmail: trimPayField(body.customerEmail, 320),
-    customerPhone: trimPayField(body.customerPhone, 80),
-    deliveryOption: trimPayField(body.deliveryOption, 40),
-    shipFirstName: trimPayField(body.shipFirstName, 120),
-    shipLastName: trimPayField(body.shipLastName, 120),
-    shipAddress: trimPayField(body.shipAddress, 300),
-    shipApartmentSuite: trimPayField(body.shipApartmentSuite, 120),
-    shipCity: trimPayField(body.shipCity, 120),
-    shipProvince: trimPayField(body.shipProvince, 80),
-    shipPostal: trimPayField(body.shipPostal, 24),
-    bikeAvailability: trimPayField(body.bikeAvailability, 200),
-  };
-}
-
-const pay = async (req, res) => {
-  const {
-    token,
-    bikeid,
-    bikeColor,
-    bikeSize,
-    nameOnCard,
-    subtotal: clientSubtotal,
-  } = req.body;
-
-  const inquiry = normalizePayInquiryPayload(req.body);
-
-  if (!inquiry.customerName) {
-    return res.status(400).json({
-      message:
-        "Enter your full name in the Contact section above Payment, then try again.",
-    });
-  }
-  if (!isCheckoutCustomerEmailValid(inquiry.customerEmail)) {
-    return res.status(400).json({
-      message:
-        "Enter a valid email in the Contact section above Payment, then try again.",
-    });
-  }
-
-  const stockCheck = await validateCheckoutStock({
-    bikeId: bikeid,
-    color: bikeColor,
-    size: bikeSize,
-    forPayment: true,
-  });
-  if (!stockCheck.ok) {
-    return res.status(stockCheck.code || 409).json({
-      message: stockCheck.message || "Stock validation failed",
-    });
-  }
-
-  if (!mongoose.Types.ObjectId.isValid(String(bikeid || ""))) {
-    return res.status(400).json({ message: "Invalid bike id" });
-  }
-
-  const bikeDoc = await AllBikes.findById(bikeid).lean();
-  if (!bikeDoc || bikeDoc.archived) {
-    return res.status(404).json({ message: "Bike not found" });
-  }
-  if (!bikeDoc.public) {
-    return res.status(403).json({
-      message: "This product is not available for purchase.",
-    });
-  }
-
-  const charge = computeCheckoutChargeCadFromBike(bikeDoc, bikeColor, bikeSize);
-  if (!charge) {
-    return res.status(400).json({
-      message: "Unable to determine a valid price for this bike.",
-    });
-  }
-
-  const clientSubNum = Number(clientSubtotal);
-  if (Number.isFinite(clientSubNum)) {
-    const diff = Math.abs(clientSubNum - charge.subTotal);
-    if (diff > 0.02) {
-      console.warn("[pay] client subtotal mismatch (server amount used)", {
-        bikeid,
-        clientSubtotal: clientSubNum,
-        serverSubTotal: charge.subTotal,
-      });
-    }
-  }
-
-  const b = normalizePayBilling(req.body);
-  if (!b.line1 || !b.city || !b.province || !b.postal) {
-    return res.status(400).json({
-      message:
-        "Billing address is required: street, city, province, and postal code (for card verification).",
-    });
-  }
-  if (b.country === "CA" && !isCanadianPostal(b.postal)) {
-    return res.status(400).json({
-      message:
-        "Enter a valid Canadian postal code (e.g. V6Z 1A1).",
-    });
-  }
-
-  const cardholderName = String(nameOnCard || "").trim() || "Card";
-
-  const auth = Buffer.from(
-    `${process.env.BAMBORA_MERCHANT_ID}:${process.env.BAMBORA_API_KEY}`
-  ).toString("base64");
-
-  const paymentPayload = {
-    amount: charge.total,
-    currency: "CAD",
-    payment_method: "token",
-    token: {
-      complete: true,
-      code: token,
-      name: cardholderName,
-    },
-    billing: {
-      name: cardholderName,
-      address_line1: b.line1,
-      city: b.city,
-      province: b.province,
-      country: b.country,
-      postal_code: b.postal,
-    },
-  };
-  if (b.line2) {
-    paymentPayload.billing.address_line2 = b.line2;
-  }
-
-  try {
-    const paymentResponse = await axios.post(
-      "https://api.na.bambora.com/v1/payments",
-      paymentPayload,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Passcode ${auth}`,
-        },
-      }
-    );
-    const paymentData = paymentResponse.data || {};
-    try {
-      await sendCheckoutPaymentEmail({
-        bikeLabel: `${bikeDoc.brand || ""} ${bikeDoc.name || ""}`.trim() || "Bike",
-        bikeid: String(bikeid),
-        bikeColor: String(bikeColor || ""),
-        bikeSize: String(bikeSize || ""),
-        inquiry,
-        cardholderName,
-        billing: b,
-        charge,
-        bambora: {
-          id: paymentData.id,
-          message: paymentData.message,
-          approved: paymentData.approved,
-        },
-      });
-    } catch (emailErr) {
-      console.error("[pay] checkout payment notification email failed:", emailErr);
-    }
-    try {
-      await sendCheckoutPaymentCustomerEmail({
-        customerName: inquiry.customerName,
-        customerEmail: inquiry.customerEmail,
-        bikeLabel: `${bikeDoc.brand || ""} ${bikeDoc.name || ""}`.trim() || "Bike",
-        bikeColor: String(bikeColor || ""),
-        bikeSize: String(bikeSize || ""),
-        charge,
-        transactionId: paymentData.id,
-      });
-    } catch (custEmailErr) {
-      console.error("[pay] customer payment receipt email failed:", custEmailErr);
-    }
-    return res.status(200).json(paymentResponse.data);
-  } catch (error) {
-    if (error.response) {
-      return res.status(error.response.status).json(error.response.data);
-    }
-    return res.status(500).json({ error: error.message });
-  }
-};
-
 module.exports = {
-  createBike,
   createOther,
   getBikes,
   getOthers,
   getBike,
   getBikeViewStats,
-  deleteBike,
-  updateBike,
   addTransitions,
   addNorco,
   deleteNorco,
@@ -1387,6 +1126,4 @@ module.exports = {
   getAllTransitions,
   updateOther,
   deleteOther,
-  pay,
-  validateCheckoutStockRoute,
 };

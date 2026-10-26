@@ -52,11 +52,11 @@ const EditAvailability = ({ bike }) => {
       setModels(newModels);
       setEdit(false);
 
-      const newBike = { ...bike, models: JSON.stringify(newModels) };
+      const newBike = { models: JSON.stringify(newModels) };
 
       await axios
         .patch(
-          `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/other/${newBike._id}`,
+          `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/other/${bike._id}`,
           {
             newBike,
           },

@@ -42,10 +42,11 @@ function findVariantRow(bike, color, size) {
   return map.get(want) || null;
 }
 
+/** A variant price of 0 / blank means "use the product price", never a free bike. */
 function priceOrNull(value) {
   if (value == null || value === "") return null;
   const n = Number(value);
-  return Number.isFinite(n) ? n : null;
+  return Number.isFinite(n) && n > 0 ? n : null;
 }
 
 /**
@@ -121,8 +122,8 @@ async function classifyInquiryFulfillment({ bikeId, color, size }) {
   }
 
   const bike = await AllBikes.findById(id).lean();
-  if (!bike) {
-    return { ok: false, code: 404, message: "Bike not found" };
+  if (!bike || !bike.public || bike.archived) {
+    return { ok: false, code: 404, message: "This bike is no longer listed." };
   }
 
   const row = findVariantRow(bike, color, size);
@@ -170,49 +171,10 @@ async function classifyInquiryFulfillment({ bikeId, color, size }) {
   };
 }
 
-/**
- * @param {{ forPayment?: boolean }} opts — when forPayment, refuse inquiry_only / non-payable.
- */
-async function validateCheckoutStock({
-  bikeId,
-  color,
-  size,
-  forPayment = false,
-}) {
-  const classified = await classifyInquiryFulfillment({ bikeId, color, size });
-  if (!classified.ok) {
-    return {
-      ok: false,
-      code: classified.code,
-      message: classified.message,
-    };
-  }
-
-  if (forPayment && !classified.payable) {
-    return {
-      ok: false,
-      code: 409,
-      message:
-        "This configuration is not available for online payment right now. Please send an inquiry and we will follow up.",
-      source: "payable_gate",
-      payable: false,
-      fulfillment: classified.fulfillment,
-    };
-  }
-
-  return {
-    ok: true,
-    source: classified.fulfillment,
-    payable: classified.payable,
-    fulfillment: classified.fulfillment,
-  };
-}
-
 module.exports = {
   parseModelsJson,
   findVariantRow,
   variantPricingForBike,
   vendorAllowsSpecialOrder,
   classifyInquiryFulfillment,
-  validateCheckoutStock,
 };

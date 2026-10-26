@@ -1,15 +1,22 @@
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { Box, Button, Stack, Typography } from "@mui/material";
-import { NAV_BAR_BG } from "components/General/NavBar";
+import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
+import { Box, Button, Link, Stack, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { Image } from "cloudinary-react";
-import { useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { brandPath } from "seo/seoData.mjs";
+import { availabilityLabel, availabilityRank, isInStore, isOutOfStock } from "utils/availability";
+import { NAV_BAR_BG } from "utils/brandColors";
+import { SHOP_PHONE } from "utils/shopHours";
 import {
   bikeHasVariantPricing,
   formatCadPrice,
   hasActiveShopSale,
   variantPricingFor,
 } from "utils/shopPrice";
+import SimilarBikes from "./SimilarBikes";
 
 const CLOUD_NAME =
   process.env.REACT_APP_CLOUDINARY_CLOUD_NAME || "ds4ukwnxl";
@@ -38,36 +45,27 @@ const allSizes = [
   "5",
 ];
 
-const availabilityMap = {
-  "In Stock": "Available",
-  "Pre-Order": "Pre-Order",
-  "Out of Stock": "Out of Stock",
-  "Out Of Stock": "Out of Stock",
-  "Low Stock (1)": "Low Stock",
-  "Low Stock (2)": "Low Stock",
-  "Low Stock (3)": "Low Stock",
-  "Low Stock (4)": "Low Stock",
-  "Low Stock (5)": "Low Stock",
-  "Available to Order": "Available to Order",
-  "In Store": "In Store",
-};
-
-function normalizeAvailabilityKey(av) {
-  if (av == null) return "";
-  return String(av).trim().toLowerCase().replace(/\s+/g, " ");
+/** Sorts "Medium 29" / "Medium MX" with Medium; unknown sizes ("One Size") go last. */
+function compareSizes(a, b) {
+  const rank = (size) => {
+    const s = String(size || "");
+    const exact = allSizes.indexOf(s);
+    if (exact !== -1) return [exact, ""];
+    const base = allSizes.indexOf(s.split(" ")[0]);
+    return base !== -1 ? [base, s] : [allSizes.length, s];
+  };
+  const [ra, sa] = rank(a);
+  const [rb, sb] = rank(b);
+  return ra - rb || sa.localeCompare(sb);
 }
 
-function isOutOfStock(av) {
-  return normalizeAvailabilityKey(av) === "out of stock";
-}
-
-function availabilityLabel(av) {
-  if (av == null) return "";
-  const n = normalizeAvailabilityKey(av);
-  const hit = Object.entries(availabilityMap).find(
-    ([k]) => normalizeAvailabilityKey(k) === n
-  );
-  return hit ? hit[1] : String(av);
+/** "https://www.transitionbikes.com/Bikes/Spur" → "transitionbikes.com" */
+function linkHost(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./i, "");
+  } catch {
+    return "";
+  }
 }
 
 function parseBikeColors(raw) {
@@ -303,7 +301,7 @@ function AboutSection({ bike }) {
             endIcon={<OpenInNewIcon sx={{ fontSize: 18 }} aria-hidden />}
             sx={{ ...sectionCtaSx, bgcolor: "#fff" }}
           >
-            See more
+            {linkHost(bike.link) ? `Full specs on ${linkHost(bike.link)}` : "Full specs"}
           </Button>
         </Stack>
       ) : null}
@@ -311,54 +309,141 @@ function AboutSection({ bike }) {
   );
 }
 
+const pickerLabelSx = {
+  m: 0,
+  mb: 1,
+  color: NAV_BAR_BG,
+  fontWeight: 700,
+  fontSize: "0.72rem",
+  letterSpacing: "0.14em",
+  textTransform: "uppercase",
+};
+
+const priceTextSx = { m: 0, fontSize: "1.5rem", fontWeight: 300, fontVariantNumeric: "tabular-nums" };
+
+const buyButtonSx = {
+  py: { xs: 1.4, md: 1.75 },
+  borderRadius: "10px",
+  textTransform: "none",
+  fontWeight: 500,
+  fontSize: "1.05rem",
+  bgcolor: NAV_BAR_BG,
+  color: "#fff",
+  "&:hover": { bgcolor: "#1e332b" },
+  "&.Mui-disabled": { bgcolor: "rgba(0,0,0,0.1)", color: "rgba(0,0,0,0.45)" },
+};
+
+function optionSx(selected, muted) {
+  return {
+    m: 0,
+    textTransform: "none",
+    borderRadius: "10px",
+    border: "1px solid",
+    borderColor: selected ? NAV_BAR_BG : "rgba(0,0,0,0.18)",
+    boxShadow: selected ? `inset 0 0 0 1px ${NAV_BAR_BG}` : "none",
+    bgcolor: selected ? "rgba(36, 61, 51, 0.06)" : "#fff",
+    color: muted ? "rgba(0,0,0,0.45)" : "#1a1a1a",
+    transition: "border-color 0.15s, background-color 0.15s",
+    "&:hover": { borderColor: NAV_BAR_BG, bgcolor: selected ? "rgba(36, 61, 51, 0.08)" : "rgba(36, 61, 51, 0.03)" },
+    "&.Mui-disabled": { opacity: 0.4, borderStyle: "dashed", color: "rgba(0,0,0,0.5)" },
+  };
+}
+
+function ShopPerks() {
+  return (
+    <Stack spacing={0.75} sx={{ pt: 0.5 }}>
+      {whyBuyNsbsItems.slice(0, 2).map((item) => (
+        <Stack key={item.title} direction="row" spacing={1} alignItems="center">
+          <CheckRoundedIcon sx={{ fontSize: 18, color: NAV_BAR_BG }} aria-hidden />
+          <Typography sx={{ fontSize: "0.92rem", color: "rgba(0,0,0,0.78)" }}>{item.title}</Typography>
+        </Stack>
+      ))}
+      <Stack direction="row" spacing={1} alignItems="center">
+        <PhoneOutlinedIcon sx={{ fontSize: 18, color: NAV_BAR_BG }} aria-hidden />
+        <Typography sx={{ fontSize: "0.92rem", color: "rgba(0,0,0,0.78)" }}>
+          Questions? Call{" "}
+          <Link href={`tel:${SHOP_PHONE.tel}`} sx={{ color: NAV_BAR_BG, fontWeight: 600 }}>
+            {SHOP_PHONE.display}
+          </Link>
+        </Typography>
+      </Stack>
+    </Stack>
+  );
+}
+
 const BikeLandingPageUpdated = ({ bike, navHidden = false }) => {
   const navigate = useNavigate();
   const images = useMemo(() => parseBikeColors(bike?.colors), [bike?.colors]);
-  const [currentImage, setCurrentImage] = useState(() =>
-    firstColorImage(images)
-  );
-  const [selectedModel, setSelectedModel] = useState(null);
+  const [currentImage, setCurrentImage] = useState(() => firstColorImage(images));
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
 
   const bikeTitle = [bike?.brand, bike?.name].filter(Boolean).join(" ").trim();
 
-  useEffect(() => {
-    const next = parseBikeColors(bike?.colors);
-    setCurrentImage(firstColorImage(next));
-    setSelectedModel(null);
-  }, [bike?._id, bike?.colors]);
+  const models = useMemo(() => parseBikeModelsArray(bike?.models), [bike?.models]);
+  const storeModels = useMemo(() => parseBikeModelsArray(bike?.inStock), [bike?.inStock]);
 
-  const models = useMemo(() => parseBikeModelsArray(bike?.models), [
-    bike?.models,
-  ]);
-  const storeModels = useMemo(() => parseBikeModelsArray(bike?.inStock), [
-    bike?.inStock,
-  ]);
-
+  /** One row per colour + size (shop stock wins over the vendor's), only for colours with a photo. */
   const sortedModels = useMemo(() => {
-    const allModels = [...models, ...storeModels];
-    const uniqueModelsMap = new Map();
-    allModels.forEach((model) => {
+    const unique = new Map();
+    [...models, ...storeModels].forEach((model) => {
       const key = `${model.color}-${model.size}`;
-      const existing = uniqueModelsMap.get(key);
-
-      if (!existing) {
-        uniqueModelsMap.set(key, model);
-      } else if (
-        model.availability === "In Store" &&
-        existing.availability !== "In Store"
-      ) {
-        uniqueModelsMap.set(key, model);
+      const existing = unique.get(key);
+      if (!existing || (isInStore(model.availability) && !isInStore(existing.availability))) {
+        unique.set(key, model);
       }
     });
-    const uniqueModels = Array.from(uniqueModelsMap.values()).filter((m) =>
-      colorHasImage(images, m?.color)
-    );
-    return [...uniqueModels].sort((a, b) => {
-      const sizeDiff = allSizes.indexOf(a.size) - allSizes.indexOf(b.size);
-      if (sizeDiff !== 0) return sizeDiff;
-      return a.color.localeCompare(b.color);
-    });
+    return Array.from(unique.values())
+      .filter((m) => colorHasImage(images, m?.color))
+      .sort((a, b) => compareSizes(a.size, b.size) || String(a.color).localeCompare(String(b.color)));
   }, [models, storeModels, images]);
+
+  /** Each size with its best availability across colours. */
+  const sizeOptions = useMemo(() => {
+    const bySize = new Map();
+    sortedModels.forEach((m) => {
+      const prev = bySize.get(m.size);
+      if (!prev || availabilityRank(m.availability) < availabilityRank(prev.availability)) {
+        bySize.set(m.size, m);
+      }
+    });
+    return Array.from(bySize.values()).map((m) => ({ size: m.size, availability: m.availability }));
+  }, [sortedModels]);
+
+  const colorOptions = useMemo(
+    () => Object.entries(images).filter(([, url]) => typeof url === "string" && url.trim() !== ""),
+    [images]
+  );
+
+  const findModel = (size, color) =>
+    sortedModels.find((m) => m.size === size && normalizeColorKey(m.color) === normalizeColorKey(color)) || null;
+
+  const selectedModel = selectedSize && selectedColor ? findModel(selectedSize, selectedColor) : null;
+
+  useEffect(() => {
+    setCurrentImage(firstColorImage(images));
+    setSelectedColor(null);
+    setSelectedSize(null);
+  }, [bike?._id, images]);
+
+  const chooseColor = (color) => {
+    setSelectedColor(color);
+    if (images[color]) setCurrentImage(images[color]);
+  };
+
+  const chooseSize = (size) => {
+    setSelectedSize(size);
+    const offered = colorOptions.filter(([color]) => findModel(size, color));
+    if (selectedColor && !findModel(size, selectedColor)) setSelectedColor(null);
+    if (offered.length === 1) chooseColor(offered[0][0]);
+  };
+
+  // Only one size: nothing to choose (and pick the colour too if that size has just one).
+  useEffect(() => {
+    if (sizeOptions.length === 1) chooseSize(sizeOptions[0].size);
+    // chooseSize is recreated every render; this should only run when the options change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sizeOptions]);
 
   // Listed price is the cheapest variant's; once a variant is picked, show that variant's price.
   const displayPricing = useMemo(
@@ -368,483 +453,309 @@ const BikeLandingPageUpdated = ({ bike, navHidden = false }) => {
         : { price: bike?.price, saleprice: bike?.saleprice },
     [bike, selectedModel]
   );
-  const showFromLabel = useMemo(
-    () => !selectedModel && bikeHasVariantPricing(bike),
-    [bike, selectedModel]
-  );
+  const showFromLabel = !selectedModel && bikeHasVariantPricing(bike);
   const hasActiveSale = hasActiveShopSale(displayPricing.saleprice);
+  const saving = hasActiveSale ? Number(displayPricing.price) - Number(displayPricing.saleprice) : 0;
 
   const mainPublicId = extractPublicId(currentImage);
-  const mainAlt = bikeTitle
-    ? `${bikeTitle} — product image`
-    : "Bicycle product image";
+  const mainAlt = bikeTitle || "Bike";
+
+  const goToCheckout = () => {
+    const pid = extractPublicId(images[selectedColor] || images[selectedModel.color] || currentImage);
+    navigate(
+      `/checkout?bikeid=${bike._id}&color=${encodeURIComponent(selectedModel.color)}&size=${encodeURIComponent(
+        selectedModel.size
+      )}&image=${encodeURIComponent(pid || "")}&availability=${encodeURIComponent(selectedModel.availability || "")}`
+    );
+  };
+
+  const buyLabel = !selectedSize
+    ? "Select a size"
+    : !selectedModel
+      ? "Select a colour"
+      : isOutOfStock(selectedModel.availability)
+        ? "Out of stock, contact us"
+        : "Buy Now / Contact Us";
 
   return (
-    <div className="w-full flex md:flex-row flex-col">
-      {/* flex-1: uses all space left of the buy column; hero capped so it doesn’t dwarf the panel on huge screens */}
-      <div className="w-full md:flex-1 md:min-w-0 mt-6 px-4 sm:px-6 lg:px-10 md:pr-6 lg:pr-10">
-        {mainPublicId ? (
-          <div className="w-full flex justify-center md:justify-start lg:justify-center px-0 sm:px-2">
-            {/*
-              Stable min-height + same grey as panels avoids layout jump when src swaps.
-              key only bike._id so Cloudinary Image updates in place instead of remounting per colour.
-            */}
-            <Box
-              sx={{
-                width: "100%",
-                maxWidth: {
-                  xs: "min(100%, 600px)",
-                  sm: "min(100%, 600px)",
-                  md: "min(100%, 720px)",
-                  lg: "min(100%, 800px)",
-                  xl: "min(100%, 880px)",
-                },
-                minHeight: { xs: 260, sm: 300, md: 340, lg: 360 },
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                bgcolor: NSBS_PANEL_BG,
-                borderRadius: "12px",
-                mx: { xs: "auto", md: 0, lg: "auto" },
-              }}
+    <>
+      <div className="w-full flex md:flex-row flex-col">
+        <div className="w-full md:flex-1 md:min-w-0 mt-4 md:mt-6 px-4 sm:px-6 lg:px-10 md:pr-6 lg:pr-10">
+          {bike?.brand ? (
+            <Button
+              component={RouterLink}
+              to={brandPath(bike.brand)}
+              startIcon={<ArrowBackIosNewRoundedIcon sx={{ fontSize: "14px !important" }} />}
+              sx={{ mb: 1.5, px: 1, ml: -1, textTransform: "none", fontWeight: 600, color: NAV_BAR_BG }}
             >
-              <Image
-                key={bike._id}
-                cloudName={CLOUD_NAME}
-                publicId={mainPublicId}
-                width="1000"
-                crop="pad"
-                quality="100"
-                fetchFormat="auto"
-                alt={mainAlt}
-                style={{
-                  display: "block",
+              {bike.brand} bikes
+            </Button>
+          ) : null}
+          {mainPublicId ? (
+            <div className="w-full flex justify-center md:justify-start lg:justify-center px-0 sm:px-2">
+              {/* Stable min-height + panel grey avoids a layout jump when the colour (src) changes. */}
+              <Box
+                sx={{
                   width: "100%",
-                  height: "auto",
-                  maxHeight: "min(72vh, 640px)",
-                  objectFit: "contain",
-                }}
-              />
-            </Box>
-          </div>
-        ) : (
-          <div
-            className="w-full max-w-[min(100%,800px)] md:mx-0 mx-auto min-h-[200px] flex items-center justify-center bg-gray-100 text-gray-500 text-sm rounded"
-            role="img"
-            aria-label={mainAlt}
-          >
-            No image available
-          </div>
-        )}
-        <div className="md:ml-8 px-4 md:px-0 b-8">
-          <div className="text-lg text-gray-900 font-semibold mb-2">
-            Colours:
-          </div>
-          <Stack direction={"row"} spacing={1} useFlexGap flexWrap="wrap">
-            {Object.entries(images).map(([colorKey, value]) => {
-              if (value !== "") {
-                const thumbPid = extractPublicId(value);
-                const thumbAlt = bikeTitle
-                  ? `${bikeTitle} — ${colorKey}`
-                  : `${colorKey} colour`;
-                return (
-                  <Button
-                    key={colorKey}
-                    sx={{
-                      m: 0,
-                      p: 0.5,
-                      borderRadius: 2,
-                      transition: "background-color 0.5s ease",
-                      textTransform: "none",
-                      color: "black",
-                      "&:hover": {
-                        backgroundColor: "#c0c0c0",
-                        color: "black",
-                        "& img": {
-                          filter: " brightness(0.75)  contrast(1); ",
-                        },
-                      },
-                      "& img": {
-                        transition: "filter 0.5s ease",
-                      },
-                    }}
-                    onClick={() => setCurrentImage(value)}
-                  >
-                    <Stack alignItems={"center"}>
-                      {thumbPid ? (
-                        <Image
-                          cloudName={CLOUD_NAME}
-                          publicId={thumbPid}
-                          width="150"
-                          crop="pad"
-                          quality="100"
-                          fetchFormat="auto"
-                          alt={thumbAlt}
-                          style={{
-                            width: "100px",
-                            display: "block",
-                            objectFit: "contain",
-                          }}
-                        />
-                      ) : null}
-                      <Box fontSize={"12px"} fontWeight={"300"}>
-                        {colorKey}
-                      </Box>
-                    </Stack>
-                  </Button>
-                );
-              }
-              return null;
-            })}
-          </Stack>
-        </div>
-        <div className="mx-8 mb-8 mt-8 md:mt-10 md:block hidden">
-          <AboutSection bike={bike} />
-        </div>
-        <WhyBuyNsbsGrid className="mt-16 mb-16 mx-8 md:block hidden" />
-      </div>
-      <Box
-        component="aside"
-        aria-label="Pricing and availability"
-        className={`w-full md:shrink-0 md:w-[min(420px,40vw)] lg:w-[min(460px,36vw)] xl:w-[min(500px,34vw)] sticky md:self-start flex flex-col [scrollbar-width:none] [&::-webkit-scrollbar]:hidden overflow-hidden justify-center items-stretch ${
-          navHidden
-            ? "top-0 md:h-screen"
-            : "top-[80px] md:h-[calc(100vh-80px)]"
-        }`}
-        sx={{
-          bgcolor: NSBS_PANEL_BG,
-          ...purchaseColumnDividerSx,
-        }}
-      >
-        <Box
-          className="flex-1 overflow-y-auto w-full min-w-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          sx={{
-            py: { xs: 2.5, md: 3 },
-            px: { xs: 2, sm: 2.25 },
-            pl: { md: 2.5 },
-            pr: { md: 3, lg: 3.5 },
-          }}
-        >
-          <Stack spacing={2.25}>
-            <Box>
-              <Typography
-                component="h1"
-                sx={{
-                  m: 0,
-                  fontWeight: 800,
-                  fontSize: { xs: "1.35rem", sm: "1.5rem" },
-                  letterSpacing: "-0.02em",
-                  color: "#1a1a1a",
-                  lineHeight: 1.2,
+                  maxWidth: {
+                    xs: "min(100%, 600px)",
+                    md: "min(100%, 720px)",
+                    lg: "min(100%, 800px)",
+                    xl: "min(100%, 880px)",
+                  },
+                  minHeight: { xs: 220, sm: 300, md: 340, lg: 360 },
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  bgcolor: NSBS_PANEL_BG,
+                  borderRadius: "12px",
+                  mx: { xs: "auto", md: 0, lg: "auto" },
                 }}
               >
-                {bike.brand} {bike.name}
-              </Typography>
-            </Box>
-            <Box>
-              {!hasActiveSale ? (
-                <Stack direction="row" alignItems="baseline" flexWrap="wrap" columnGap={1} rowGap={0.5}>
-                  {showFromLabel ? (
-                    <Typography sx={{ m: 0, fontSize: "1.5rem", fontWeight: 300, color: "#1a1a1a" }}>
-                      From
-                    </Typography>
-                  ) : null}
-                  <Typography
-                    component="p"
-                    sx={{
-                      m: 0,
-                      fontSize: "1.5rem",
-                      fontWeight: 300,
-                      color: "#1a1a1a",
-                      fontVariantNumeric: "tabular-nums",
-                    }}
-                  >
-                    ${formatCadPrice(displayPricing.price)}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      m: 0,
-                      fontSize: "1.5rem",
-                      fontWeight: 300,
-                      color: "rgba(0,0,0,0.55)",
-                    }}
-                  >
-                    CAD
-                  </Typography>
-                </Stack>
-              ) : (
-                <Stack direction="row" alignItems="baseline" flexWrap="wrap" columnGap={1} rowGap={0.5}>
-                  {showFromLabel ? (
-                    <Typography sx={{ m: 0, fontSize: "1.5rem", fontWeight: 300, color: "#1a1a1a" }}>
-                      From
-                    </Typography>
-                  ) : null}
-                  <Typography
-                    sx={{
-                      m: 0,
-                      fontSize: "1.5rem",
-                      fontWeight: 300,
-                      color: "rgba(0,0,0,0.45)",
-                      textDecoration: "line-through",
-                      fontVariantNumeric: "tabular-nums",
-                    }}
-                  >
-                    ${formatCadPrice(displayPricing.price)}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      m: 0,
-                      fontSize: "1.5rem",
-                      fontWeight: 300,
-                      color: "#1a1a1a",
-                      fontVariantNumeric: "tabular-nums",
-                    }}
-                  >
-                    ${formatCadPrice(displayPricing.saleprice)}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      m: 0,
-                      fontSize: "1.5rem",
-                      fontWeight: 300,
-                      color: "rgba(0,0,0,0.55)",
-                    }}
-                  >
-                    CAD
-                  </Typography>
-                </Stack>
-              )}
-            </Box>
-            <Box>
-              <Typography
-                component="p"
-                sx={{
-                  m: 0,
-                  mb: 1.5,
-                  color: NAV_BAR_BG,
-                  fontWeight: 700,
-                  fontSize: "0.72rem",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                }}
-              >
-                Select size / colour
-              </Typography>
-            <Stack spacing={1.25} sx={{ width: "100%", maxWidth: "100%" }}>
-              {sortedModels.map((model) => {
-                const oos = isOutOfStock(model.availability);
-                const isSelected =
-                  selectedModel &&
-                  selectedModel.color === model.color &&
-                  selectedModel.size === model.size;
-                const rowImg = images[model.color];
-                const rowPid = rowImg ? extractPublicId(rowImg) : null;
-                const rowAlt = bikeTitle
-                  ? `${bikeTitle} — ${model.color} ${model.size}`
-                  : `${model.color} ${model.size}`;
-                return (
-                  <Button
-                    key={`${model.color}-${model.size}`}
-                    fullWidth
-                    sx={{
-                      m: 0,
-                      p: 0,
-                      border: 1,
-                      borderColor: isSelected ? "black" : "gray",
-                      borderWidth: isSelected ? "2px" : "1px",
-                      transition: "background-color 0.5s ease",
-                      textTransform: "none",
-                      color: oos ? "rgba(0,0,0,0.45)" : "black",
-                      backgroundColor: isSelected ? "#f0f0f0" : "white",
-                      opacity: oos ? 0.85 : 1,
-                      "&:hover": {
-                        backgroundColor: "#c0c0c0",
-                        color: oos ? "rgba(0,0,0,0.45)" : "black",
-                        "& img": {
-                          filter:
-                            " brightness(0.75) saturate(0) contrast(1); ",
-                        },
-                      },
-                      "& img": {
-                        transition: "filter 0.5s ease",
-                      },
-                    }}
-                    onClick={() => {
-                      if (rowImg) setCurrentImage(rowImg);
-                      setSelectedModel(model);
-                    }}
-                  >
-                    <Stack
-                      direction={"row"}
-                      p={0.5}
-                      pl={1}
-                      pr={2}
-                      justifyContent={"space-between"}
-                      flex={1}
-                      alignItems={"center"}
-                    >
-                      <Stack
-                        direction={"row"}
-                        alignItems={"center"}
-                        spacing={1}
-                      >
-                        {rowPid ? (
-                          <Image
-                            cloudName={CLOUD_NAME}
-                            publicId={rowPid}
-                            width="150"
-                            crop="pad"
-                            quality="100"
-                            fetchFormat="auto"
-                            alt={rowAlt}
-                            style={{
-                              width: "75px",
-                              display: "block",
-                              objectFit: "contain",
-                            }}
-                          />
-                        ) : null}
-                        <Box fontSize={"12px"} fontWeight={"300"}>
-                          {model.color}
-                        </Box>
-                        <Box fontSize={"12px"} fontWeight={"600"}>
-                          {model.size}
-                        </Box>
-                      </Stack>
-                      <Box fontSize={"12px"} fontWeight={"300"}>
-                        {availabilityLabel(model.availability)}
-                      </Box>
-                    </Stack>
-                  </Button>
-                );
-              })}
-            </Stack>
-            </Box>
-          </Stack>
-        </Box>
-
-        <Box
-          className="sticky bottom-0 w-full shrink-0"
-          sx={{
-            ...purchaseFooterSx,
-            pt: 2,
-            pb: { xs: 3, md: 3 },
-            px: { xs: 2, sm: 2.25 },
-            pl: { md: 2.5 },
-            pr: { md: 3, lg: 3.5 },
-          }}
-        >
-          {!selectedModel ? (
-            <Button
-              type="button"
-              fullWidth
-              disabled
-              variant="contained"
-              disableElevation
-              sx={{
-                py: 1.75,
-                borderRadius: "10px",
-                textTransform: "none",
-                fontWeight: 400,
-                fontSize: "1.05rem",
-                bgcolor: "rgba(0,0,0,0.12)",
-                color: "rgba(0,0,0,0.45)",
-                "&.Mui-disabled": {
-                  bgcolor: "rgba(0,0,0,0.12)",
-                  color: "rgba(0,0,0,0.45)",
-                },
-              }}
-            >
-              Select an option
-            </Button>
-          ) : isOutOfStock(selectedModel.availability) ? (
-            <Button
-              type="button"
-              fullWidth
-              variant="contained"
-              disableElevation
-              sx={{
-                py: 1.75,
-                borderRadius: "10px",
-                textTransform: "none",
-                fontWeight: 400,
-                fontSize: "1.05rem",
-                bgcolor: "#1a1a1a",
-                color: "#fff",
-                "&:hover": { bgcolor: "#333" },
-              }}
-              onClick={() => {
-                const pid = extractPublicId(images[selectedModel.color]);
-                navigate(
-                  `/checkout?bikeid=${bike._id}&color=${encodeURIComponent(
-                    selectedModel.color
-                  )}&size=${encodeURIComponent(
-                    selectedModel.size
-                  )}&image=${encodeURIComponent(
-                    pid || ""
-                  )}&availability=${encodeURIComponent(
-                    selectedModel.availability || ""
-                  )}`
-                );
-              }}
-            >
-              Out of Stock - Contact Us
-            </Button>
+                <Image
+                  key={bike._id}
+                  cloudName={CLOUD_NAME}
+                  publicId={mainPublicId}
+                  width="1000"
+                  crop="pad"
+                  quality="auto:good"
+                  fetchFormat="auto"
+                  alt={mainAlt}
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    height: "auto",
+                    maxHeight: "min(72vh, 640px)",
+                    objectFit: "contain",
+                  }}
+                />
+              </Box>
+            </div>
           ) : (
+            <div
+              className="w-full max-w-[min(100%,800px)] md:mx-0 mx-auto min-h-[200px] flex items-center justify-center bg-gray-100 text-gray-500 text-sm rounded"
+              role="img"
+              aria-label={mainAlt}
+            >
+              No image available
+            </div>
+          )}
+          <div className="mx-8 mb-8 mt-8 md:mt-10 md:block hidden">
+            <AboutSection bike={bike} />
+          </div>
+          <WhyBuyNsbsGrid className="mt-16 mb-16 mx-8 md:block hidden" />
+        </div>
+
+        <Box
+          component="aside"
+          aria-label="Pricing and availability"
+          className={`w-full md:shrink-0 md:w-[min(420px,40vw)] lg:w-[min(460px,36vw)] xl:w-[min(500px,34vw)] md:sticky md:self-start flex flex-col md:overflow-hidden justify-center items-stretch ${
+            navHidden ? "md:top-0 md:h-screen" : "md:top-[80px] md:h-[calc(100vh-80px)]"
+          }`}
+          sx={{ bgcolor: NSBS_PANEL_BG, mt: { xs: 2, md: 0 }, ...purchaseColumnDividerSx }}
+        >
+          <Box
+            className="flex-1 overflow-y-auto w-full min-w-0"
+            sx={{
+              py: { xs: 2.5, md: 3 },
+              px: { xs: 2, sm: 2.25 },
+              pl: { md: 2.5 },
+              pr: { md: 3, lg: 3.5 },
+              scrollbarWidth: "thin",
+            }}
+          >
+            <Stack spacing={2.5}>
+              <Box>
+                <Typography
+                  component="h1"
+                  sx={{
+                    m: 0,
+                    fontWeight: 800,
+                    fontSize: { xs: "1.35rem", sm: "1.5rem" },
+                    letterSpacing: "-0.02em",
+                    color: "#1a1a1a",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {bike.brand} {bike.name}
+                </Typography>
+                <Stack direction="row" alignItems="baseline" flexWrap="wrap" columnGap={1} rowGap={0.5} sx={{ mt: 1 }}>
+                  {showFromLabel ? <Typography sx={{ ...priceTextSx, color: "#1a1a1a" }}>From</Typography> : null}
+                  {hasActiveSale ? (
+                    <>
+                      <Typography sx={{ ...priceTextSx, color: "rgba(0,0,0,0.45)", textDecoration: "line-through" }}>
+                        ${formatCadPrice(displayPricing.price)}
+                      </Typography>
+                      <Typography sx={{ ...priceTextSx, color: "#1a1a1a" }}>
+                        ${formatCadPrice(displayPricing.saleprice)}
+                      </Typography>
+                    </>
+                  ) : (
+                    <Typography component="p" sx={{ ...priceTextSx, color: "#1a1a1a" }}>
+                      ${formatCadPrice(displayPricing.price)}
+                    </Typography>
+                  )}
+                  <Typography sx={{ ...priceTextSx, color: "rgba(0,0,0,0.55)" }}>CAD</Typography>
+                  {saving > 0 && !showFromLabel ? (
+                    <Box
+                      component="span"
+                      sx={{
+                        alignSelf: "center",
+                        px: 1,
+                        py: 0.25,
+                        borderRadius: "6px",
+                        bgcolor: "#fde8e8",
+                        color: "#b42318",
+                        fontSize: "0.8rem",
+                        fontWeight: 700,
+                      }}
+                    >
+                      Save ${formatCadPrice(saving)}
+                    </Box>
+                  ) : null}
+                </Stack>
+              </Box>
+
+              {sizeOptions.length ? (
+                <Box component="fieldset" sx={{ border: 0, m: 0, p: 0, minWidth: 0 }}>
+                  <Typography component="legend" sx={pickerLabelSx}>
+                    Size{selectedSize ? `: ${selectedSize}` : ""}
+                  </Typography>
+                  <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(92px, 1fr))", gap: 1 }}>
+                    {sizeOptions.map(({ size, availability }) => {
+                      const selected = selectedSize === size;
+                      const oos = isOutOfStock(availability);
+                      return (
+                        <Button
+                          key={size}
+                          onClick={() => chooseSize(size)}
+                          aria-pressed={selected}
+                          sx={{ ...optionSx(selected, oos), flexDirection: "column", py: 1, minHeight: 56 }}
+                        >
+                          <Box component="span" sx={{ fontWeight: 700, fontSize: "0.95rem", lineHeight: 1.2 }}>
+                            {size}
+                          </Box>
+                          <Box
+                            component="span"
+                            sx={{
+                              fontSize: "0.7rem",
+                              mt: 0.25,
+                              lineHeight: 1.2,
+                              color: isInStore(availability) ? "#15803d" : "rgba(0,0,0,0.5)",
+                              fontWeight: isInStore(availability) ? 700 : 400,
+                            }}
+                          >
+                            {isInStore(availability) ? "In store" : oos ? "Out of stock" : "\u00a0"}
+                          </Box>
+                        </Button>
+                      );
+                    })}
+                  </Box>
+                </Box>
+              ) : null}
+
+              {colorOptions.length ? (
+                <Box component="fieldset" sx={{ border: 0, m: 0, p: 0, minWidth: 0 }}>
+                  <Typography component="legend" sx={pickerLabelSx}>
+                    Colour{selectedColor ? `: ${selectedColor}` : ""}
+                  </Typography>
+                  <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(96px, 1fr))", gap: 1 }}>
+                    {colorOptions.map(([color, url]) => {
+                      const model = selectedSize ? findModel(selectedSize, color) : null;
+                      const unavailable = Boolean(selectedSize) && !model;
+                      const selected = selectedColor === color;
+                      const thumbPid = extractPublicId(url);
+                      return (
+                        <Button
+                          key={color}
+                          onClick={() => chooseColor(color)}
+                          disabled={unavailable}
+                          aria-pressed={selected}
+                          title={unavailable ? `Not available in ${selectedSize}` : undefined}
+                          sx={{
+                            ...optionSx(selected, model && isOutOfStock(model.availability)),
+                            flexDirection: "column",
+                            alignItems: "stretch",
+                            p: 0.75,
+                          }}
+                        >
+                          {thumbPid ? (
+                            <Image
+                              cloudName={CLOUD_NAME}
+                              publicId={thumbPid}
+                              width="200"
+                              crop="pad"
+                              quality="auto"
+                              fetchFormat="auto"
+                              alt=""
+                              style={{ width: "100%", height: "auto", display: "block", objectFit: "contain" }}
+                            />
+                          ) : null}
+                          <Box component="span" sx={{ fontSize: "0.75rem", fontWeight: 600, mt: 0.5, lineHeight: 1.2 }}>
+                            {color}
+                          </Box>
+                          {model ? (
+                            <Box
+                              component="span"
+                              sx={{
+                                fontSize: "0.68rem",
+                                lineHeight: 1.2,
+                                color: isInStore(model.availability) ? "#15803d" : "rgba(0,0,0,0.55)",
+                                fontWeight: isInStore(model.availability) ? 700 : 400,
+                              }}
+                            >
+                              {availabilityLabel(model.availability)}
+                            </Box>
+                          ) : null}
+                        </Button>
+                      );
+                    })}
+                  </Box>
+                </Box>
+              ) : null}
+
+              <ShopPerks />
+            </Stack>
+          </Box>
+
+          <Box
+            className="sticky bottom-0 w-full shrink-0"
+            sx={{
+              ...purchaseFooterSx,
+              zIndex: 2,
+              pt: { xs: 1.5, md: 2 },
+              pb: { xs: "calc(12px + env(safe-area-inset-bottom))", md: 3 },
+              px: { xs: 2, sm: 2.25 },
+              pl: { md: 2.5 },
+              pr: { md: 3, lg: 3.5 },
+            }}
+          >
             <Button
               type="button"
               fullWidth
               variant="contained"
               disableElevation
-              sx={{
-                py: 1.75,
-                borderRadius: "10px",
-                textTransform: "none",
-                fontWeight: 400,
-                fontSize: "1.05rem",
-                bgcolor: "#1a1a1a",
-                color: "#fff",
-                "&:hover": { bgcolor: "#333" },
-              }}
-              onClick={() => {
-                const pid = extractPublicId(images[selectedModel.color]);
-                navigate(
-                  `/checkout?bikeid=${bike._id}&color=${encodeURIComponent(
-                    selectedModel.color
-                  )}&size=${encodeURIComponent(
-                    selectedModel.size
-                  )}&image=${encodeURIComponent(
-                    pid || ""
-                  )}&availability=${encodeURIComponent(
-                    selectedModel.availability || ""
-                  )}`
-                );
-              }}
+              disabled={!selectedModel}
+              onClick={goToCheckout}
+              sx={buyButtonSx}
             >
-              Buy Now / Contact Us
+              {buyLabel}
             </Button>
-          )}
-          {selectedModel && (
-            <Typography
-              sx={{
-                mt: 1.5,
-                textAlign: "center",
-                fontSize: "0.875rem",
-                color: "rgba(0,0,0,0.52)",
-              }}
-            >
-              {bike.brand} {bike.name} • {selectedModel.color} •{" "}
-              {selectedModel.size}
-            </Typography>
-          )}
-        </Box>
-        <div className="mx-8 mt-8 md:mb-8 md:hidden block">
-          <AboutSection bike={bike} />
-        </div>
+            {selectedModel ? (
+              <Typography sx={{ mt: 1, textAlign: "center", fontSize: "0.85rem", color: "rgba(0,0,0,0.55)" }}>
+                {selectedModel.size}, {selectedModel.color}: {availabilityLabel(selectedModel.availability)}
+              </Typography>
+            ) : null}
+          </Box>
+          <div className="mx-8 mt-8 md:mb-8 md:hidden block">
+            <AboutSection bike={bike} />
+          </div>
 
-        <WhyBuyNsbsGrid className="mt-16 mb-16 mx-8 md:hidden block" />
-      </Box>
-    </div>
+          <WhyBuyNsbsGrid className="mt-16 mb-16 mx-8 md:hidden block" />
+        </Box>
+      </div>
+      <SimilarBikes bike={bike} />
+    </>
   );
 };
 

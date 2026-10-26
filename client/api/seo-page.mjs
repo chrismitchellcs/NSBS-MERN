@@ -35,7 +35,12 @@ async function loadIndexHtml(origin) {
   if (indexCache && indexCache.origin === origin && Date.now() - indexCache.at < INDEX_TTL_MS) {
     return indexCache.html;
   }
-  const res = await fetch(`${origin}/index.html`, { signal: AbortSignal.timeout(5000) });
+  // Protected preview deployments need Vercel's automation bypass to fetch their own files.
+  const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+  const res = await fetch(`${origin}/index.html`, {
+    headers: bypass ? { "x-vercel-protection-bypass": bypass } : {},
+    signal: AbortSignal.timeout(5000),
+  });
   const html = res.ok ? await res.text() : "";
   if (!html.includes('id="root"')) throw new Error(`index.html unavailable (${res.status})`);
   indexCache = { html, origin, at: Date.now() };
@@ -76,11 +81,13 @@ export function renderHead(html, meta) {
       : "",
   ].join("");
 
+  // Replacer functions so "$&"-style sequences in shop text are inserted literally.
+  const title = `<title>${escapeHtml(meta.title)}</title>`;
   return html
-    .replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(meta.title)}</title>`)
+    .replace(/<title>[\s\S]*?<\/title>/i, () => title)
     .replace(/<meta\s+(?:name|property)="(?:description|robots|og:[^"]+|twitter:[^"]+)"[^>]*>/gi, "")
     .replace(/<link\s+rel="canonical"[^>]*>/gi, "")
-    .replace("</head>", `${tags}</head>`);
+    .replace("</head>", () => `${tags}</head>`);
 }
 
 /** Works out the page's meta, HTTP status, and any redirect from the rewrite's query params. */
@@ -113,6 +120,10 @@ export default async function handler(req, res) {
   const host = req.headers["x-forwarded-host"] || req.headers.host;
   const origin = host?.startsWith("localhost") ? `http://${host}` : `https://${host}`;
 
+  // Page HTML and bike data load in parallel to stay well inside the function time limit.
+  const htmlPromise = loadIndexHtml(origin);
+  htmlPromise.catch(() => {});
+
   let page;
   try {
     page = await resolvePage(url.searchParams);
@@ -135,7 +146,7 @@ export default async function handler(req, res) {
 
   let html;
   try {
-    html = await loadIndexHtml(origin);
+    html = await htmlPromise;
   } catch (err) {
     console.error("seo-page:", err.message);
     res.statusCode = 502;

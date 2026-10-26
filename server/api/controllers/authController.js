@@ -16,18 +16,29 @@ function loginAttemptKey(req) {
   return `ip:${req.ip || "unknown"}`;
 }
 
-async function recordFailedLogin(key, now) {
+/**
+ * Counts this attempt before the password is checked, so a burst of parallel requests can't all
+ * pass the limit check first. Returns the attempt count in the current window.
+ */
+async function countLoginAttempt(key, now) {
   const bumped = await LoginAttempt.findOneAndUpdate(
     { key, expiresAt: { $gt: now } },
     { $inc: { count: 1 } },
     { new: true }
-  );
-  if (!bumped) {
-    await LoginAttempt.findOneAndUpdate(
+  ).lean();
+  if (bumped) return bumped;
+  try {
+    return await LoginAttempt.findOneAndUpdate(
       { key },
       { $set: { count: 1, expiresAt: new Date(now.getTime() + LOGIN_WINDOW_MS) } },
-      { upsert: true }
-    );
+      { upsert: true, new: true }
+    ).lean();
+  } catch (err) {
+    // Two first attempts raced on the unique key; the other created the window, so count into it.
+    if (err && err.code === 11000) {
+      return LoginAttempt.findOneAndUpdate({ key }, { $inc: { count: 1 } }, { new: true }).lean();
+    }
+    throw err;
   }
 }
 
@@ -47,8 +58,8 @@ exports.login = async (req, res) => {
   try {
     const key = loginAttemptKey(req);
     const now = new Date();
-    const attempt = await LoginAttempt.findOne({ key }).lean();
-    if (attempt && attempt.expiresAt > now && attempt.count >= MAX_FAILED_LOGINS) {
+    const attempt = await countLoginAttempt(key, now);
+    if (attempt && attempt.count > MAX_FAILED_LOGINS) {
       const retryAfterSec = Math.ceil((attempt.expiresAt - now) / 1000);
       res.set("Retry-After", String(retryAfterSec));
       return res.status(429).json({
@@ -64,7 +75,6 @@ exports.login = async (req, res) => {
       await bcrypt.compare(password, await getDummyHash());
     }
     if (!valid) {
-      await recordFailedLogin(key, now);
       return res.status(401).json({ message: "Invalid credentials" });
     }
 

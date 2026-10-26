@@ -40,7 +40,7 @@ export default function ShopContentNew() {
   const [allBikes, setAllBikes] = React.useState(null);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"), { noSsr: true });
 
   const { brand: pathBrand } = useParams();
   const location = useLocation();

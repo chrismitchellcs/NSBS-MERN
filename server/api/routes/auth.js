@@ -1,5 +1,5 @@
-const express = require("express");
-const router = express.Router();
+const asyncRouter = require("../utils/asyncRouter");
+const router = asyncRouter();
 const authController = require("../controllers/authController");
 
 router.post("/login", authController.login);

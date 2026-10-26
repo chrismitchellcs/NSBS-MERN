@@ -20,10 +20,11 @@ function parseRows(raw) {
   }
 }
 
+/** A variant price of 0 / blank means "use the product price", never a free bike. */
 function priceOrNull(value) {
   if (value == null || value === "") return null;
   const n = Number(value);
-  return Number.isFinite(n) ? n : null;
+  return Number.isFinite(n) && n > 0 ? n : null;
 }
 
 function variantKey(value) {

@@ -1,4 +1,4 @@
-const express = require("express");
+const asyncRouter = require("../utils/asyncRouter");
 const authMiddleware = require("../middleware/authMiddleware");
 const {
   getPublicSlides,
@@ -8,7 +8,7 @@ const {
   deleteSlide,
 } = require("../controllers/headerHeroController");
 
-const router = express.Router();
+const router = asyncRouter();
 
 router.get("/public", getPublicSlides);
 router.get("/", authMiddleware, getAllSlides);

@@ -324,7 +324,7 @@ function OtherBikeEditor({ bike, onRefresh }) {
   const handlePublicChange = async (event) => {
     const checked = event.target.checked;
     setIsPublic(checked);
-    const newBike = { ...bike, public: checked };
+    const newBike = { public: checked };
     try {
       await axios.patch(`${apiBase}/api/bikes/other/${bike._id}`, { newBike }, { withCredentials: true });
       invalidateAllBikesCache();
@@ -338,7 +338,7 @@ function OtherBikeEditor({ bike, onRefresh }) {
   const handleArchivedChange = async (event) => {
     const checked = event.target.checked;
     setIsArchived(checked);
-    const newBike = { ...bike, archived: checked };
+    const newBike = { archived: checked };
     if (checked) {
       newBike.public = false;
       setIsPublic(false);
@@ -368,9 +368,9 @@ function OtherBikeEditor({ bike, onRefresh }) {
       const n = Number(costRaw);
       if (Number.isFinite(n) && n >= 0) costPrice = n;
     }
-    const newBike = { ...bike, type: editType, description, link, year, price, saleprice, costPrice };
+    const newBike = { type: editType, description, link, year, price, saleprice, costPrice };
     try {
-      await axios.patch(`${apiBase}/api/bikes/other/${newBike._id}`, { newBike }, { withCredentials: true });
+      await axios.patch(`${apiBase}/api/bikes/other/${bike._id}`, { newBike }, { withCredentials: true });
       invalidateAllBikesCache();
       onRefresh();
       setEdit(false);
@@ -391,7 +391,7 @@ function OtherBikeEditor({ bike, onRefresh }) {
     try {
       await axios.patch(
         `${apiBase}/api/bikes/other/${bike._id}`,
-        { newBike: { ...bike, name: next, fullName } },
+        { newBike: { name: next, fullName } },
         { withCredentials: true }
       );
       invalidateAllBikesCache();

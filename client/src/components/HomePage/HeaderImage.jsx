@@ -145,6 +145,11 @@ const HeaderImage = () => {
       {slides.map((slide, i) => (
         <Box
           key={slide._id}
+          aria-hidden={i === index ? undefined : true}
+          ref={(el) => {
+            // Faded-out slides keep their links out of the tab order (React 18 has no `inert` prop).
+            if (el) el.inert = i !== index;
+          }}
           sx={{
             position: "absolute",
             inset: 0,
@@ -199,7 +204,7 @@ const HeaderImage = () => {
             spacing={{ xs: 1.5, md: 2 }}
           >
             <Typography
-              component="h1"
+              component={i === index ? "h1" : "p"}
               sx={{
                 m: 0,
                 fontWeight: 800,

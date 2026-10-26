@@ -99,7 +99,7 @@ function TransitionBikeEditorFn({ bike, onRefresh, openToken = 0 }) {
   const handlePublicChange = async (event) => {
     const checked = event.target.checked;
     setIsPublic(checked);
-    const newBike = { ...bike, public: checked };
+    const newBike = { public: checked };
     try {
       await axios.patch(
         `${apiBase}/api/bikes/transition/${bike._id}`,
@@ -116,7 +116,7 @@ function TransitionBikeEditorFn({ bike, onRefresh, openToken = 0 }) {
   const handleArchivedChange = async (event) => {
     const checked = event.target.checked;
     setIsArchived(checked);
-    const newBike = { ...bike, archived: checked };
+    const newBike = { archived: checked };
     if (checked) {
       newBike.public = false;
       setIsPublic(false);
@@ -140,10 +140,10 @@ function TransitionBikeEditorFn({ bike, onRefresh, openToken = 0 }) {
     e.preventDefault();
     const description = e.target.description.value;
     const link = e.target.link.value;
-    const newBike = { ...bike, type: editType, description, link };
+    const newBike = { type: editType, description, link };
     try {
       await axios.patch(
-        `${apiBase}/api/bikes/transition/${newBike._id}`,
+        `${apiBase}/api/bikes/transition/${bike._id}`,
         { newBike },
         { withCredentials: true }
       );

@@ -32,13 +32,10 @@ function groupBikesByBrand(bikes = []) {
 const Home = () => {
   const [bikes, setBikes] = useState([]);
   useEffect(() => {
-    const fetchBikes = async () => {
-      const response = await axios.get(
-        `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/home-preview`,
-      );
-      setBikes(response.data);
-    };
-    fetchBikes();
+    axios
+      .get(`${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/home-preview`)
+      .then((response) => setBikes(Array.isArray(response.data) ? response.data : []))
+      .catch(() => setBikes([]));
   }, []);
 
   const bikesByBrand = useMemo(() => groupBikesByBrand(bikes ?? []), [bikes]);

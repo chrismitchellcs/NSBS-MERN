@@ -56,7 +56,7 @@ const NavBar = ({
   const { pathname } = useLocation();
   const theme = useTheme();
   /** Full link layout from md (900px); below that, menu + search icons. */
-  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"), { noSsr: true });
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrollHidden, setScrollHidden] = useState(false);

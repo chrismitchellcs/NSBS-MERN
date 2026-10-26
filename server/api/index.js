@@ -84,20 +84,51 @@ app.use("/api/images", imageRoutes);
 app.use("/api/header-hero", headerHeroRoutes);
 app.use("/api/service-listings", serviceListingsRoutes);
 
-// MongoDB Connection (cached)
-let connectionPromise;
-if (!connectionPromise) {
-  connectionPromise = mongoose
-    .connect(process.env.ATLAS_URI)
-    .then(() => console.log("✅ MongoDB connected"))
-    .catch((err) => console.error("❌ MongoDB connection error:", err));
+// Errors from any route (see utils/asyncRouter) end here instead of hanging the request.
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  if (res.headersSent) return;
+  if (err && /Not allowed by CORS/.test(err.message || "")) {
+    return res.status(403).json({ error: "Origin not allowed" });
+  }
+  if (err && (err.name === "CastError" || err.name === "ValidationError")) {
+    return res.status(400).json({ error: "Invalid request" });
+  }
+  console.error("[unhandled]", req.method, req.path, err);
+  res.status(500).json({ error: "Something went wrong" });
+});
+
+// MongoDB connection, cached per instance. A failed connect is retried on the next request
+// rather than leaving this instance broken until it's recycled.
+let connectionPromise = null;
+function connectDb() {
+  if (mongoose.connection.readyState === 1) return Promise.resolve();
+  if (!connectionPromise) {
+    connectionPromise = mongoose
+      .connect(process.env.ATLAS_URI)
+      .then(() => console.log("✅ MongoDB connected"))
+      .catch((err) => {
+        connectionPromise = null;
+        console.error("❌ MongoDB connection error:", err.message);
+        throw err;
+      });
+  }
+  return connectionPromise;
 }
+connectDb().catch(() => {});
 
 // Vercel Serverless Handler
 module.exports = async (req, res) => {
   console.log("✅ Handling request to:", req.method, req.url);
 
-  await connectionPromise;
+  try {
+    await connectDb();
+  } catch {
+    res.statusCode = 503;
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({ error: "Database unavailable, please try again shortly." }));
+    return;
+  }
 
   // Run Express middleware stack
   await new Promise((resolve, reject) => {
@@ -115,7 +146,7 @@ module.exports = async (req, res) => {
 // Optional: Local long-lived server
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
-  connectionPromise.then(() => {
+  connectDb().then(() => {
     app.listen(PORT, () => {
       console.log(`🚀 Server running at http://localhost:${PORT}`);
     });

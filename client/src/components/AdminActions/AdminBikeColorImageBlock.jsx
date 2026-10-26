@@ -74,7 +74,7 @@ export function AdminBikeColorImageBlock({
       }
       const next = { ...parseColors() };
       delete next[colorName];
-      await axios.patch(patchUrl, { newBike: { ...bike, colors: JSON.stringify(next) } }, { withCredentials: true });
+      await axios.patch(patchUrl, { newBike: { colors: JSON.stringify(next) } }, { withCredentials: true });
       onRefresh();
     } catch (e) {
       console.error(e);
@@ -118,7 +118,7 @@ export function AdminBikeColorImageBlock({
       const uploadRes = await axios.post(cloudinaryUrl, formData, { withCredentials: false });
       const secureUrl = uploadRes.data.secure_url;
       const next = { ...parseColors(), [colorName]: secureUrl };
-      await axios.patch(patchUrl, { newBike: { ...bike, colors: JSON.stringify(next) } }, { withCredentials: true });
+      await axios.patch(patchUrl, { newBike: { colors: JSON.stringify(next) } }, { withCredentials: true });
       setSelectedFile(null);
       setPreviewUrl("");
       onRefresh();

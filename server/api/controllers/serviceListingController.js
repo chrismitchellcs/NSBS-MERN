@@ -2,9 +2,20 @@ const mongoose = require("mongoose");
 const ServiceListing = require("../models/ServiceListing");
 const { defaultServiceListings } = require("../utils/defaultServiceListings");
 
+/**
+ * Adds the default listings the first time the collection is ever used, then never again, so
+ * listings an admin deletes stay deleted. The flag upsert is atomic, so two first requests can't
+ * both seed.
+ */
 async function ensureSeeded() {
-  const count = await ServiceListing.countDocuments();
-  if (count === 0) {
+  const flags = mongoose.connection.db.collection("app_flags");
+  const result = await flags.updateOne(
+    { _id: "serviceListingsSeeded" },
+    { $setOnInsert: { at: new Date() } },
+    { upsert: true }
+  );
+  if (!result.upsertedCount) return;
+  if ((await ServiceListing.countDocuments()) === 0) {
     await ServiceListing.insertMany(defaultServiceListings);
   }
 }

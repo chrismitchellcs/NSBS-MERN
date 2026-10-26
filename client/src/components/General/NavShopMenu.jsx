@@ -73,6 +73,18 @@ export default function NavShopMenu({ buttonSx }) {
     setOpen(false);
   };
 
+  const menuLinks = () => Array.from(document.querySelectorAll("#nav-shop-menu a"));
+  /** Keyboard open: focus the first link once the panel has rendered. */
+  const openAndFocus = () => {
+    openNow();
+    requestAnimationFrame(() => requestAnimationFrame(() => menuLinks()[0]?.focus()));
+  };
+  const moveFocus = (step) => {
+    const links = menuLinks();
+    const i = links.indexOf(document.activeElement);
+    links[(i + step + links.length) % links.length]?.focus();
+  };
+
   const menuLink = (to, label) => (
     <Link component={RouterLink} to={to} onClick={close} sx={linkSx}>
       {label}
@@ -87,6 +99,9 @@ export default function NavShopMenu({ buttonSx }) {
       onPointerLeave={(e) => {
         if (e.pointerType === "mouse") closeSoon();
       }}
+      onBlur={(e) => {
+        if (open && !e.currentTarget.contains(e.relatedTarget)) close();
+      }}
       sx={{ display: "inline-flex" }}
     >
       <Button
@@ -97,7 +112,7 @@ export default function NavShopMenu({ buttonSx }) {
         onKeyDown={(e) => {
           if (e.key === "ArrowDown") {
             e.preventDefault();
-            openNow();
+            openAndFocus();
           } else if (e.key === "Escape") {
             close();
           }
@@ -119,6 +134,8 @@ export default function NavShopMenu({ buttonSx }) {
         anchorEl={anchorRef.current}
         placement="bottom-start"
         transition
+        // In the DOM right after "Shop" so Tab moves into the menu (and hover stays on one element).
+        disablePortal
         modifiers={[{ name: "offset", options: { offset: [0, 10] } }]}
         sx={{ zIndex: (t) => t.zIndex.modal }}
       >
@@ -133,6 +150,9 @@ export default function NavShopMenu({ buttonSx }) {
                 if (e.key === "Escape") {
                   close();
                   anchorRef.current?.focus();
+                } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+                  e.preventDefault();
+                  moveFocus(e.key === "ArrowDown" ? 1 : -1);
                 }
               }}
               sx={{ borderRadius: 2, p: 2.5, minWidth: 460 }}

@@ -6,6 +6,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import CheckIcon from "@mui/icons-material/Check";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { availabilityLabel, isInStore, isOutOfStock } from "utils/availability";
 import { effectivePrice, hasActiveShopSale, variantPricingFor } from "utils/shopPrice";
 
 const CLOUD_NAME =
@@ -27,14 +28,8 @@ function formatCurrency(amount, locale = "en-CA", currency = "CAD") {
 }
 
 function availabilityTone(av) {
-  const s = String(av || "")
-    .trim()
-    .toLowerCase();
-  if (s === "out of stock") return "bg-gray-100 text-gray-700";
-  if (s.includes("low stock")) return "bg-amber-50 text-amber-900";
-  if (s.includes("in store") || s.includes("in stock")) {
-    return "bg-emerald-50 text-emerald-900";
-  }
+  if (isInStore(av)) return "bg-emerald-50 text-emerald-900";
+  if (isOutOfStock(av)) return "bg-gray-100 text-gray-700";
   return "bg-gray-50 text-gray-700";
 }
 
@@ -71,6 +66,8 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
 
     if (!token) {
       setIsSubmitting(false);
+      setSubmitError('Please tick the "I\'m not a robot" box before sending.');
+      setFormNotSent(true);
       return;
     }
     captchaRef.current?.reset();
@@ -201,7 +198,7 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
                           availability
                         )}`}
                       >
-                        {availability || "—"}
+                        {availabilityLabel(availability) || "Contact us"}
                       </span>
                     </div>
                   </div>
@@ -515,7 +512,8 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
 
               <div className="pt-2 border-t border-gray-100">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex justify-start shrink-0">
+                  {/* The widget is a fixed 304px; shrink it slightly so it fits very narrow phones. */}
+                  <div className="flex justify-start shrink-0 max-[380px]:scale-[0.88] max-[380px]:origin-top-left max-[380px]:-mb-2">
                     <ReCAPTCHA
                       sitekey="6LcIjDQpAAAAANHNJdQQTrJy-LQLR7oAWIWontHU"
                       ref={captchaRef}

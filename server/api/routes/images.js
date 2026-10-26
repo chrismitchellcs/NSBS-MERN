@@ -1,4 +1,4 @@
-const express = require("express");
+const asyncRouter = require("../utils/asyncRouter");
 const {
   uploadImage,
   getImages,
@@ -7,7 +7,7 @@ const {
 } = require("../controllers/imageController");
 const authMiddleware = require("../middleware/authMiddleware");
 
-const router = express.Router();
+const router = asyncRouter();
 
 router.post("/", authMiddleware, uploadImage);
 router.get("/", authMiddleware, getImages);

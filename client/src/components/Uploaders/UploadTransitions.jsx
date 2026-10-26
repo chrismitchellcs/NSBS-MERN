@@ -442,7 +442,7 @@ const UploadTransitions = () => {
       }
       model.bikes = priced.map(({ row, regular, sale }) => {
         const { _regularRaw, _saleRaw, ...clean } = row;
-        if (cheapest && (regular !== cheapest.regular || sale !== cheapest.sale)) {
+        if (cheapest && regular > 0 && (regular !== cheapest.regular || sale !== cheapest.sale)) {
           return { ...clean, price: regular, saleprice: sale };
         }
         return clean;

@@ -3,7 +3,6 @@ Allow: /
 Disallow: /admin-dashboard
 Disallow: /admin-login
 Disallow: /admin-addbikes-*
-Disallow: /admin-oldadd
 Disallow: /admin-header-hero
 Disallow: /admin-service-listings
 Disallow: /checkout

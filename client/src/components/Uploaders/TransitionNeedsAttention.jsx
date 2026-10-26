@@ -88,7 +88,7 @@ const TransitionNeedsAttention = ({ bikes, onRefresh }) => {
     try {
       await axios.patch(
         `${process.env.REACT_APP_VERCEL_DOMAIN}/api/bikes/transition/${bike._id}`,
-        { newBike: { ...bike, archived: true, public: false } },
+        { newBike: { archived: true, public: false } },
         { withCredentials: true }
       );
       await onRefresh?.();

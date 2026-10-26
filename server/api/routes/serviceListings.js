@@ -1,4 +1,4 @@
-const express = require("express");
+const asyncRouter = require("../utils/asyncRouter");
 const authMiddleware = require("../middleware/authMiddleware");
 const {
   getPublicListings,
@@ -8,7 +8,7 @@ const {
   deleteListing,
 } = require("../controllers/serviceListingController");
 
-const router = express.Router();
+const router = asyncRouter();
 
 router.get("/public", getPublicListings);
 router.get("/", authMiddleware, getAllListings);

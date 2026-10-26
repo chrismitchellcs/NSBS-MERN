@@ -73,6 +73,14 @@ const AdminHeaderHero = () => {
     fetchSlides();
   }, [fetchSlides]);
 
+  // Free the previous local preview whenever it's replaced or the editor unmounts.
+  useEffect(
+    () => () => {
+      if (previewUrl.startsWith("blob:")) URL.revokeObjectURL(previewUrl);
+    },
+    [previewUrl]
+  );
+
   const openNew = () => {
     setEditingId(null);
     const nextOrder =

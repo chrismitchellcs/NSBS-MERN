@@ -28,11 +28,13 @@ const Service = () => {
       .then((res) => {
         if (cancelled) return;
         const data = res.data;
-        if (Array.isArray(data) && data.length > 0) {
+        // An empty list is the admin's choice; the built-in prices are only for a failed load.
+        if (Array.isArray(data)) {
           setListings(data);
           setLoadError(false);
         } else {
           setListings(serviceListingsFallback);
+          setLoadError(true);
         }
       })
       .catch(() => {
@@ -77,6 +79,11 @@ const Service = () => {
               ) : null}
               <ServicePackages packages={packages} />
               <ServiceRates rates={rates} />
+              {!packages.length && !rates.length ? (
+                <Typography color="text.secondary" textAlign="center">
+                  Give us a call or drop by for service pricing.
+                </Typography>
+              ) : null}
             </>
           )}
 

@@ -7,6 +7,8 @@ import { useMemo, useRef } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { Link as RouterLink } from "react-router-dom";
+import { brandPath } from "seo/seoData.mjs";
+import { getBikeFirstImageUrl } from "utils/bikeDisplay";
 
 /** Matches NavBar / site green */
 const BRAND_GREEN = "#243d33";
@@ -55,7 +57,8 @@ const Bikes = ({ brand, bikes }) => {
       (bikes ?? [])
         .filter(
           (b) =>
-            b.brand?.toLowerCase() === (brand ?? "").toLowerCase(),
+            b.brand?.toLowerCase() === (brand ?? "").toLowerCase() &&
+            getBikeFirstImageUrl(b),
         )
         .slice(0, 20),
     [bikes, brand],
@@ -63,9 +66,9 @@ const Bikes = ({ brand, bikes }) => {
 
   const isSingle = list.length === 1;
 
-  const fits4 = useMediaQuery("(min-width:1200px)");
-  const fits3 = useMediaQuery("(min-width:860px)");
-  const fits2 = useMediaQuery("(min-width:599px)");
+  const fits4 = useMediaQuery("(min-width:1200px)", { noSsr: true });
+  const fits3 = useMediaQuery("(min-width:860px)", { noSsr: true });
+  const fits2 = useMediaQuery("(min-width:599px)", { noSsr: true });
   const visibleCount = fits4 ? 4 : fits3 ? 3 : fits2 ? 2 : 1;
   const showArrows = list.length > visibleCount;
 
@@ -116,8 +119,7 @@ const Bikes = ({ brand, bikes }) => {
         </Typography>
         <Button
           component={RouterLink}
-          to="/shop"
-          state={{ brand }}
+          to={brand ? brandPath(brand) : "/shop"}
           endIcon={
             <ArrowForwardIcon sx={{ fontSize: 20 }} aria-hidden />
           }
