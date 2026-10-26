@@ -33,6 +33,7 @@ import {
   Stack,
   Switch,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { AdminBikeColorImageBlock } from "components/AdminActions/AdminBikeColorImageBlock";
@@ -505,6 +506,7 @@ function OtherBikeEditor({ bike, onRefresh, expanded, onToggle }) {
 
   return (
     <Card id={bikeElementId(bike._id)} variant="outlined" sx={{ borderRadius: 2, overflow: "visible", scrollMarginTop: OTHER_BIKES_LIST_SCROLL_MARGIN }}>
+      <Stack direction="row" alignItems="center">
       <Box
         component="button"
         type="button"
@@ -513,7 +515,8 @@ function OtherBikeEditor({ bike, onRefresh, expanded, onToggle }) {
         sx={{
           all: "unset",
           boxSizing: "border-box",
-          width: "100%",
+          flex: 1,
+          minWidth: 0,
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
@@ -570,6 +573,20 @@ function OtherBikeEditor({ bike, onRefresh, expanded, onToggle }) {
           <ExpandMoreIcon sx={{ transition: "transform 0.2s", transform: expanded ? "rotate(180deg)" : "none", color: "text.secondary" }} />
         </Stack>
       </Box>
+      <Tooltip title="Delete bike">
+        <span>
+          <IconButton
+            aria-label={`Delete ${bike.name}`}
+            color="error"
+            disabled={deleting}
+            onClick={handleDeleteBike}
+            sx={{ mx: 0.5, flexShrink: 0 }}
+          >
+            <DeleteOutlineIcon />
+          </IconButton>
+        </span>
+      </Tooltip>
+      </Stack>
 
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent sx={{ pt: 1, "&:last-child": { pb: 2 } }}>
