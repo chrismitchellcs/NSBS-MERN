@@ -26,7 +26,22 @@ export const SHOP_DIRECTIONS_URL = `https://www.google.com/maps/dir/?api=1&desti
   `North Shore Bike Shop, ${SHOP_ADDRESS.street}, ${SHOP_ADDRESS.city} ${SHOP_ADDRESS.postalCode}`
 )}`;
 
-const SHOP_TIME_ZONE = "America/Vancouver";
+/**
+ * B.C. is on Pacific Time (UTC−7) all year with no clock changes. A fixed offset is used instead of
+ * the "America/Vancouver" zone because browsers with older time zone data still switch it to PST
+ * (UTC−8) in winter, which would put open/closed an hour off.
+ */
+const SHOP_UTC_OFFSET_HOURS = -7;
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+/** Day name and minutes after midnight at the shop right now. */
+function shopClock(now) {
+  const shifted = new Date(now.getTime() + SHOP_UTC_OFFSET_HOURS * 60 * 60 * 1000);
+  return {
+    day: WEEKDAYS[shifted.getUTCDay()],
+    minutes: shifted.getUTCHours() * 60 + shifted.getUTCMinutes(),
+  };
+}
 
 /** "7:00 PM" → minutes after midnight (1140). */
 function toMinutes(time) {
@@ -67,16 +82,7 @@ export function shopHoursSummary(hours = SHOP_HOURS) {
 
 /** Today's hours in shop (Vancouver) time and whether the shop is open right now. */
 export function todayHours(now = new Date()) {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: SHOP_TIME_ZONE,
-    weekday: "long",
-    hour: "numeric",
-    minute: "numeric",
-    hourCycle: "h23",
-  }).formatToParts(now);
-  const get = (type) => parts.find((p) => p.type === type)?.value;
-  const day = get("weekday");
-  const minutes = Number(get("hour")) * 60 + Number(get("minute"));
+  const { day, minutes } = shopClock(now);
   const entry = SHOP_HOURS.find((h) => h.day === day);
   if (!entry) return { day, open: null, close: null, isOpen: false, beforeOpen: false };
   const openMin = toMinutes(entry.open);
