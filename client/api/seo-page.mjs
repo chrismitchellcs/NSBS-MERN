@@ -26,7 +26,8 @@ const STATIC_ROUTES = {
   contact: "/contact",
   "return-policy": "/return-policy",
 };
-const INTERNAL_PARAMS = ["_route", "_brand", "_id"];
+/** Ours, plus the path params Vercel also copies into the query (brand, bikeid, page). */
+const INTERNAL_PARAMS = ["_route", "_brand", "_id", "brand", "bikeid", "page"];
 const INDEX_TTL_MS = 10 * 60 * 1000;
 
 let indexCache = null;

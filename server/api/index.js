@@ -91,6 +91,11 @@ app.use("/api/images", imageRoutes);
 app.use("/api/header-hero", headerHeroRoutes);
 app.use("/api/service-listings", serviceListingsRoutes);
 
+// Anything no route handled (e.g. the removed /api/bikes/pay) is a plain 404, not an empty 200.
+app.use((req, res) => {
+  res.status(404).json({ error: "Not found" });
+});
+
 // Errors from any route (see utils/asyncRouter) end here instead of hanging the request.
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
