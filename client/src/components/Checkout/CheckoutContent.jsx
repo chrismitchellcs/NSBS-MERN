@@ -1,12 +1,12 @@
 import axios from "axios";
 import { Image } from "cloudinary-react";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import CheckIcon from "@mui/icons-material/Check";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { availabilityLabel, isInStore, isOutOfStock } from "utils/availability";
+import { availabilityLabel, isInStore, isOutOfStock, variantAvailability } from "utils/availability";
 import { effectivePrice, hasActiveShopSale, variantPricingFor } from "utils/shopPrice";
 
 const CLOUD_NAME =
@@ -47,6 +47,14 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
   const [formSent, setFormSent] = useState(false);
   const [formNotSent, setFormNotSent] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [message, setMessage] = useState("");
+
+  // The bike's own data wins over the link, so a stale "In Stock" link can't hide a sold-out variant.
+  const stock = useMemo(
+    () => variantAvailability(bike, color, size) ?? availability,
+    [bike, color, size, availability]
+  );
+  const outOfStock = isOutOfStock(stock);
 
   const pricing = variantPricingFor(bike, color, size);
   const hasSale = hasActiveShopSale(pricing.saleprice);
@@ -95,12 +103,12 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
           bikecolor: color,
           bikesize: size,
           bikeprice: subTotal,
-          bikeavailability: availability,
+          bikeavailability: stock,
           bikeid: bike._id,
           name,
           email,
           phone,
-          deliveryOption: deliveryOptionVal,
+          deliveryOption: outOfStock ? "" : deliveryOptionVal,
           firstName,
           lastName,
           address,
@@ -108,7 +116,7 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
           city,
           province,
           postalCode,
-          message: "N/A",
+          message: message.trim() || "N/A",
         }
       );
       form.reset();
@@ -119,6 +127,7 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
       setShipCity("");
       setShipProvince("BC");
       setShipPostal("");
+      setMessage("");
       setFormSent(true);
     } catch (error) {
       const msg =
@@ -145,18 +154,23 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
             Shop
           </Link>
           <span className="mx-2 text-gray-300">/</span>
-          <span className="text-gray-900 font-medium">Checkout</span>
+          <span className="text-gray-900 font-medium">{outOfStock ? "Inquiry" : "Checkout"}</span>
         </p>
-        <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-8 md:mb-10">
-          Checkout
+        <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-2">
+          {outOfStock ? "Ask about this bike" : "Checkout"}
         </h1>
+        <p className="text-[15px] text-gray-600 mb-8 md:mb-10 max-w-2xl">
+          {outOfStock
+            ? "This size and colour is out of stock right now. Send us your details and we’ll let you know when it’s expected, or suggest something similar."
+            : "Send us your details and we’ll confirm availability, payment, and pickup or shipping by email."}
+        </p>
 
         <div className="flex flex-col lg:grid lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-12 xl:gap-16 lg:items-start">
           {/* Order summary — first on mobile */}
           <aside className="order-1 lg:order-2 mb-8 lg:mb-0 lg:sticky lg:top-24 self-start w-full">
             <div className="rounded-xl border border-gray-200/80 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
               <div className="border-b border-gray-100 px-5 py-4">
-                <h2 className={sectionTitle}>Order summary</h2>
+                <h2 className={sectionTitle}>{outOfStock ? "Bike" : "Order summary"}</h2>
               </div>
               <div className="border-b border-gray-100">
                 <div className="p-5">
@@ -195,10 +209,10 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
                     <div>
                       <span
                         className={`inline-flex text-xs font-medium px-2.5 py-1 rounded-md ${availabilityTone(
-                          availability
+                          stock
                         )}`}
                       >
-                        {availabilityLabel(availability) || "Contact us"}
+                        {availabilityLabel(stock) || "Contact us"}
                       </span>
                     </div>
                   </div>
@@ -206,7 +220,7 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
               </div>
               <div className="px-5 py-5 space-y-3 text-sm">
                 <div className="flex justify-between text-gray-600">
-                  <span>Subtotal</span>
+                  <span>{outOfStock ? "Price" : "Subtotal"}</span>
                   <span className="text-gray-900 tabular-nums">
                     {hasSale ? (
                       <span className="flex items-center gap-2 justify-end">
@@ -220,6 +234,12 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
                     )}
                   </span>
                 </div>
+                {outOfStock ? (
+                  <p className="text-xs text-gray-500 pt-2">
+                    Prices in CAD. Nothing is charged; we&apos;ll get back to you about timing and options.
+                  </p>
+                ) : (
+                <>
                 <div className="flex justify-between text-gray-600">
                   <span>Estimated tax (BC 5%)</span>
                   <span className="text-gray-900 tabular-nums">
@@ -239,6 +259,8 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
                     pickup and shipping.
                   </span>
                 </p>
+                </>
+                )}
               </div>
             </div>
           </aside>
@@ -314,6 +336,26 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
                 </div>
               </div>
 
+              {outOfStock ? (
+                <div>
+                  <h2 className={sectionTitle}>Message</h2>
+                  <div className="mt-4 space-y-1.5">
+                    <label htmlFor="checkout-message" className="text-sm font-medium text-gray-800">
+                      Anything we should know? <span className="font-normal text-gray-500">(optional)</span>
+                    </label>
+                    <textarea
+                      id="checkout-message"
+                      name="message"
+                      rows={4}
+                      className={`${inputClass} resize-y`}
+                      placeholder="When you're hoping to ride it, other sizes or colours you'd consider, questions..."
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      maxLength={5000}
+                    />
+                  </div>
+                </div>
+              ) : (
               <div>
                 <h2 className={sectionTitle}>Delivery</h2>
                 <p className="text-sm text-gray-600 mt-2 mb-4">
@@ -508,6 +550,7 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
                   </div>
                 )}
               </div>
+              )}
 
               <div className="pt-2 border-t border-gray-100">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -527,8 +570,9 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
                   </button>
                 </div>
                 <p className="text-xs text-gray-500 mt-4">
-                  Submitting sends your details to North Shore Bike Shop. We’ll
-                  follow up by email about payment and next steps.
+                  {outOfStock
+                    ? "Submitting sends your details to North Shore Bike Shop. We\u2019ll reply by email about when it\u2019s expected and any alternatives. Nothing is charged."
+                    : "Submitting sends your details to North Shore Bike Shop. We\u2019ll follow up by email about payment and next steps."}
                 </p>
               </div>
             </form>
@@ -543,8 +587,9 @@ const CheckoutContent = ({ bike, color, size, image, availability }) => {
                   fontSize="small"
                 />
                 <span>
-                  Inquiry sent. We&apos;ll reply as soon as we can at the email
-                  you provided.
+                  {outOfStock
+                    ? "Inquiry sent. We\u2019ll email you about availability and options as soon as we can."
+                    : "Inquiry sent. We\u2019ll reply as soon as we can at the email you provided."}
                 </span>
               </div>
             )}

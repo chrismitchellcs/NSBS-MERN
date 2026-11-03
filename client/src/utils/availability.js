@@ -23,6 +23,27 @@ export function availabilityLabel(av) {
   return "Available to order";
 }
 
+/**
+ * Current availability of one colour + size from the bike's own data (shop stock first, since an
+ * in-store unit beats the vendor's status). Null when the variant isn't found.
+ */
+export function variantAvailability(bike, color, size) {
+  const parse = (raw) => {
+    try {
+      const rows = JSON.parse(raw || "[]");
+      return Array.isArray(rows) ? rows : [];
+    } catch {
+      return [];
+    }
+  };
+  const want = `${normalizeAvailabilityKey(color)}|${normalizeAvailabilityKey(size)}`;
+  const match = (r) => r && `${normalizeAvailabilityKey(r.color)}|${normalizeAvailabilityKey(r.size)}` === want;
+  const rows = [...parse(bike?.inStock), ...parse(bike?.models)].filter(match);
+  if (!rows.length) return null;
+  return rows.reduce((best, r) => (availabilityRank(r.availability) < availabilityRank(best.availability) ? r : best))
+    .availability;
+}
+
 /** Lower is better: in store, then orderable, then pre-order, then out of stock. */
 export function availabilityRank(av) {
   const n = normalizeAvailabilityKey(av);

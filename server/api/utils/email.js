@@ -141,6 +141,8 @@ const sendBikeEmail = async (
   message,
   fulfillmentMeta = null
 ) => {
+  const hasMessage = Boolean(message) && String(message).trim() !== "" && message !== "N/A";
+
   // Format price
   const formattedPrice = bikeprice
     ? `$${Number(bikeprice).toLocaleString()}.00 CAD`
@@ -260,7 +262,16 @@ ${
     ? "Ship To Me"
     : deliveryOption || "N/A"
 }
-${shippingAddressSection}
+${shippingAddressSection}${
+  hasMessage
+    ? `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MESSAGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${message}
+`
+    : ""
+}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 `;
 
@@ -357,6 +368,15 @@ ${fulfillmentHtml}
       }</span></div>
     </div>
     `
+        : ""
+    }
+    ${
+      hasMessage
+        ? html`
+    <div class="section">
+      <div class="section-title">Message</div>
+      <div class="value" style="white-space: pre-wrap;">${message}</div>
+    </div>`
         : ""
     }
   </div>

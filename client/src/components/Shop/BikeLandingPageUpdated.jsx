@@ -45,6 +45,13 @@ const allSizes = [
   "5",
 ];
 
+/** Short label under a size button (it's only ~90px wide). */
+function sizeStockLabel(av) {
+  if (isInStore(av)) return "In store";
+  if (isOutOfStock(av)) return "Out of stock";
+  return availabilityLabel(av) === "Pre-order" ? "Pre-order" : "To order";
+}
+
 /** Sorts "Medium 29" / "Medium MX" with Medium; unknown sizes ("One Size") go last. */
 function compareSizes(a, b) {
   const rank = (size) => {
@@ -641,11 +648,11 @@ const BikeLandingPageUpdated = ({ bike, navHidden = false }) => {
                               fontSize: "0.7rem",
                               mt: 0.25,
                               lineHeight: 1.2,
-                              color: isInStore(availability) ? "#15803d" : "rgba(0,0,0,0.5)",
-                              fontWeight: isInStore(availability) ? 700 : 400,
+                              color: isInStore(availability) ? "#15803d" : oos ? "rgba(0,0,0,0.5)" : "#1d4ed8",
+                              fontWeight: oos ? 400 : 700,
                             }}
                           >
-                            {isInStore(availability) ? "In store" : oos ? "Out of stock" : "\u00a0"}
+                            {sizeStockLabel(availability)}
                           </Box>
                         </Button>
                       );
