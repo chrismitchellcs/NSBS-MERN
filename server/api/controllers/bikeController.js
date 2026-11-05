@@ -284,6 +284,7 @@ const createOther = async (req, res) => {
 };
 
 function parsePrice(priceString) {
+  if (typeof priceString === "number") return Number.isFinite(priceString) ? Math.round(priceString) : 0;
   if (!priceString || typeof priceString !== "string") return 0;
   const cleaned = priceString.replace(/[^0-9.-]+/g, "");
   const parsed = parseFloat(cleaned);

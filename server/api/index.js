@@ -11,6 +11,7 @@ const authRoutes = require("./routes/auth");
 const imageRoutes = require("./routes/images");
 const headerHeroRoutes = require("./routes/headerHero");
 const serviceListingsRoutes = require("./routes/serviceListings");
+const catalogRoutes = require("./routes/catalog");
 
 const app = express();
 
@@ -90,6 +91,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/images", imageRoutes);
 app.use("/api/header-hero", headerHeroRoutes);
 app.use("/api/service-listings", serviceListingsRoutes);
+app.use("/api/catalog", catalogRoutes);
 
 // Anything no route handled (e.g. the removed /api/bikes/pay) is a plain 404, not an empty 200.
 app.use((req, res) => {

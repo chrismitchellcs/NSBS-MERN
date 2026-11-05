@@ -12,6 +12,7 @@ import {
 import { NAV_BAR_BG } from "components/General/NavBar";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import * as XLSX from "xlsx";
 import EditTransitions from "./EditTransitions";
 import TransitionNeedsAttention from "./TransitionNeedsAttention";
 
@@ -62,9 +63,48 @@ function transitionRowCustomerCost(item) {
 
 /** Whole-dollar retail from a B2B price cell; same parsing as the server's `parsePrice`. */
 function parseRetailPrice(priceString) {
+  if (typeof priceString === "number") return Number.isFinite(priceString) ? Math.round(priceString) : 0;
   if (!priceString || typeof priceString !== "string") return 0;
   const parsed = parseFloat(priceString.replace(/[^0-9.-]+/g, ""));
   return isNaN(parsed) ? 0 : Math.round(parsed);
+}
+
+const MONEY_COLUMNS = ["REGULAR RETAIL", "SALE RETAIL", "REGULAR CUSTOMER PRICE", "SALE CUSTOMER PRICE"];
+
+/** "REGULAR RETAIL (CAD)" → "REGULAR RETAIL", so new and old exports use the same keys. */
+function canonicalStockHeader(header) {
+  return String(header || "")
+    .replace(/\(\s*CAD\s*\)/i, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toUpperCase();
+}
+
+/**
+ * Rows from the .xlsx stock list (Nov 2026 onward): same columns as the old HTML export, but
+ * headers end in "(CAD)" and prices are numbers. Prices become "1899.00" strings so the rest of
+ * the upload (and the server's parsePrice) reads them exactly like the old "$1,899.00" text.
+ */
+function rowsFromXlsx(arrayBuffer) {
+  const workbook = XLSX.read(arrayBuffer, { type: "array" });
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  if (!sheet) throw new Error("The spreadsheet has no sheets");
+  return XLSX.utils
+    .sheet_to_json(sheet, { defval: "", raw: true })
+    .map((raw) => {
+      const entry = {};
+      Object.entries(raw).forEach(([header, value]) => {
+        const key = canonicalStockHeader(header);
+        if (MONEY_COLUMNS.includes(key)) {
+          entry[key] = typeof value === "number" && Number.isFinite(value) ? value.toFixed(2) : String(value ?? "").trim();
+        } else {
+          entry[key] = String(value ?? "").trim();
+        }
+      });
+      entry.Photo = "";
+      return entry;
+    })
+    .filter((entry) => entry.PRODUCT);
 }
 
 /** Legacy B2B part numbers carry the model year in the second segment (01.26.11.5515 → "26"). */
@@ -191,7 +231,20 @@ const UploadTransitions = () => {
       const reader = new FileReader();
 
       reader.onload = (e) => {
-        const html = e.target.result;
+        const bytes = new Uint8Array(e.target.result);
+        // Real .xlsx files are zip archives ("PK"); older downloads were an HTML table named .xls.
+        if (bytes[0] === 0x50 && bytes[1] === 0x4b) {
+          try {
+            const parsedData = rowsFromXlsx(e.target.result);
+            if (!parsedData.length) throw new Error("No stock rows found in the spreadsheet");
+            setData(parsedData);
+            resolve(parsedData);
+          } catch (err) {
+            reject(err);
+          }
+          return;
+        }
+        const html = new TextDecoder("utf-8").decode(bytes);
 
         const parser = new DOMParser();
         // @ts-ignore
@@ -243,7 +296,7 @@ const UploadTransitions = () => {
       };
 
       reader.onerror = () => reject(reader.error);
-      reader.readAsText(file);
+      reader.readAsArrayBuffer(file);
     });
   };
 
@@ -272,7 +325,8 @@ const UploadTransitions = () => {
         }
 
         let cleaned = product.replace("Complete: ", "");
-        cleaned = cleaned.replace(" - USA", "").trim();
+        // Region tags after the size/colour ("… (Large, Frostberry) - USA", "- EU") are the same bike.
+        cleaned = cleaned.replace(/\)\s*-\s*(USA|US|EU|EUR|UK|CAN|CA|AUS|AU)\s*$/i, ")").trim();
 
         if (cleaned.includes("Complete: ")) {
           cleaned = cleaned.replace("Complete: ", "");
@@ -525,7 +579,7 @@ const UploadTransitions = () => {
             Upload Transition stock file
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 720 }}>
-            Export HTML from the B2B stock list and upload it here. It creates/updates Transition models and availability.
+            Download the Complete Bikes stock list (.xlsx) from Transition&apos;s B2B site and upload it here. It creates/updates Transition models and availability.
             Below, use <strong>Public</strong> for the storefront and <strong>Archived</strong> for old stock you want hidden; the list orders drafts first, then live bikes, then archived.
             To get the file: click{" "}
             <Link rel="noopener noreferrer" href="https://www.b2b.transitionbikes.com/Account.cfm" target="_blank">
@@ -547,7 +601,7 @@ const UploadTransitions = () => {
               <VisuallyHiddenInput
                 type="file"
                 onChange={uploadBikes}
-                accept=".xls,.html,.htm,text/html"
+                accept=".xlsx,.xls,.html,.htm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/html"
                 disabled={uploading}
               />
             </Button>

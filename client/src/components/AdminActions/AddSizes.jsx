@@ -1,29 +1,9 @@
 import { Box, Checkbox, FormControlLabel } from "@mui/material";
+import { useCatalogOptions } from "api/catalogOptions";
 
+/** Pick sizes for a new bike from the shop-wide size list (managed under "Brands & sizes"). */
 const AddSizes = ({ sizes, setSizes }) => {
-  const allSizes = [
-    '10"',
-    '12"',
-    '14"',
-    '16"',
-    '20"',
-    '24"',
-    "Short",
-    "Long",
-    "X-Long",
-    "XX-Small",
-    "X-Small",
-    "Small",
-    "Medium",
-    "Large",
-    "X-Large",
-    "XX-Large",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-  ];
+  const { sizes: allSizes } = useCatalogOptions();
 
   return (
     <Box
@@ -64,11 +44,9 @@ const AddSizes = ({ sizes, setSizes }) => {
                 checked={checked}
                 value={size}
                 onChange={(_, isChecked) => {
-                  if (isChecked) {
-                    if (!sizes.includes(size)) setSizes([...sizes, size]);
-                  } else {
-                    setSizes(sizes.filter((s) => s !== size));
-                  }
+                  // Keep the picked sizes in list order (smallest → largest), not click order.
+                  const next = isChecked ? [...sizes, size] : sizes.filter((s) => s !== size);
+                  setSizes(allSizes.filter((s) => next.includes(s)).concat(next.filter((s) => !allSizes.includes(s))));
                 }}
                 sx={{ p: 0, mt: 0.25 }}
               />

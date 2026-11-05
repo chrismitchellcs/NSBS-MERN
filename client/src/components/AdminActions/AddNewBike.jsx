@@ -38,6 +38,8 @@ import {
 } from "@mui/material";
 import { AdminBikeColorImageBlock } from "components/AdminActions/AdminBikeColorImageBlock";
 import AddSizes from "components/AdminActions/AddSizes";
+import CatalogOptionsPanel from "components/AdminActions/CatalogOptionsPanel";
+import { useCatalogOptions } from "api/catalogOptions";
 import OtherBikeStockGrid, { STOCK_OPTIONS, stockSummary } from "components/AdminActions/OtherBikeStockGrid";
 import { NAV_BAR_BG } from "utils/brandColors";
 import { transitionBikeIssues, transitionBikesNeedingAttention } from "utils/transitionAdminChecks";
@@ -337,6 +339,15 @@ function OtherBikeEditor({ bike, onRefresh, expanded, onToggle }) {
   const [isArchived, setIsArchived] = useState(Boolean(bike.archived));
   const [edit, setEdit] = useState(false);
   const [editType, setEditType] = useState(bike.type);
+  const [editBrand, setEditBrand] = useState(bike.brand || "");
+  const { brands: catalogBrands } = useCatalogOptions();
+  const brandChoices = useMemo(
+    () =>
+      bike.brand && !catalogBrands.some((b) => b.toLowerCase() === String(bike.brand).toLowerCase())
+        ? [...catalogBrands, bike.brand]
+        : catalogBrands,
+    [catalogBrands, bike.brand]
+  );
   const [renameOpen, setRenameOpen] = useState(false);
   const [renameValue, setRenameValue] = useState(bike.name || "");
   const [deleting, setDeleting] = useState(false);
@@ -407,8 +418,9 @@ function OtherBikeEditor({ bike, onRefresh, expanded, onToggle }) {
       if (Number.isFinite(n) && n >= 0) costPrice = n;
     }
     // fullName drives Cloudinary file names, so it follows the year like a rename does.
-    const fullName = `${year} ${bike.brand ?? ""} ${bike.name ?? ""}`.replace(/\s+/g, " ").trim();
-    const newBike = { type: editType, description, link, year, price, saleprice, costPrice, fullName };
+    const brand = editBrand || bike.brand || "";
+    const fullName = `${year} ${brand} ${bike.name ?? ""}`.replace(/\s+/g, " ").trim();
+    const newBike = { brand, type: editType, description, link, year, price, saleprice, costPrice, fullName };
     try {
       await patch(newBike);
       invalidateAllBikesCache();
@@ -464,6 +476,21 @@ function OtherBikeEditor({ bike, onRefresh, expanded, onToggle }) {
     <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, maxWidth: 440 }}>
       <form onSubmit={handleEditDetailsSubmit}>
         <Stack spacing={2}>
+          <FormControl size="small" fullWidth>
+            <InputLabel id={`brand-${bike._id}`}>Brand</InputLabel>
+            <Select
+              labelId={`brand-${bike._id}`}
+              label="Brand"
+              value={brandChoices.find((b) => b.toLowerCase() === editBrand.toLowerCase()) ?? ""}
+              onChange={(e) => setEditBrand(e.target.value)}
+            >
+              {brandChoices.map((b) => (
+                <MenuItem key={b} value={b}>
+                  {b}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <FormControl size="small" fullWidth>
             <InputLabel id={`type-${bike._id}`}>Bike type</InputLabel>
             <Select labelId={`type-${bike._id}`} label="Bike type" value={editType || ""} onChange={(e) => setEditType(e.target.value)}>
@@ -676,6 +703,7 @@ function OtherBikeEditor({ bike, onRefresh, expanded, onToggle }) {
                       startIcon={<EditOutlinedIcon />}
                       onClick={() => {
                         setEditType(bike.type);
+                        setEditBrand(bike.brand || "");
                         setEdit(true);
                       }}
                       sx={{ color: NAV_BAR_BG }}
@@ -744,24 +772,18 @@ function OtherBikeEditor({ bike, onRefresh, expanded, onToggle }) {
 
 const OTHER_BIKES_LIST_SCROLL_MARGIN = 96;
 
-const OTHER_BIKE_BRAND_SECTION_IDS = {
-  transition: "other-bikes-brand-transition",
-  norco: "other-bikes-brand-norco",
-  ibis: "other-bikes-brand-ibis",
-  other: "other-bikes-brand-other",
-};
+const brandSectionId = (key) => `other-bikes-brand-${String(key).toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
 function scrollToElement(elementId) {
   document.getElementById(elementId)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function OtherBikesBrandNav({ counts }) {
-  const items = [
-    { id: OTHER_BIKE_BRAND_SECTION_IDS.transition, label: "Transition", count: counts.transition },
-    { id: OTHER_BIKE_BRAND_SECTION_IDS.norco, label: "Norco", count: counts.norco },
-    { id: OTHER_BIKE_BRAND_SECTION_IDS.ibis, label: "Ibis", count: counts.ibis },
-    ...(counts.other ? [{ id: OTHER_BIKE_BRAND_SECTION_IDS.other, label: "Other", count: counts.other }] : []),
-  ];
+function OtherBikesBrandNav({ sections }) {
+  const items = sections.map((section) => ({
+    id: brandSectionId(section.key),
+    label: section.title,
+    count: section.bikes.length,
+  }));
 
   return (
     <Box
@@ -896,19 +918,16 @@ function OtherBikesNeedAttention({ bikes, onOpen }) {
   );
 }
 
-function partitionOtherBikesByBrand(bikeList) {
-  const transition = [];
-  const norco = [];
-  const ibis = [];
-  const other = [];
-  bikeList.forEach((b) => {
-    const k = String(b.brand ?? "").trim().toLowerCase();
-    if (k === "transition") transition.push(b);
-    else if (k === "norco") norco.push(b);
-    else if (k === "ibis") ibis.push(b);
-    else other.push(b);
+/** One section per brand in the shop-wide list (in that order), then any other brand. */
+function groupBikesByBrand(bikeList, brands) {
+  const sections = brands.map((brand) => ({ key: brand, title: brand, bikes: [] }));
+  const other = { key: "__other", title: "Other brands", bikes: [] };
+  bikeList.forEach((bike) => {
+    const brand = String(bike.brand ?? "").trim().toLowerCase();
+    const section = sections.find((sec) => sec.key.toLowerCase() === brand);
+    (section || other).bikes.push(bike);
   });
-  return { transition, norco, ibis, other };
+  return other.bikes.length ? [...sections, other] : sections;
 }
 
 function sortBikesForOtherList(arr, listSort) {
@@ -938,6 +957,7 @@ const AddNewBike = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [search, setSearch] = useState("");
   const [expandedIds, setExpandedIds] = useState(() => new Set());
+  const { brands: catalogBrands } = useCatalogOptions();
 
   const publicIdBaseRef = useRef("");
   publicIdBaseRef.current = `${draftYear} ${brand} ${draftBikeName}`.replace(/\s+/g, " ").trim();
@@ -998,15 +1018,14 @@ const AddNewBike = () => {
     return arr;
   }, [bikes, listVisibility, search]);
 
-  const bikesByBrand = useMemo(() => {
-    const { transition, norco, ibis, other } = partitionOtherBikesByBrand(filteredBikes);
-    return {
-      transition: sortBikesForOtherList(transition, listSort),
-      norco: sortBikesForOtherList(norco, listSort),
-      ibis: sortBikesForOtherList(ibis, listSort),
-      other: sortBikesForOtherList(other, listSort),
-    };
-  }, [filteredBikes, listSort]);
+  const brandSections = useMemo(
+    () =>
+      groupBikesByBrand(filteredBikes, catalogBrands).map((section) => ({
+        ...section,
+        bikes: sortBikesForOtherList(section.bikes, listSort),
+      })),
+    [filteredBikes, listSort, catalogBrands]
+  );
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -1017,6 +1036,10 @@ const AddNewBike = () => {
     const costPrice = event.target.costPrice?.value?.trim() ?? "";
     const description = event.target.description.value;
     const link = event.target.link.value;
+    if (!brand) {
+      alert("Choose a brand.");
+      return;
+    }
     const fullName = `${year} ${brand} ${name}`.replace(/\s+/g, " ").trim();
     const initialStock = event.target.initialStock?.value || "Out of Stock";
 
@@ -1073,13 +1096,6 @@ const AddNewBike = () => {
     }
   };
 
-  const brandCounts = {
-    transition: bikesByBrand.transition.length,
-    norco: bikesByBrand.norco.length,
-    ibis: bikesByBrand.ibis.length,
-    other: bikesByBrand.other.length,
-  };
-
   return (
     <Stack spacing={3} sx={{ width: "100%", maxWidth: 1280, mx: "auto", px: { xs: 1, sm: 2 }, py: 2 }}>
       <Snackbar open={open} autoHideDuration={4000} onClose={handleClose} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
@@ -1089,6 +1105,8 @@ const AddNewBike = () => {
       </Snackbar>
 
       <OtherBikesNeedAttention bikes={bikes} onOpen={openBike} />
+
+      <CatalogOptionsPanel />
 
       <Paper elevation={0} sx={{ p: { xs: 2, sm: 2.5 }, borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" gap={2}>
@@ -1122,12 +1140,17 @@ const AddNewBike = () => {
           >
             <Stack spacing={2} sx={{ maxWidth: 560, mt: 2.5 }}>
               <FormLabel>Brand</FormLabel>
-              <RadioGroup row value={brand} onChange={(e) => setBrand(e.target.value)} name="brand">
-                <FormControlLabel value="Norco" control={<Radio size="small" />} label="Norco" />
-                <FormControlLabel value="Ibis" control={<Radio size="small" />} label="Ibis" />
-                <FormControlLabel value="Transition" control={<Radio size="small" />} label="Transition" />
-                <FormControlLabel value="other" control={<Radio size="small" />} label="Other" />
-              </RadioGroup>
+              {catalogBrands.length ? (
+                <RadioGroup row value={brand} onChange={(e) => setBrand(e.target.value)} name="brand">
+                  {catalogBrands.map((b) => (
+                    <FormControlLabel key={b} value={b} control={<Radio size="small" />} label={b} />
+                  ))}
+                </RadioGroup>
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  Add a brand under &quot;Brands &amp; sizes&quot; first.
+                </Typography>
+              )}
               <FormControl size="small" fullWidth required>
                 <InputLabel id="new-bike-type">Bike type</InputLabel>
                 <Select labelId="new-bike-type" label="Bike type" value={type} onChange={(e) => setType(e.target.value)}>
@@ -1228,26 +1251,19 @@ const AddNewBike = () => {
               alignItems: { xs: "stretch", md: "flex-start" },
             }}
           >
-            <OtherBikesBrandNav counts={brandCounts} />
+            <OtherBikesBrandNav sections={brandSections} />
             <Stack spacing={4} sx={{ flex: 1, minWidth: 0 }}>
-              {[
-                ["norco", "Norco"],
-                ["ibis", "Ibis"],
-                ["transition", "Transition"],
-                ["other", "Other brands"],
-              ]
-                .filter(([key]) => key !== "other" || bikesByBrand.other.length)
-                .map(([key, title]) => (
-                  <OtherBikesBrandSection
-                    key={key}
-                    id={OTHER_BIKE_BRAND_SECTION_IDS[key]}
-                    title={title}
-                    bikes={bikesByBrand[key]}
-                    onRefresh={fetchBikes}
-                    expandedIds={expandedIds}
-                    toggle={toggle}
-                  />
-                ))}
+              {brandSections.map((section) => (
+                <OtherBikesBrandSection
+                  key={section.key}
+                  id={brandSectionId(section.key)}
+                  title={section.title}
+                  bikes={section.bikes}
+                  onRefresh={fetchBikes}
+                  expandedIds={expandedIds}
+                  toggle={toggle}
+                />
+              ))}
             </Stack>
           </Box>
         )}

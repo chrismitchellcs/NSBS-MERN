@@ -2,6 +2,7 @@ import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Alert,
+  Autocomplete,
   Box,
   Button,
   IconButton,
@@ -14,6 +15,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { invalidateAllBikesCache } from "api/getAllBikesCached";
+import { useCatalogOptions } from "api/catalogOptions";
 import { useEffect, useMemo, useState } from "react";
 import { NAV_BAR_BG } from "utils/brandColors";
 
@@ -87,6 +89,7 @@ export default function OtherBikeStockGrid({ bike, onSaved }) {
   const [newSize, setNewSize] = useState("");
   const [newColor, setNewColor] = useState("");
   const [savedNote, setSavedNote] = useState("");
+  const { sizes: catalogSizes } = useCatalogOptions();
 
   useEffect(() => {
     setRows(parseRows(bike.models));
@@ -127,8 +130,8 @@ export default function OtherBikeStockGrid({ bike, onSaved }) {
 
   const setAll = (value) => change(rows.map((r) => ({ ...r, availability: value })));
 
-  const addSize = () => {
-    const size = newSize.trim();
+  const addSize = (value = newSize) => {
+    const size = String(value || "").trim();
     if (!size || sizes.some((s) => norm(s) === norm(size))) return;
     change([...rows, ...colors.map((color) => ({ size, color, partNumber: "N/A", availability: "Out of Stock" }))]);
     setNewSize("");
@@ -280,8 +283,23 @@ export default function OtherBikeStockGrid({ bike, onSaved }) {
 
       <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ mt: 1.5 }}>
         <Stack direction="row" spacing={0.5}>
-          <TextField size="small" label="New size" value={newSize} onChange={(e) => setNewSize(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSize())} sx={{ width: 130 }} />
-          <IconButton onClick={addSize} aria-label="Add size" disabled={!newSize.trim()}>
+          {/* Picking a suggestion or pressing Enter on typed text both arrive via onChange. */}
+          <Autocomplete
+            freeSolo
+            size="small"
+            value={null}
+            options={catalogSizes.filter((s) => !sizes.some((x) => norm(x) === norm(s)))}
+            inputValue={newSize}
+            onInputChange={(_, value, reason) => {
+              if (reason !== "reset") setNewSize(value);
+            }}
+            onChange={(_, value) => {
+              if (typeof value === "string" && value.trim()) addSize(value);
+            }}
+            sx={{ width: 160 }}
+            renderInput={(params) => <TextField {...params} label="New size" />}
+          />
+          <IconButton onClick={() => addSize()} aria-label="Add size" disabled={!newSize.trim()}>
             <AddIcon />
           </IconButton>
         </Stack>
